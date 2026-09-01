@@ -48,6 +48,6 @@ apt_install libxcb1-dev libxcb-cursor-dev
 apt_install \
     qtbase5-dev qt5-qmake qtbase5-dev-tools qtwayland5 \
     qtmultimedia5-dev libqt5serialport5-dev libqt5websockets5-dev \
-    libasound2-dev libpulse-dev
+    libasound2-dev libpulse-dev libfftw3-dev
 
 log "All packaged dependencies installed."

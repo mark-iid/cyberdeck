@@ -48,13 +48,35 @@ fi
 grep -qE '^\s*#define\s+MSHV_QT5' src/config.h \
     || warn "Could not confirm MSHV_QT5 is set in src/config.h — check it by hand."
 
-# --- Build ------------------------------------------------------------------
-# NOTE the .pro's LIBS line is:
+# --- Replace the bundled static fftw with Debian's ---------------------------
+# THE BUILD FAILS WITHOUT THIS. The .pro ships a PREBUILT STATIC archive:
 #   LIBS = -lasound src/Hv_Lib_fftw/lin_arm/libfftw3_slarm64_pi.a -lpulse-simple -lpulse
-# It uses the linker's -lasound rather than a hardcoded /usr/lib path, so the
-# libasound path fix the upstream README describes for the x86 .pro files is
-# NOT needed here. It does pull a PREBUILT STATIC fftw (libfftw3_slarm64_pi.a)
-# shipped in the repo — if linking fails, that archive is the first suspect.
+# That archive was compiled WITHOUT -fPIC, and Debian builds PIE executables by
+# default, so ld refuses it:
+#   relocation R_AARCH64_ADR_PREL_PG_HI21 against symbol `stdout@@GLIBC_2.17'
+#   which may bind externally can not be used when making a shared object
+#
+# The obvious fix is -no-pie. Substituting Debian's shared fftw is better: it
+# KEEPS PIE hardening, and the library gets security updates instead of being
+# frozen in a vendored .a from an unknown toolchain.
+#
+# The archive provides double-precision fftw_* (541 symbols). MSHV also
+# references a few fftwf_* but they resolve to dead code — the resulting binary
+# links only libfftw3.so.3. The single/threads variants are listed anyway;
+# --as-needed drops what is unused.
+#
+# (The .pro's -lasound is a plain -l, not a hardcoded path, so the libasound fix
+# upstream's README describes for the x86 .pro files does NOT apply here.)
+apt_install libfftw3-dev
+
+if grep -q 'libfftw3_slarm64_pi\.a' "$MSHV_PRO"; then
+    cp -n "$MSHV_PRO" "$MSHV_PRO.orig"
+    sed -i 's|src/Hv_Lib_fftw/lin_arm/libfftw3_slarm64_pi\.a|-lfftw3 -lfftw3f -lfftw3_threads -lfftw3f_threads|' "$MSHV_PRO"
+    log "patched $MSHV_PRO to link the system fftw"
+fi
+grep -n '^LIBS' "$MSHV_PRO" | sed 's/^/    /'
+
+# --- Build ------------------------------------------------------------------
 log "Building MSHV with $MSHV_PRO"
 qmake -qt=5 "$MSHV_PRO"
 thermal_check

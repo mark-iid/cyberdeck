@@ -469,3 +469,23 @@ critical trip. `JOBS=4` is therefore safe with a fan present.
 
 Idle with active airflow: **50-63 °C**, versus 87-90 °C in a closed, fanless,
 heat-soaked case.
+
+### §4.1 — MSHV will not link against its own bundled fftw
+
+`MSHV_Slarm64_PI.pro` ships a **prebuilt static** `libfftw3_slarm64_pi.a`
+compiled **without `-fPIC`**. Debian builds PIE executables by default, so ld
+refuses it outright:
+
+    relocation R_AARCH64_ADR_PREL_PG_HI21 against symbol `stdout@@GLIBC_2.17'
+    which may bind externally can not be used when making a shared object
+
+The obvious fix is `-no-pie`. **Substituting Debian's shared fftw is better** —
+it keeps PIE hardening *and* the library receives security updates, rather than
+being frozen in a vendored archive from an unknown toolchain. `30-build-mshv.sh`
+rewrites the `LIBS` line to `-lfftw3 -lfftw3f -lfftw3_threads -lfftw3f_threads`
+and keeps a `.orig` alongside.
+
+The archive provided double-precision `fftw_*` (541 symbols). MSHV also
+references a handful of `fftwf_*`, but those resolve to dead code: the linked
+binary pulls in only `libfftw3.so.3`. Result is a PIE aarch64 executable
+dynamically linked against system alsa, pulse, fftw and Qt5.
