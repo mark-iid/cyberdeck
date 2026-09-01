@@ -128,7 +128,15 @@ spawn-at-startup "sh" "-c" "swaybg -i \"$HOME/Pictures/wallpaper.jpg\" -m fill |
 // config rotted: it carries a comment about a "Mod+W wsjtx-layout" script that
 // does not exist in any .kdl and is not in files/scripts/. Check, do not assume.
 
-// --- Weak-signal digital: the three-way comparison (DESIGN.md §3) -----------
+// --- Weak-signal digital ----------------------------------------------------
+// DECIDED 2026-08-31 (DESIGN §3): MSHV is the primary FT8/FT4 program. It opens
+// ONE window with the waterfall inside it (Ctrl+W toggles), where WSJT-X and
+// JTDX each open two and need the second placed by hand on a 776px-usable panel.
+// Verified with `niri msg windows`, not assumed.
+//
+// WSJT-X stays as the reference implementation and insurance; its rules below
+// are verified working. JTDX is a WSJT-X fork and duplicates that fallback
+// rather than adding one -- the operator does not intend to use it.
 // WSJT-X is two windows (main 880x685 + WideGraph 938x337 = 1022px stacked,
 // against ~770px usable). They CANNOT both be tiled here. So the main window
 // tiles full-width and the waterfall FLOATS on top, summoned when needed.
@@ -144,9 +152,21 @@ window-rule {
     default-window-height { fixed 200; }
 }
 
-// WSJT-X's Settings dialog saves as 1280x811 — TALLER THAN THE 800px PANEL.
-// Float it so it is at least movable; you may still have to scroll it.
-// This is the most likely thing to bite in the field. Verify early.
+// WSJT-X's Settings dialog: MEASURED at 1280x813 on a 776px usable area
+// (`niri msg windows`, 2026-08-31). The .ini decode predicted 811, so this is
+// real and it does not fit.
+//
+// THIS RULE DOES NOT FIRE, and the reason is worth recording rather than
+// silently deleting. niri evaluates open-* properties ONCE, at map time, and Qt
+// sets this dialog's title AFTER mapping — so at the moment the rule is tested
+// the title is not yet "Settings". Both this rule and the generic
+// ^(Settings|Preferences|...) rule near the bottom of this file miss it for the
+// same reason. Title-based open-floating is unreliable for late-titled dialogs.
+//
+// Kept as documentation of a known limitation, and because it costs nothing if
+// a future Qt/niri combination titles the window earlier. The working answer is
+// the Mod+Space bind (toggle-window-floating) in the binds block: float it by
+// hand once it is on screen. That works regardless of when the title arrives.
 window-rule {
     match app-id=r#"^(?i)wsjt-?x$"# title=r#"^Settings"#
     open-floating true
@@ -156,6 +176,17 @@ window-rule {
     match app-id=r#"^(?i)jtdx$"#
     open-floating false
     default-column-width { proportion 1.0; }
+}
+// JTDX is a WSJT-X fork and has the SAME two-window split — verified
+// 2026-08-31 with `niri msg windows`: app-id "jtdx", titles
+// "JTDX  by HF community ..." and "JTDX - Wide Graph". The original config
+// floated WSJT-X's waterfall but not this one, so JTDX's opened tiled at
+// 1272x768 and ate a whole column.
+window-rule {
+    match app-id=r#"^(?i)jtdx$"# title=r#"Wide Graph"#
+    open-floating true
+    default-column-width { fixed 1272; }
+    default-window-height { fixed 200; }
 }
 
 // MSHV: the whole reason it is a candidate is that the waterfall is INSIDE the
@@ -177,6 +208,16 @@ window-rule {
 }
 window-rule {
     match app-id=r#"^(?i)(flrig|flmsg|flamp)$"#
+    open-floating true
+}
+
+// fldigi's own dialogs. VERIFIED app-id is "Fldigi" with a capital F
+// (niri msg windows, 2026-08-31) — the (?i) above is doing real work, not
+// defensive noise. The configuration wizard opened TILED at 600x380 and shoved
+// the main window aside; FLTK sets these titles at map time, so unlike the Qt
+// case above this match does fire.
+window-rule {
+    match app-id=r#"^(?i)fldigi$"# title=r#"(?i)(configuration|wizard|dialog)"#
     open-floating true
 }
 
@@ -249,8 +290,8 @@ binds {
 
     // --- The deck's own apps, on the number row's neighbours ----------------
     Mod+B hotkey-overlay-title="Kiwix — offline Wikipedia & manuals" { spawn "kiwix-desktop"; }
-    Mod+M hotkey-overlay-title="MSHV — FT8/FT4 (waterfall: Ctrl+W)"  { spawn "mshv"; }
-    Mod+N hotkey-overlay-title="WSJT-X — FT8/FT4"                    { spawn "wsjtx"; }
+    Mod+M hotkey-overlay-title="MSHV — FT8/FT4, primary (waterfall: Ctrl+W)" { spawn "mshv"; }
+    Mod+N hotkey-overlay-title="WSJT-X — FT8/FT4, fallback"                  { spawn "wsjtx"; }
 
     Mod+Q { close-window; }
 
@@ -276,6 +317,12 @@ binds {
     Mod+Shift+2 { move-column-to-workspace 2; }
     Mod+Shift+3 { move-column-to-workspace 3; }
     Mod+Shift+4 { move-column-to-workspace 4; }
+
+    // The reliable answer to any dialog that opens tiled when it should float.
+    // Window rules can only act at map time, and several toolkits (Qt notably)
+    // set their title afterwards, so no title-based rule can catch them. This
+    // works whenever the window is on screen. See the WSJT-X Settings note above.
+    Mod+Space hotkey-overlay-title="Float / unfloat this window" { toggle-window-floating; }
 
     Mod+R       { switch-preset-column-width; }
     Mod+F       { maximize-column; }

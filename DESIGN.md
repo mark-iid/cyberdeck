@@ -90,36 +90,42 @@ command line unless titled.
 
 ---
 
-## §3 — FT8 software: UNDECIDED, deliberately
+## §3 — FT8 software: DECIDED. MSHV.
 
-Three programs are installed on purpose. This is an open question, not an
-oversight.
+Settled 2026-08-31 on measurements from the real panel, not inference.
+`niri msg windows` with all three running at scale 1 on the 1280x800 output:
 
-The constraint: WSJT-X is **two windows** — main (880x685) plus a separate
-WideGraph (938x337). Stacked that is **1022px against ~770px of usable height**
-after the bar. They cannot both be tiled. The parent `kb3lyb` config's approach
-(full-width WSJT-X with the waterfall stacked above at `proportion 0.2`) was
-written for a 1080p panel and **does not transfer**.
+| | Windows | Main | Waterfall | Settings dialog |
+|---|---|---|---|---|
+| WSJT-X 2.7.0 | **2** | 1272x768 | separate, 1272x200 | **1280x813** |
+| JTDX 2.2.159 | **2** | 1272x768 | separate | — |
+| **MSHV 2.76.7** | **1** | 1272x768 | **inside the window** (Ctrl+W) | — |
 
-| Candidate | Status | Note |
-|---|---|---|
-| **WSJT-X** 2.7.0 | installed (apt) | Main tiles; WideGraph floats on top. Settings dialog is **811px on an 800px panel** — most likely field failure. |
-| **JTDX** 2.2.159 | installed (apt) | Denser fork. Free to evaluate, already present. |
-| **MSHV** 2.76.6 | built from source | Waterfall is **inside** the main window, `Ctrl+W` toggles it, `Ctrl+T` hides the TX widget, **both states saved**. One window, so it just tiles. |
+MSHV opens as a single window. WSJT-X and JTDX each need a second floating
+window placed by hand-written rules, on a panel with roughly 776px of usable
+height. That was the §2 arithmetic and it held up in practice.
 
-MSHV is the front-runner *architecturally* — it deletes the two-window problem
-rather than working around it, and unlike a CLI decoder (`ft8modem`, `ft8_lib`)
-it keeps rig control and logging. Upstream ships real Pi build targets
-(`MSHV_ARM_PI.pro`, `MSHV_Slarm64_PI.pro`), so this is a supported path.
+WSJT-X's Settings dialog measured **1280x813** — taller than the 800px screen.
+The `.ini` decode predicted 811, so the prediction was sound and the problem is
+real. See §4 on why no window rule can float it.
 
-**But the height win is inferred, not measured.** The upstream thread on MSHV
-window/waterfall sizing returned HTTP 402 and could not be read. Decide by
-opening all three on the actual panel and recording minimum usable height with
-the waterfall shown and hidden — then delete the losers from this table.
+**What MSHV does NOT give up** — checked against the built binary rather than
+assumed, because "the niche fork must be worse at integration" is the obvious
+prior and it is wrong here:
 
-All three are Qt5, as is gqrx, so they behave consistently under niri.
+- **UDP port 2237** — the WSJT-X protocol port. QLog, GridTracker and JTAlert
+  work against it.
+- **PSK Reporter** built in (`report.pskreporter.info`).
+- **ADIF** export all/selected, plus direct ClubLog, eQSL and QRZ upload.
 
----
+So the choice costs no ecosystem integration. It buys one window instead of two
+on a screen that cannot afford two.
+
+**WSJT-X stays installed** as the reference implementation and insurance: it is
+apt-maintained, new modes land there first, and its window rules are verified
+working. **JTDX is redundant** — it is a WSJT-X fork, so it duplicates the
+fallback rather than adding one. Operator has said it will not be used; it
+remains installed but is a candidate for removal.
 
 ## §4 — Traps found, so they are not re-found
 

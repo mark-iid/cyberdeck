@@ -28,8 +28,17 @@ echo "==> validating config.kdl on the deck"
 ssh "$HOST" 'niri validate -c ~/cyberdeck/config/niri/config.kdl 2>&1 | grep -E "config is valid|error" || true'
 
 echo "==> reloading niri if it is running"
+# `niri msg` needs NIRI_SOCKET, which an ssh session does not inherit. The
+# socket is /run/user/<uid>/niri.<display>.<pid>.sock — discover it rather than
+# hardcoding, since the pid changes every login.
 ssh "$HOST" 'if pgrep -x niri >/dev/null; then
-    niri msg action load-config-file && echo "   reloaded"
+    export XDG_RUNTIME_DIR="/run/user/$(id -u)"
+    export NIRI_SOCKET="$(ls -t "$XDG_RUNTIME_DIR"/niri.*.sock 2>/dev/null | head -1)"
+    if [ -z "$NIRI_SOCKET" ]; then
+      echo "   niri is running but no socket found under $XDG_RUNTIME_DIR"
+    else
+      niri msg action load-config-file && echo "   reloaded"
+    fi
   else
     echo "   niri not running — changes apply at next login"
   fi'
