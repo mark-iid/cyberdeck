@@ -117,11 +117,16 @@ symlinked and validated. All window rules are verified against real app-ids from
 | RTC cell (ML2020) | off-grid timekeeping | `J5`/`BATT` is EMPTY. Charging stays **disabled** until a known-rechargeable cell is fitted (DESIGN §5, docs/CONTENT.md). |
 | QLG2 GPS | sub-second time for FT8 | **Jumper it to 3.3V logic first** — 5V default will damage a Pi GPIO. `bin/50-doomsday-extras.sh time` has both tiers. |
 
+**Thermal reality check:** the deck idles at **80.1 °C with the case closed**,
+which is how it actually runs. The 50-63 °C figures in DESIGN §6.6 were taken
+with the case open and do not describe normal operation (§6.7). Cooling has to
+go *inside* the case.
+
 **When the fan is in:**
 
 ```sh
 bin/verify-post-reboot.sh            # baseline still good?
-bin/70-thermal-tune.sh measure 300   # what did the fan buy vs 1769MHz mean?
+bin/70-thermal-tune.sh measure 300   # CASE CLOSED — 1769MHz was an open-case upper bound
 bin/60-local-ai.sh                   # llama-server; guarded at 100C
 ```
 

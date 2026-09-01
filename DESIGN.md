@@ -543,3 +543,30 @@ first pass and briefly suggested six duplicates that did not exist. Use
 `niri msg action reload-config` does not exist; niri suggests
 `load-config-file`. `bin/sync-to-pi.sh` was calling the wrong one. Over ssh it
 also needs `NIRI_SOCKET`, which is `/run/user/1000/niri.<display>.<pid>.sock`.
+
+
+### §6.7 — CORRECTION: the good thermal numbers were open-case artifacts
+
+The 50-63 °C idle figures in §6.6 were measured with the **case open**. The case
+has to be **closed** in normal use — it is a display case and the screen is the
+point. Measured closed, with the external fan still blowing at it:
+
+| State | Idle |
+|---|---|
+| Closed, no fan, heat-soaked | 87-90 °C |
+| **Closed + external fan — THE REAL OPERATING STATE** | **80.1 °C** |
+| Open + external fan | 50-63 °C |
+
+An external fan buys roughly 8 °C through a closed case. That is not nothing,
+but it is nowhere near the 30 °C the open-case figures implied, and **no number
+recorded against an open case describes how this deck actually runs.**
+
+The consequence is not a change of plan but a hardening of it: the case is the
+thermal boundary, so cooling must be **inside** it. A case-wall or header-mounted
+fan, or the active cooler under the X1001 (§6.1). Blowing air at a closed box was
+always a stopgap and the measurement says how small a one.
+
+Sustained-load figures in §6.4 and §6.6 were also taken with the case open, so
+the 1769 MHz mean is an **upper bound**, not the operating baseline. The
+closed-case sustained figure has not been measured. Do that when the fan arrives
+so the comparison is like-for-like: `70-thermal-tune.sh measure 300`, case shut.
