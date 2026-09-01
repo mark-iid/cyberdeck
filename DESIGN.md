@@ -489,3 +489,51 @@ The archive provided double-precision `fftw_*` (541 symbols). MSHV also
 references a handful of `fftwf_*`, but those resolve to dead code: the linked
 binary pulls in only `libfftw3.so.3`. Result is a PIE aarch64 executable
 dynamically linked against system alsa, pulse, fftw and Qt5.
+
+---
+
+## §8 — niri-session runs the distro's XDG autostart, so spawns collide
+
+Symptom on first boot into niri: **two bars stacked on a 800px panel.**
+
+`niri-session` starts a systemd user session that pulls in
+`xdg-desktop-autostart.target`. Raspberry Pi OS populates `/etc/xdg/autostart`
+for its labwc desktop, and those entries therefore run inside niri too. Anything
+`config.kdl` also spawns is then started twice. Confirmed by cgroup, not by
+guesswork — the two waybars were:
+
+    app-niri-waybar-1385.scope    <- spawn-at-startup in config.kdl
+    waybar.service                <- Debian's systemd user unit
+
+**waybar.service ships enabled, and enabled GLOBALLY.** `systemctl --user
+disable` is not enough and says so:
+
+    The following unit files have been enabled in global scope. This means they
+    will still be started automatically after a successful disablement in user
+    scope: waybar.service
+
+The symlink lives at
+`/etc/systemd/user/graphical-session.target.wants/waybar.service` and needs
+`sudo systemctl --global disable waybar.service`.
+
+Second collision: **two polkit agents.** `config.kdl` spawned polkit-mate while
+`/etc/xdg/autostart/lxpolkit.desktop` was already providing one. The parent
+kb3lyb config spawns an agent because Fedora Sway Atomic has no such autostart —
+that premise does not hold here. The spawn is removed and lxpolkit is left to
+do its job.
+
+`nm-applet` is deliberately NOT removed despite `/etc/xdg/autostart/nm-applet.desktop`
+existing: that entry launches the plain applet, which uses the dead XEmbed tray,
+while the config spawns `--indicator` for the StatusNotifierItem path waybar
+understands. Verified exactly one instance runs.
+
+**Counting instances with `pgrep -f <name>` over ssh lies** — the ssh command
+line contains the pattern and matches itself, which inflated every count in the
+first pass and briefly suggested six duplicates that did not exist. Use
+`pgrep -x`, or read the cgroup tree with `systemd-cgls --user-unit app.slice`.
+
+### §8.1 — the reload action is `load-config-file`
+
+`niri msg action reload-config` does not exist; niri suggests
+`load-config-file`. `bin/sync-to-pi.sh` was calling the wrong one. Over ssh it
+also needs `NIRI_SOCKET`, which is `/run/user/1000/niri.<display>.<pid>.sock`.

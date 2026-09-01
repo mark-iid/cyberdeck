@@ -85,13 +85,31 @@ layout {
 }
 
 spawn-at-startup "xwayland-satellite"
+
+// waybar is spawned HERE and its Debian systemd unit is DISABLED.
+// Both fire otherwise: niri-session pulls in xdg-desktop-autostart.target and
+// the user manager also starts waybar.service, which ships enabled. That gave
+// two bars stacked on one 800px panel — observed 2026-08-31, PIDs in
+// app-niri-waybar-*.scope and waybar.service respectively. One source of truth;
+// this file is it, because the bar's config lives in this repo beside it.
+//   systemctl --user disable --now waybar.service
 spawn-at-startup "waybar"
+
 spawn-at-startup "mako"
-// mate-polkit, verified installed and already what labwc autostarts here.
-// policykit-1-gnome does NOT exist in trixie (Candidate: none) — the parent
-// config's /usr/libexec path was correct.
-spawn-at-startup "/usr/libexec/polkit-mate-authentication-agent-1"
+
+// NO POLKIT AGENT SPAWNED HERE, deliberately. Raspberry Pi OS autostarts
+// lxpolkit via /etc/xdg/autostart/lxpolkit.desktop, and niri-session runs
+// xdg-desktop-autostart.target, so an agent is ALREADY provided. Spawning
+// polkit-mate as well gave two agents racing for the same D-Bus name.
+// The parent kb3lyb config spawns one because Fedora Sway Atomic has no
+// equivalent autostart — that premise does not hold on this platform.
+
 spawn-at-startup "sh" "-c" "wl-paste --watch cliphist store"
+
+// nm-applet: /etc/xdg/autostart/nm-applet.desktop exists but launches the
+// plain applet, which uses the dead XEmbed tray. --indicator uses the
+// StatusNotifierItem path waybar understands, so this spawn is kept and is
+// not a duplicate — verified exactly one instance running.
 spawn-at-startup "nm-applet" "--indicator"
 
 // Wallpaper, if one exists. Absent file -> swaybg exits, desktop is plain.

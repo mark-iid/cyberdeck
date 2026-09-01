@@ -29,7 +29,7 @@ ssh "$HOST" 'niri validate -c ~/cyberdeck/config/niri/config.kdl 2>&1 | grep -E 
 
 echo "==> reloading niri if it is running"
 ssh "$HOST" 'if pgrep -x niri >/dev/null; then
-    niri msg action reload-config && echo "   reloaded"
+    niri msg action load-config-file && echo "   reloaded"
   else
     echo "   niri not running — changes apply at next login"
   fi'

@@ -34,19 +34,17 @@ MSHV_PRO="${MSHV_PRO:-MSHV_Slarm64_PI.pro}"
 fetch_repo https://github.com/LZ2HV/MSHV.git "$MSHV_DIR" "$MSHV_REF"
 cd "$MSHV_DIR"
 
-# --- Select Qt5 -------------------------------------------------------------
-# README_HOW_TO_COMPILE.txt: src/config.h carries a manual toolkit switch, and
-# it may default to Qt4. Qt4 does not exist in trixie, so this must be Qt5.
-# Edit in place, idempotently.
-if grep -qE '^\s*#define\s+MSHV_QT4' src/config.h 2>/dev/null; then
-    log "config.h: switching MSHV_QT4 -> MSHV_QT5"
-    sed -i 's|^\s*#define\s\+MSHV_QT4|//#define MSHV_QT4|' src/config.h
-fi
-if grep -qE '^\s*//\s*#define\s+MSHV_QT5' src/config.h 2>/dev/null; then
-    sed -i 's|^\s*//\s*#define\s\+MSHV_QT5|#define MSHV_QT5|' src/config.h
-fi
-grep -qE '^\s*#define\s+MSHV_QT5' src/config.h \
-    || warn "Could not confirm MSHV_QT5 is set in src/config.h — check it by hand."
+# --- Qt version selection: NOT NEEDED on this release ------------------------
+# Upstream's README_HOW_TO_COMPILE.txt describes a manual toolkit switch in
+# src/config.h ("uncomment #define MSHV_QT5"). That is STALE. Checked against
+# the pinned commit (v2.76.7): src/config.h is 46 lines and contains no
+# MSHV_QT4/MSHV_QT5 defines at all — Qt selection now lives in the .pro files
+# (`QT += widgets network websockets`) and is driven by `qmake -qt=5` below.
+#
+# An earlier version of this script tried to sed those defines and printed
+# "Could not confirm MSHV_QT5 is set in src/config.h" on every single run — a
+# warning about a file that was already correct. Removed rather than left to
+# train the operator to ignore warnings.
 
 # --- Replace the bundled static fftw with Debian's ---------------------------
 # THE BUILD FAILS WITHOUT THIS. The .pro ships a PREBUILT STATIC archive:
