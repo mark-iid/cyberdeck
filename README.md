@@ -100,3 +100,39 @@ bin/70-thermal-tune.sh measure   # 5-min sustained-load thermal profile
 - `docs/INVENTORY.md` — full baseline capture.
 - `docs/CONTENT.md` — offline content gaps (medical, maps, repair) and the
   GPS-time problem that silently breaks FT8 off-grid.
+
+## Where this was left — 2026-08-31
+
+**Working now.** The deck boots into niri (`autologin-session=niri`). niri 26.04,
+xwayland-satellite 0.8.2 and MSHV 2.76.7 are built and installed; configs are
+symlinked and validated. All window rules are verified against real app-ids from
+`niri msg windows` — no guesses remain.
+
+**Blocked on hardware, all on order:**
+
+| Waiting for | Unblocks | Notes |
+|---|---|---|
+| Fan (5V 2-pin) | the thermal ceiling | Wire to GPIO **pin 4 (+5V)** and **pin 6 (GND)**. NOT the 4-pin header — 5V and GND are pins 1 and 3 there, not adjacent (DESIGN §6.5). |
+| Active cooler for under the X1001 | the real fix | The X1001 is documented to clear the official Pi 5 Active Cooler / H505 (DESIGN §6.1). Existing passive heatsinks must come off. |
+| RTC cell (ML2020) | off-grid timekeeping | `J5`/`BATT` is EMPTY. Charging stays **disabled** until a known-rechargeable cell is fitted (DESIGN §5, docs/CONTENT.md). |
+| QLG2 GPS | sub-second time for FT8 | **Jumper it to 3.3V logic first** — 5V default will damage a Pi GPIO. `bin/50-doomsday-extras.sh time` has both tiers. |
+
+**When the fan is in:**
+
+```sh
+bin/verify-post-reboot.sh            # baseline still good?
+bin/70-thermal-tune.sh measure 300   # what did the fan buy vs 1769MHz mean?
+bin/60-local-ai.sh                   # llama-server; guarded at 100C
+```
+
+**Open decisions:**
+
+- **JTDX**: operator does not intend to use it. It is a WSJT-X fork, so it
+  duplicates the fallback rather than adding one. `sudo apt remove jtdx` plus
+  dropping its (verified-working) rules, when confirmed.
+- **`mariadbd`** is enabled and burns 7-11% CPU at idle with no user databases
+  on the machine. `systemctl disable --now mariadb` is free heat and RAM.
+- Do NOT cap `arm_freq` — measured, does not help (DESIGN §6.4).
+
+**If niri ever fails to come up:** there is no greeter to fall back to. ssh in,
+or Ctrl+Alt+F1..F6, then `bin/90-set-session.sh labwc && sudo systemctl restart lightdm`.

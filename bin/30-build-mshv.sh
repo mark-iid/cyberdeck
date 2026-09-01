@@ -104,6 +104,9 @@ StartupWMClass=MSHV
 DESKTOP
 
 log "MSHV installed as /usr/local/bin/mshv"
-warn "UNVERIFIED: the StartupWMClass above is a guess. On first launch run"
-warn "  niri msg windows"
-warn "and correct both it and the MSHV window rule in config/niri/config.kdl."
+# VERIFIED 2026-08-31 with `niri msg windows`: MSHV reports app-id "mshv" and a
+# title of the form "MSHV 70 MHz version 2.76.7". It is a native Wayland Qt5
+# client (qtwayland5 is installed), so niri matches the Wayland app-id and the
+# StartupWMClass above is only used for .desktop association, not window rules.
+# The rule ^(?i)mshv$ in config/niri/config.kdl fires correctly.
+log "app-id verified as \"mshv\" — the config.kdl window rule matches."
