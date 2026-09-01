@@ -66,4 +66,7 @@ sudo install -Dm644 resources/niri.service         /usr/lib/systemd/user/niri.se
 sudo install -Dm644 resources/niri-shutdown.target /usr/lib/systemd/user/niri-shutdown.target
 
 log "niri installed: $(/usr/local/bin/niri --version)"
-log "It will appear as a session choice in lightdm after a restart of the greeter."
+log "Registered as /usr/share/wayland-sessions/niri.desktop."
+warn "NOTE: this machine autologins (autologin-session=rpd-labwc) and shows NO"
+warn "greeter, so niri will not appear as a menu choice. Use bin/90-set-session.sh"
+warn "to switch, or test first with 'niri' nested, or niri-session from a TTY."

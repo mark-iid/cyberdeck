@@ -41,5 +41,8 @@ fi
 log "PROVISION COMPLETE"
 
 log "Build complete. Deploy configs with:  bin/deploy-config.sh"
-log "Then log out and pick 'niri' in the lightdm session menu."
-log "If anything is wrong, pick 'labwc' and you are exactly back where you started."
+log "There is NO greeter on this machine (autologin). To enter niri:"
+log "  1. 'niri' from a terminal          -> nested, zero-risk smoke test"
+log "  2. Ctrl+Alt+F2, then 'niri-session' -> real hardware, still reversible"
+log "  3. bin/90-set-session.sh niri       -> make it the boot default"
+log "Back out any time with: bin/90-set-session.sh labwc"

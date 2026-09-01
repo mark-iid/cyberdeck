@@ -25,7 +25,19 @@ bin/provision.sh        # build + install everything (idempotent, re-runnable)
 bin/deploy-config.sh    # symlink configs into ~/.config
 ```
 
-Then log out and choose **niri** in the lightdm session menu.
+**There is no session menu on this machine** — Raspberry Pi OS ships autologin
+(`autologin-session=rpd-labwc`), so it boots straight into labwc. To get into
+niri, in increasing order of commitment:
+
+```sh
+niri                              # 1. nested inside labwc — zero risk smoke test
+                                  # 2. Ctrl+Alt+F2, log in, run: niri-session
+bin/90-set-session.sh niri        # 3. make it the boot default
+bin/90-set-session.sh labwc       #    ...and back again
+```
+
+Recovery if niri fails at boot: ssh in, or Ctrl+Alt+F1..F6, then
+`bin/90-set-session.sh labwc && sudo systemctl restart lightdm`.
 
 Individual steps, if you would rather go one at a time:
 
