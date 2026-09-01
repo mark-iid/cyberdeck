@@ -533,6 +533,11 @@ existing: that entry launches the plain applet, which uses the dead XEmbed tray,
 while the config spawns `--indicator` for the StatusNotifierItem path waybar
 understands. Verified exactly one instance runs.
 
+**`pkill -f` over ssh is actively dangerous, not just misleading.** Same root
+cause as below: `ssh host 'pkill -f jtdxjt9'` matched the ssh-spawned shell's
+own command line and killed the session mid-command. Use `pkill -x`, or match a
+pattern that cannot appear in the invoking command.
+
 **Counting instances with `pgrep -f <name>` over ssh lies** — the ssh command
 line contains the pattern and matches itself, which inflated every count in the
 first pass and briefly suggested six duplicates that did not exist. Use

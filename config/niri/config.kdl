@@ -172,22 +172,11 @@ window-rule {
     open-floating true
 }
 
-window-rule {
-    match app-id=r#"^(?i)jtdx$"#
-    open-floating false
-    default-column-width { proportion 1.0; }
-}
-// JTDX is a WSJT-X fork and has the SAME two-window split — verified
-// 2026-08-31 with `niri msg windows`: app-id "jtdx", titles
-// "JTDX  by HF community ..." and "JTDX - Wide Graph". The original config
-// floated WSJT-X's waterfall but not this one, so JTDX's opened tiled at
-// 1272x768 and ate a whole column.
-window-rule {
-    match app-id=r#"^(?i)jtdx$"# title=r#"Wide Graph"#
-    open-floating true
-    default-column-width { fixed 1272; }
-    default-window-height { fixed 200; }
-}
+// JTDX rules REMOVED 2026-08-31 along with the package. It is a WSJT-X fork, so
+// it duplicated the fallback rather than adding one, and the operator does not
+// use it (DESIGN §3). The rules were verified working before removal -- app-id
+// "jtdx", waterfall floated at 1272x202 -- so if `apt install jtdx` ever brings
+// it back, mirror the WSJT-X pair above rather than rediscovering it.
 
 // MSHV: the whole reason it is a candidate is that the waterfall is INSIDE the
 // main window (Ctrl+W toggles it, Ctrl+T the TX widget, both states saved).
