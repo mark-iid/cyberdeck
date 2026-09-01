@@ -1,0 +1,10 @@
+* {
+  font-family: monospace;
+  font-size: 12px;
+  min-height: 0;
+}
+window#waybar { background: #1a1b26; color: #c0caf5; }
+#workspaces button { padding: 0 6px; background: transparent; color: #565f89; }
+#workspaces button.focused { color: #7aa2f7; }
+#clock, #cpu, #temperature, #network, #pulseaudio, #tray { padding: 0 8px; }
+#temperature.critical { color: #f7768e; font-weight: bold; }

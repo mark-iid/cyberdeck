@@ -1,0 +1,4 @@
+# Build trees fetched by bin/*.sh — never committed, always reproducible from pins.
+build/
+src-cache/
+*.log

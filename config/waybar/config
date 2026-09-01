@@ -1,0 +1,36 @@
+{
+  // Height 24, not the usual 30+. Every pixel of the 800 matters — see
+  // DESIGN.md §2. Mod+Shift+B hides the bar entirely when WSJT-X needs it all.
+  "layer": "top",
+  "position": "top",
+  "height": 24,
+  "spacing": 4,
+  "modules-left": ["niri/workspaces"],
+  "modules-center": ["niri/window"],
+  "modules-right": ["pulseaudio", "cpu", "temperature", "network", "clock", "tray"],
+
+  "niri/window": { "max-length": 40 },
+  "clock": { "format": "{:%H:%M %Z}", "tooltip-format": "<big>{:%Y-%m-%d}</big>" },
+  "cpu": { "format": "cpu {usage}%", "interval": 5 },
+
+  // The Pi 5 throttles hard in an enclosure and this deck has no fan curve
+  // tuning. Surfacing temperature is not decoration.
+  "temperature": {
+    "thermal-zone": 0,
+    "critical-threshold": 75,
+    "format": "{temperatureC}°C",
+    "format-critical": "HOT {temperatureC}°C"
+  },
+
+  "network": {
+    "format-wifi": "{essid} {signalStrength}%",
+    "format-ethernet": "eth",
+    "format-disconnected": "offline"
+  },
+  "pulseaudio": {
+    "format": "vol {volume}%",
+    "format-muted": "muted",
+    "on-click": "pavucontrol"
+  },
+  "tray": { "spacing": 8 }
+}
