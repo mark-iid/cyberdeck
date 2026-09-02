@@ -78,10 +78,20 @@ if [ -s "$PBF" ]; then
     fi
     if [ -s "$SWPA" ] && [ ! -f "$DEST/garmin/gmapsupp.img" ]; then
         log "Building a Garmin map with mkgmap (this takes a while)"
-        ( cd "$DEST/garmin" && mkgmap --gmapsupp --route --index \
-            --description="SW Pennsylvania" "$SWPA" >/dev/null 2>&1 ) \
-            && log "  $DEST/garmin/gmapsupp.img" \
-            || warn "  mkgmap failed — see DESIGN §10"
+        # Do NOT hide the output in /dev/null — a build step that fails silently
+        # is the anti-pattern this repo keeps fixing. Log it, and check for the
+        # actual artifact rather than trusting the exit code (mkgmap can exit
+        # non-zero on non-fatal warnings). The first run of this failed purely
+        # from RAM contention while three big downloads ran concurrently; giving
+        # the JVM an explicit heap and running it when the box is quiet fixes it.
+        ( cd "$DEST/garmin" && mkgmap --max-jobs=2 --gmapsupp --route --index \
+            --description="SW Pennsylvania" "$SWPA" ) > "$DEST/mkgmap.log" 2>&1 || true
+        if [ -f "$DEST/garmin/gmapsupp.img" ]; then
+            log "  built $DEST/garmin/gmapsupp.img ($(du -h "$DEST/garmin/gmapsupp.img" | cut -f1))"
+        else
+            warn "  mkgmap produced no gmapsupp.img — see $DEST/mkgmap.log"
+            warn "  usually RAM contention; re-run this script when downloads are idle."
+        fi
     fi
     log "QMapShack: Menu -> Setup Map Paths -> add $DEST/garmin"
 fi

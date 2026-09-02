@@ -144,11 +144,39 @@ dimensions at lower cost if the Pelican brand is not the point.
   Pelican, self-contained, water-resistant I/O — closest to this) and the
   Printables cyberdeck tag for faceplate STLs to adapt rather than start blank.
 
+## §9 — Input device: prefer the wired Perixx over the BT keyboard
+
+Operator has a **Perixx PERIBOARD-510H Plus** — a wired USB mini keyboard with a
+**built-in touchpad and two USB hubs**. For this deck it beats the Bluetooth
+keyboard on every functional axis, and the layout should be designed around it:
+
+- **Wired USB** — no pairing dance at boot, no battery to keep charged. A go-box
+  input device should work the instant the deck powers up. (The BT keyboard
+  currently throws "Bluetooth keyboard connected" reconnect notifications; that
+  goes away.)
+- **Integrated touchpad** — gives a precise pointer for the work touch is poor
+  at (fine qutebrowser clicks, gqrx/SDR sliders). This is what the software side
+  was compensating for; a real pointer is simpler than link-hint gymnastics.
+  niri's touchpad block is already staged (config.kdl §input) and stays inert
+  until the device is plugged in.
+- **Two USB hubs** — expands the deck's own port count for the RTL-SDR, a GPS,
+  and the Flipper at once. Feed one hub port back to a faceplate USB-A jack.
+
+Faceplate consequences:
+- The keyboard well is sized for the **PERIBOARD-510H footprint** (a mini board,
+  ~12–13 mm thick with X-scissor keys), not the slim BT slab. Measure the actual
+  unit before cutting the well — §8.
+- One fewer thing on the connector strip: the keyboard is wired internally to a
+  Pi USB port or an internal hub, so it does not need a panel jack. Its own two
+  hub ports can BE the panel USB-A jacks, routed to the faceplate.
+- No separate mouse needed, which keeps the slab uncluttered — the touchpad is
+  the pointer.
+
 ## §8 — Open, needs the operator's measurements before CAD
 
 A precise faceplate cannot be drawn until these are known:
 - exact screen module outline and mounting-hole pattern (the RTK CX101 panel)
-- the slim BT keyboard's footprint and thickness
+- the Perixx PERIBOARD-510H footprint and thickness (the wired unit, §9)
 - chosen shell, and therefore the usable interior faceplate rectangle
 - whether the display driver board mounts under the faceplate or beside the Pi
 

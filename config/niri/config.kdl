@@ -12,19 +12,30 @@ input {
         }
     }
 
-    // NO touchpad block. There is no touchpad and no mouse — a USB keyboard
-    // ("TSTP MTouch ... -event-kbd") and a USB touchscreen ("TSTP MTouch"),
-    // which are two interfaces of the same physical device.
+    // INPUT MODEL. Two pointer sources may be present:
+    //   - the touchscreen (built in, always there)
+    //   - a Perixx PERIBOARD-510H Plus: wired USB mini keyboard with a TOUCHPAD
+    //     and 2 USB hubs. Preferred over the BT keyboard — wired means no
+    //     pairing and no battery, and the touchpad gives a real pointer for the
+    //     fine work touch is bad at (qutebrowser clicks, gqrx sliders).
     //
-    // focus-follows-mouse is DELIBERATELY OMITTED, unlike both parent configs.
-    // With a touchscreen the "pointer" teleports to wherever you last touched
-    // and stays there. focus-follows-mouse would then hand focus to whatever
-    // window happens to sit under that stale point — so typing would go
-    // somewhere you are not looking. Keyboard focus only.
+    // The touchpad block below is INERT until such a device is plugged in, so it
+    // is safe to ship now. tap-to-click and natural-scroll match a laptop feel.
+    touchpad {
+        tap
+        natural-scroll
+        dwt   // disable-while-typing: ignore the pad while the keys are active
+    }
+
+    // focus-follows-mouse is STILL omitted, and now for a subtler reason. With a
+    // touchpad added, a deliberate pointer exists — but the touchSCREEN pointer
+    // still teleports to the last tap and stays there. Mixing the two with
+    // focus-follows-mouse would let a stale touch-point steal focus from where
+    // the touchpad left it. Keyboard/click focus stays authoritative; the pointer
+    // (either source) acts only on an explicit tap or click.
     touch {
-        // Map touch input to the panel explicitly. Harmless with one output,
-        // but if an HDMI monitor is ever plugged into HDMI-A-2 the touchscreen
-        // must not start driving the wrong screen.
+        // Map touch to the panel explicitly, so a future HDMI-A-2 monitor does
+        // not start driving the wrong screen.
         map-to-output "HDMI-A-1"
     }
 }
@@ -263,7 +274,8 @@ window-rule {
 
 cursor {
     xcursor-size 24
-    // The pointer is a touch artefact most of the time — get it out of the way.
+    // Hide the cursor only WHILE typing; the touchpad makes the pointer useful
+    // the rest of the time, so it reappears the moment the pad or screen is used.
     hide-when-typing
 }
 
