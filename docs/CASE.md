@@ -1,9 +1,20 @@
 # Case & faceplate design
 
 For the next enclosure. Written to be shopped and printed against, not admired.
-Operator has a 3D printer, an existing ~Pelican-1150-class shell that "opens
-upside down," and a Miady LFP8AH LiFePO4 pack (12.8 V, 8 Ah, **102.4 Wh**)
-currently living *outside* the case on Powerpole leads.
+
+**The computer is a self-contained module.** The display is a JUNEBOX 8"
+1280×800 IPS 5-point touch unit (Amazon B0DX26BXPX) whose **backboard enclosure
+houses the Raspberry Pi 5 itself** — plus, now, the NVMe SSD and heatsink. It
+takes **DC 12 V** in, exposes HDMI / USB / power on the case, mounts via **VESA
+75/100**, and carries **its own active cooling fan**. So the 203 × 136.5 × 51 mm
+brick is the whole computer, not a screen bolted to a separate Pi.
+
+That collapses the build to three essentials — the JUNEBOX module, a keyboard,
+and the Miady LFP8AH LiFePO4 pack (12.8 V, 8 Ah, **102.4 Wh**) — plus an
+**optional** RTL-SDR + telescopic antenna. The SDR is the first thing to cut if
+space is tight; the deck is fully functional without it. The
+operator has a 3D printer and an existing ~Pelican-1150-class shell that "opens
+upside down."
 
 ## §1 — The one constraint that decides everything
 
@@ -59,20 +70,22 @@ vary by printer, and RF connectors especially want a snug hole.
 
 | Connector | Purpose | Cutout | Notes |
 |---|---|---|---|
-| **BNC** bulkhead | antenna feed (RECOMMENDED) | **~14 mm** round, keyed | Quarter-turn bayonet — fast, glove-friendly, thousands of mate cycles. Add an anti-rotation notch or flat. |
-| **SMA** bulkhead | antenna feed (alt) | **6.5 mm** round (±0.1) | Smallest cutout, matches the RTL-SDR. Threaded and fiddly; ~500-cycle rating. Best if the antenna mostly stays on. |
+| **SMA** bulkhead | antenna feed (RECOMMENDED) | **6.5 mm** round (±0.1) | Matches the all-SMA RTL-SDR kit with no adapter. Panel jack stays mated (coax to a stand), so the mating-cycle limit is moot. Add a flat/notch for anti-rotation. |
+| **BNC** bulkhead | antenna feed (alt) | **~14 mm** round, keyed | Only if quick-swap at the panel matters; needs an SMA→BNC adapter for this kit. |
 | **USB-A** snap-in | data / peripherals | **26.5 × 12.3 mm** rectangular | Adafruit/McMaster snap-in panel-mount cable. Two of these. |
 | **DC barrel 2.1 mm** | 12 V in / charge | **~8 mm** round (0.31") | Panel jack, up to 8 mm panel thickness. |
 | **Anderson Powerpole** | battery / 12 V distribution | Powerwerx PanelPole2, or a printed PP15-45 retainer | Matches the existing external leads. Keep the Powerpole standard. |
 | **Rocker/toggle switch** | master power | **~12 mm** round or 13×19 mm rocker | Between battery and the buck converter. |
 
-**One RF connector, not a rack of them.** SO-239, N-type and multiples are
-dropped: the operator carries adapters, so the panel needs a single antenna jack
-and everything else adapts to it. BNC is the functional pick for a field deck
-that plugs and unplugs often (bayonet quick-connect); SMA is the smaller-hole
-alternative if the antenna lives connected. Standardise on whichever, keep an
-SMA↔BNC adapter for the RTL-SDR, and the faceplate loses a 4-hole flange and two
-cutouts.
+**One RF connector, and make it SMA.** The operator's RTL-SDR is a Blog-V3-class
+kit — dongle, coax, and telescopic dipole all SMA. So an **SMA bulkhead on the
+panel needs no adapter anywhere**, and it is the smallest cutout (⌀6.5 mm single
+hole). SMA's only real drawback, its ~500-cycle mating limit, does not apply
+here: the antenna sits on its stand on a length of coax, so the panel jack stays
+mated and you adjust at the antenna end. Route a short internal SMA jumper from
+this bulkhead to the dongle, which lives inside on a module USB port. (BNC would
+work with an SMA→BNC adapter if quick-swap at the panel ever matters, but for
+this kit it just adds a part.)
 
 ## §4 — Suggested faceplate layout
 
@@ -96,27 +109,29 @@ back edge of the faceplate) so cables exit horizontally toward the operator's
 far side and route out over the open lid, rather than straight up into the
 screen's sightline.
 
-## §5 — Power chain & charging (what "self-contained" still needs)
+## §5 — Power & cooling (mostly solved by the module)
 
-Getting the battery inside is necessary but not sufficient. The current setup
-charges externally; self-contained needs the charge path inside too.
+The self-contained 12 V module removes the two hardest parts of a go-box build:
 
-- **12.8 V bus** feeds the display driver board directly (it is a 12 V board —
-  `DC 12V` silkscreen) and the SO-239-adjacent radio gear.
-- **Buck converter 12 V → 5 V/5 A** for the Pi 5. Size it for the Pi's peaks or
-  it brownout-throttles under load; the earlier `0x…0001` power-request warning
-  and any USB current-limit events are the symptom to watch.
-- **LiFePO4 charging is NOT lead-acid charging.** A LiFePO4 pack wants a charger
-  that terminates at **14.6 V CV** (4× 3.65 V cells). A trickle/float lead-acid
-  charger will under- or over-drive it. The keyboard base already shows a "Charge
-  Power" LED, so some charge circuit exists — identify it before adding another.
-- **Fuse the battery** (inline, close to the positive terminal). Non-negotiable
-  on a LiFePO4 pack that can deliver tens of amps into a fault.
-- **102.4 Wh is over the 100 Wh airline carry-on limit.** Flyable in the
-  100–160 Wh band, but needs airline approval and max two spares. Only matters if
-  this ever travels by air; noted so it is not a surprise at a checkpoint.
+- **No power conversion.** The module is 12 V-native and does its own internal
+  12 V→5 V for the Pi. The 12.8 V LiFePO4 feeds it **directly** — no buck
+  converter to size, no 5 V rail to build, no brownout-throttle risk from an
+  undersized regulator. This is the cleanest possible power path.
+- **No cooling to design.** The module has its own active fan (and the Pi inside
+  carries the Geekworm active cooler — DESIGN §6.8, full 2.4 GHz sustained). The
+  case only has to **not block the module's vents**. Combined with "never runs
+  closed" (§1), thermal is a non-issue.
 
-## §6 — Shell size
+What still needs adding for self-containment:
+
+- **A LiFePO4 charger** (terminates at **14.6 V CV**, not lead-acid float) on a
+  panel jack, or charge the pack externally. The keyboard base already shows a
+  "Charge Power" LED — identify that circuit first.
+- **An inline fuse** on the battery positive, close to the terminal.
+- **102.4 Wh is over the 100 Wh airline carry-on limit** — flyable in the
+  100–160 Wh band with approval, max two spares. Only matters if it flies.
+
+## §6 — Shell size## §6 — Shell size
 
 The LFP8AH is a ~90 × 70 × 100 mm cube. It, plus the Pi + NVMe + cooler + a 7"
 faceplate, does not fit the current ~1150-class shell — which is exactly why the
@@ -175,7 +190,7 @@ Faceplate consequences:
 ## §8 — Open, needs the operator's measurements before CAD
 
 A precise faceplate cannot be drawn until these are known:
-- exact screen module outline and mounting-hole pattern (the RTK CX101 panel)
+- ~~screen module~~ KNOWN: JUNEBOX 203×136.5×51, VESA 75/100, 12V, own fan
 - the Perixx PERIBOARD-510H footprint and thickness (the wired unit, §9)
 - chosen shell, and therefore the usable interior faceplate rectangle
 - whether the display driver board mounts under the faceplate or beside the Pi

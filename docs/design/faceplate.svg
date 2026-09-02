@@ -1,0 +1,101 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-45 -55 490 460" font-family="monospace">
+  <!-- 1 user unit = 1 mm. Cyberdeck faceplate + layout template. -->
+  <style>
+    .plate{fill:#12141c;stroke:#7aa2f7;stroke-width:1.2}
+    .cut{fill:#0a0b10;stroke:#f7768e;stroke-width:1.2}
+    .win{fill:#0a0b10;stroke:#9ece6a;stroke-width:1.5}
+    .ref{fill:none;stroke:#565f89;stroke-width:0.8;stroke-dasharray:5 4}
+    .dim{stroke:#c0caf5;stroke-width:0.4}
+    .lbl{fill:#c0caf5;font-size:8px}
+    .lbl small{font-size:6px}
+    t,.t{fill:#c0caf5;font-size:8px}
+    .hd{fill:#7aa2f7;font-size:13px;font-weight:bold}
+    .sub{fill:#565f89;font-size:7px}
+    .grn{fill:#9ece6a;font-size:7px}
+    .red{fill:#f7768e;font-size:7px}
+  </style>
+
+  <text x="0" y="-38" class="hd">Cyberdeck faceplate — Pelican 1400 base, screen-in-lid, keyboard separate</text>
+  <text x="0" y="-27" class="sub">1 unit = 1 mm · verified connector cutouts · confirm module active-area before cutting the window</text>
+
+  <!-- ===== Pelican 1400 interior reference ===== -->
+  <rect x="0" y="0" width="300" height="225" class="ref"/>
+  <text x="150" y="240" text-anchor="middle" class="sub">Pelican 1400 interior  300 × 225 mm  (faceplate outline)</text>
+
+  <!-- ===== Display module window (the screen module face) ===== -->
+  <!-- module outline 203 x 136.5; window cut 3mm smaller all round so bezel sits behind a lip -->
+  <rect x="48" y="18" width="203" height="136.5" class="ref"/>
+  <rect x="51" y="21" width="197" height="130.5" class="win"/>
+  <text x="149" y="82" text-anchor="middle" class="grn">JUNEBOX MODULE</text>
+  <text x="149" y="92" text-anchor="middle" class="sub">203×136.5×51 · Pi+SSD INSIDE</text>
+  <text x="149" y="101" text-anchor="middle" class="sub">12V native · own fan · HDMI/USB/pwr out</text>
+  <!-- VESA 75 mounting pattern (M4), for a printed bracket behind the plate -->
+  <circle cx="112" cy="48.75" r="2.5" fill="none" stroke="#e0af68" stroke-width="1"/>
+  <circle cx="187" cy="48.75" r="2.5" fill="none" stroke="#e0af68" stroke-width="1"/>
+  <circle cx="112" cy="123.75" r="2.5" fill="none" stroke="#e0af68" stroke-width="1"/>
+  <circle cx="187" cy="123.75" r="2.5" fill="none" stroke="#e0af68" stroke-width="1"/>
+  <text x="149" y="140" text-anchor="middle" fill="#e0af68" font-size="6">VESA 75 · M4 · ⊞ 75×75</text>
+  <!-- window dims -->
+  <line x1="48" y1="10" x2="251" y2="10" class="dim"/>
+  <text x="149" y="8" text-anchor="middle" class="lbl">203</text>
+  <line x1="258" y1="18" x2="258" y2="154.5" class="dim"/>
+  <text x="268" y="90" text-anchor="middle" class="lbl" transform="rotate(90 268 90)">136.5</text>
+
+  <!-- ===== Connector strip along the bottom edge of the base ===== -->
+  <text x="8" y="180" class="red">CONNECTOR STRIP  (rear lip — cables exit away from screen)</text>
+  <!-- strip baseline y=200; place connectors left->right with center-to-center spacing -->
+  <!-- BNC 14mm hole -->
+  <circle cx="40" cy="205" r="3.25" class="cut"/>
+  <text x="40" y="223" text-anchor="middle" class="lbl">SMA†</text>
+  <text x="40" y="231" text-anchor="middle" class="sub">⌀6.5</text>
+  <!-- USB-A #1 26.5 x 12.3 -->
+  <rect x="82" y="198.85" width="26.5" height="12.3" class="cut"/>
+  <text x="95" y="223" text-anchor="middle" class="lbl">USB-A</text>
+  <text x="95" y="231" text-anchor="middle" class="sub">26.5×12.3</text>
+  <!-- USB-A #2 -->
+  <rect x="132" y="198.85" width="26.5" height="12.3" class="cut"/>
+  <text x="145" y="223" text-anchor="middle" class="lbl">USB-A</text>
+  <text x="145" y="231" text-anchor="middle" class="sub">26.5×12.3</text>
+  <!-- HDMI passthrough ~ 16 x 6 -->
+  <rect x="182" y="202" width="16" height="6" class="cut"/>
+  <text x="190" y="223" text-anchor="middle" class="lbl">HDMI*</text>
+  <text x="190" y="231" text-anchor="middle" class="sub">optional ext</text>
+  <!-- power switch 12mm -->
+  <circle cx="232" cy="205" r="6" class="cut"/>
+  <text x="232" y="223" text-anchor="middle" class="lbl">⏻ SW</text>
+  <text x="232" y="231" text-anchor="middle" class="sub">⌀12</text>
+  <!-- 12V DC / Powerpole in -->
+  <circle cx="266" cy="205" r="4" class="cut"/>
+  <text x="266" y="223" text-anchor="middle" class="lbl">12V</text>
+  <text x="266" y="231" text-anchor="middle" class="sub">⌀8 / PP</text>
+
+  <!-- ===== Keyboard, drawn to scale, SEPARATE ===== -->
+  <g transform="translate(0,300)">
+    <rect x="0" y="0" width="230" height="160" class="ref"/>
+    <text x="115" y="76" text-anchor="middle" class="lbl">PERIXX PERIBOARD-510H  (SEPARATE)</text>
+    <text x="115" y="88" text-anchor="middle" class="sub">230 × 160 × 23 · wired USB · touchpad + 2 hubs</text>
+    <text x="115" y="104" text-anchor="middle" class="red">too big to share the faceplate — stows in lid, plugs in</text>
+    <line x1="0" y1="-8" x2="230" y2="-8" class="dim"/>
+    <text x="115" y="-10" text-anchor="middle" class="lbl">230</text>
+    <line x1="238" y1="0" x2="238" y2="160" class="dim"/>
+    <text x="248" y="80" text-anchor="middle" class="lbl" transform="rotate(90 248 80)">160</text>
+  </g>
+
+  <!-- ===== Spec notes ===== -->
+  <g transform="translate(270,270)" class="t">
+    <text x="0" y="0" class="hd" font-size="10">Build notes</text>
+    <text x="0" y="16" class="sub">• 12.8V LiFePO4 → module 12V IN. Native.</text>
+    <text x="0" y="27" class="sub">  NO buck, NO conversion. Cleanest path.</text>
+    <text x="0" y="38" class="sub">• Fuse the battery inline (close to +).</text>
+    <text x="0" y="49" class="sub">• Antenna = 1 SMA jack. RTL-SDR Blog</text>
+    <text x="0" y="60" class="sub">  kit is all-SMA — no adapter needed.</text>
+    <text x="0" y="71" class="sub">• USB-A jacks fed from the keyboard's</text>
+    <text x="0" y="82" class="sub">  2 built-in hubs, or Pi USB.</text>
+    <text x="0" y="93" class="sub">• Module has its OWN fan; cooling is</text>
+    <text x="0" y="104" class="sub">  handled inside. Do not block its vents.</text>
+    <text x="0" y="115" class="sub">• Mount screen by its VESA 75 holes;</text>
+    <text x="0" y="126" class="sub">  test-coupon every cutout first.</text>
+    <text x="0" y="140" class="sub">† SMA/SDR optional — drop first if</text>
+    <text x="0" y="151" class="sub">  space is tight. Deck works without.</text>
+  </g>
+</svg>
