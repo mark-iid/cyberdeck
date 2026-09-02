@@ -575,3 +575,65 @@ Sustained-load figures in §6.4 and §6.6 were also taken with the case open, so
 the 1769 MHz mean is an **upper bound**, not the operating baseline. The
 closed-case sustained figure has not been measured. Do that when the fan arrives
 so the comparison is like-for-like: `70-thermal-tune.sh measure 300`, case shut.
+
+---
+
+## §6.8 — RESOLVED. Active cooler fitted 2026-09-02.
+
+The thermal problem that dominated this build is fixed. Definitive measurement,
+**case closed**, which no earlier figure in this file can claim:
+
+    Baseline: temp=54.3'C  throttled=0x0  arm=1700024448
+      t=30s   67.5 °C   0x0   2400030464
+      t=60s   69.2 °C   0x0   2400033792
+      t=90s   70.8 °C   0x0   2400023808
+      t=120s  72.5 °C   0x0   2400033792
+      t=150s  73.6 °C   0x0   2400023808
+      t=180s  74.1 °C   0x0   2400027136
+      t=210s  76.3 °C   0x0   2400037120
+      t=240s  75.7 °C   0x0   2400027136
+      t=270s  76.8 °C   0x0   2400027136
+      t=300s  76.3 °C   0x0   2400027136
+
+**Full 2400 MHz sustained for five minutes with zero throttle bits**, plateauing
+at ~76 °C. The last four samples oscillate 75.7-76.8, which is equilibrium, not
+a climb.
+
+| Configuration | Sustained | Temp | Throttled |
+|---|---|---|---|
+| Closed, no cooler | 1500 MHz | **80.1 °C at IDLE** | permanently |
+| Open case + external fan | 1769 MHz | 82.9-86.2 °C | yes |
+| `arm_freq=1800` capped, no fan | 1503 MHz | 84.0-86.2 °C | yes |
+| **Closed + Active Cooler** | **2400 MHz** | 67.5-76.8 °C | **never** |
+
+**+60% sustained clock over the original baseline**, and the machine reaches its
+rated speed for the first time in anything measured here.
+
+### The fan is a real cooling device now
+
+`/sys/class/thermal/cooling_device0` went from **absent** to
+`type=pwm-fan cur=1 max=4`, and it ramps: **3602 rpm at idle, 9950 rpm (state
+4/4) under load**. The trip points at 50/60/67.5/75 °C that had been inert since
+§6.1 are now doing their job.
+
+### 75 °C is not a warning
+
+Worth stating because it looks alarming next to the old numbers: **the
+50/60/67.5/75 °C trip points are FAN SPEED STEPS, not throttle points.** Hitting
+75 means the fan goes to maximum, which is the system working. Throttling begins
+at the 85 °C soft limit; critical is 110 °C. At 76.8 °C under full load there is
+8 °C of headroom and the clock never moved.
+
+The deck previously sat at **80 °C while idle**. It now runs cooler under full
+four-core load than it used to at rest, at 60% higher clock.
+
+### Consequences
+
+- `build_jobs()` now defaults to **all cores**, not half. `JOBS=2` restores the
+  conservative behaviour if the cooler is ever removed.
+- `bin/60-local-ai.sh` is **unblocked** — llama.cpp inference was previously
+  refused because one short run hit 96.6 °C.
+- The 100 °C guard stays as a tripwire for a **failed or obstructed fan**, not
+  as an expected condition.
+- §6.7's warning still stands for the historical numbers: everything measured
+  before this section, except the 80.1 °C idle figure, was open-case.

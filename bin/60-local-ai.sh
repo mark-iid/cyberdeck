@@ -15,9 +15,11 @@
 #      than a terminal toy. The native Cortex-A76 build should also beat the
 #      generic pip wheel.
 #
-# !! THERMAL !! Inference is sustained all-core load. This Pi hit 96.6 C after
-# ONE short inference, with no fan, already throttled to 1.0GHz (DESIGN §6).
-# The critical trip is 110 C. FIT THE FAN BEFORE RUNNING THIS.
+# THERMAL: inference is sustained all-core load. This was previously blocked —
+# the machine hit 96.6 C after ONE short inference with no cooling. An active
+# cooler was fitted 2026-09-02 and it now holds 2400MHz at 76.8 C with zero
+# throttling (DESIGN §6.8), so this is safe to run. The 100 C guard below stays
+# as a tripwire for a failed or obstructed fan.
 
 source "$(dirname "$0")/lib.sh"
 need_sudo

@@ -50,13 +50,17 @@ ver_ge() {
 }
 
 # --- Thermal guard ----------------------------------------------------------
-# This Pi 5 has NO FAN (see DESIGN.md §6). It idles at ~88-90C, already
-# clock-capped to 1.0GHz of a 2.4GHz max, and hits 93C under 4-core load.
-# A full-core Rust build would sit at the hard thermal limit for hours.
-# So builds default to HALF the cores. Override with JOBS=4 if a fan is fitted.
+# RESOLVED 2026-09-02: an active cooler was fitted and the deck now sustains the
+# full 2400MHz for 5 minutes of 4-core load, closed case, peaking at 76.8C with
+# throttle flags 0x0. See DESIGN §6.8.
+#
+# So all cores is now the correct default. The historical reason this was ever
+# halved: before the cooler the machine idled at 88-90C, was clock-capped to
+# 1.0GHz, and hit 93C under load — a full-core build would have sat at the
+# thermal limit for hours. Set JOBS=2 to get that conservative behaviour back if
+# the cooler is ever removed.
 build_jobs() {
-    local n; n="$(nproc)"
-    echo "${JOBS:-$(( n > 2 ? n / 2 : 1 ))}"
+    echo "${JOBS:-$(nproc)}"
 }
 
 thermal_check() {
@@ -65,8 +69,11 @@ thermal_check() {
     f="$(vcgencmd get_throttled 2>/dev/null | cut -d= -f2)"
     log "thermal: ${t:-?}C, throttle flags ${f:-?}, building with -j$(build_jobs)"
     # bit 2 (0x4) = currently throttled
+    # bit 2 (0x4) = currently throttled. With the active cooler fitted this
+    # should never fire; if it does, the fan has failed or is obstructed.
     if [ -n "$f" ] && [ $(( $(printf '%d' "$f") & 0x4 )) -ne 0 ]; then
-        warn "THIS PI IS THERMALLY THROTTLED RIGHT NOW (${t}C)."
-        warn "The build will work but will be very slow. Fit a fan — see DESIGN.md §6."
+        warn "THERMALLY THROTTLED RIGHT NOW (${t}C) — unexpected with the cooler fitted."
+        warn "Check the fan: cat /sys/devices/platform/cooling_fan/hwmon/hwmon*/fan1_input"
+        warn "and /sys/class/thermal/cooling_device0/cur_state. See DESIGN §6.8."
     fi
 }

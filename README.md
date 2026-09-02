@@ -117,18 +117,25 @@ symlinked and validated. All window rules are verified against real app-ids from
 | RTC cell (ML2020) | off-grid timekeeping | `J5`/`BATT` is EMPTY. Charging stays **disabled** until a known-rechargeable cell is fitted (DESIGN §5, docs/CONTENT.md). |
 | QLG2 GPS | sub-second time for FT8 | **Jumper it to 3.3V logic first** — 5V default will damage a Pi GPIO. `bin/50-doomsday-extras.sh time` has both tiers. |
 
-**Thermal reality check:** the deck idles at **80.1 °C with the case closed**,
-which is how it actually runs. The 50-63 °C figures in DESIGN §6.6 were taken
-with the case open and do not describe normal operation (§6.7). Cooling has to
-go *inside* the case.
+**Thermal: SOLVED 2026-09-02.** An active cooler under the X1001 took the deck
+from 1500 MHz sustained (throttled, 80.1 °C at idle) to the **full 2400 MHz,
+closed case, peaking at 76.8 °C with zero throttle bits** (DESIGN §6.8). The fan
+appears as `cooling_device0` and ramps 3602 -> 9950 rpm. 75 °C is a fan-speed
+trip point, not a throttle point; throttling starts at 85 °C.
 
-**When the fan is in:**
+**Now unblocked:**
 
 ```sh
-bin/verify-post-reboot.sh            # baseline still good?
-bin/70-thermal-tune.sh measure 300   # CASE CLOSED — 1769MHz was an open-case upper bound
-bin/60-local-ai.sh                   # llama-server; guarded at 100C
+bin/60-local-ai.sh                   # llama-server; was refused at 96.6C
+bin/70-thermal-tune.sh measure 300   # re-measure any time; expect 2400MHz flat
 ```
+
+**Still waiting on parts:**
+
+| Waiting for | Unblocks | Notes |
+|---|---|---|
+| RTC cell (ML2020) | off-grid timekeeping | `J5`/`BATT` is EMPTY. Charging stays **disabled** until a known-rechargeable cell is fitted. |
+| QLG2 GPS | sub-second time for FT8 | **Jumper it to 3.3V logic first** — 5V default will damage a Pi GPIO. `bin/50-doomsday-extras.sh time`. |
 
 **Open decisions:**
 
