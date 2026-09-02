@@ -77,20 +77,46 @@ if [ -s "$PBF" ]; then
             && log "  $(du -h "$SWPA" | cut -f1)"
     fi
     if [ -s "$SWPA" ] && [ ! -f "$DEST/garmin/gmapsupp.img" ]; then
-        log "Building a Garmin map with mkgmap (this takes a while)"
-        # Do NOT hide the output in /dev/null — a build step that fails silently
-        # is the anti-pattern this repo keeps fixing. Log it, and check for the
-        # actual artifact rather than trusting the exit code (mkgmap can exit
-        # non-zero on non-fatal warnings). The first run of this failed purely
-        # from RAM contention while three big downloads ran concurrently; giving
-        # the JVM an explicit heap and running it when the box is quiet fixes it.
-        ( cd "$DEST/garmin" && mkgmap --max-jobs=2 --gmapsupp --route --index \
-            --description="SW Pennsylvania" "$SWPA" ) > "$DEST/mkgmap.log" 2>&1 || true
-        if [ -f "$DEST/garmin/gmapsupp.img" ]; then
-            log "  built $DEST/garmin/gmapsupp.img ($(du -h "$DEST/garmin/gmapsupp.img" | cut -f1))"
-        else
-            warn "  mkgmap produced no gmapsupp.img — see $DEST/mkgmap.log"
-            warn "  usually RAM contention; re-run this script when downloads are idle."
+        # SPLIT FIRST, then mkgmap. A single Garmin tile has a hard 16MB RGN-
+        # section limit, and even the SW-PA extract (96MB pbf) blows past it:
+        #   SEVERE: The RGN section of the map or tile is too big.
+        # So the correct workflow for any non-trivial area is splitter -> mkgmap,
+        # not mkgmap alone. Doing it properly here makes the "build a map for any
+        # region offline" capability work for real regions, not just tiny ones.
+        #
+        # splitter is not in Debian (the apt "splitter" is a VLC plugin). Fetch
+        # the official jar from mkgmap.org once and cache it.
+        SPLITTER_DIR="$DEST/splitter"
+        SPLITTER_JAR="$SPLITTER_DIR/splitter.jar"
+        if [ ! -f "$SPLITTER_JAR" ]; then
+            log "Fetching splitter from mkgmap.org"
+            mkdir -p "$SPLITTER_DIR"
+            if curl -fsSL --max-time 120 -o "$DEST/splitter.zip" \
+                 "https://www.mkgmap.org.uk/download/splitter-r654.zip" \
+               && unzip -o -q -d "$SPLITTER_DIR" "$DEST/splitter.zip"; then
+                ln -sf "$(find "$SPLITTER_DIR" -name splitter.jar | head -1)" "$SPLITTER_JAR" 2>/dev/null \
+                    || SPLITTER_JAR="$(find "$SPLITTER_DIR" -name splitter.jar | head -1)"
+                rm -f "$DEST/splitter.zip"
+            else
+                warn "  splitter download failed — skipping the Garmin build."
+                warn "  Xastir (TIGER shapefiles) is unaffected and already done."
+                SPLITTER_JAR=""
+            fi
+        fi
+
+        if [ -n "$SPLITTER_JAR" ] && [ -f "$SPLITTER_JAR" ]; then
+            log "Splitting SW-PA into Garmin-sized tiles"
+            ( cd "$DEST/garmin" && java -jar "$SPLITTER_JAR" \
+                --output-dir="$DEST/garmin/tiles" "$SWPA" ) > "$DEST/splitter.log" 2>&1 || true
+            log "Building the Garmin map from the tiles with mkgmap"
+            ( cd "$DEST/garmin" && mkgmap --max-jobs=2 --gmapsupp --route --index \
+                --description="SW Pennsylvania" \
+                "$DEST/garmin/tiles"/*.osm.pbf ) > "$DEST/mkgmap.log" 2>&1 || true
+            if [ -s "$DEST/garmin/gmapsupp.img" ]; then
+                log "  built $DEST/garmin/gmapsupp.img ($(du -h "$DEST/garmin/gmapsupp.img" | cut -f1))"
+            else
+                warn "  mkgmap still produced no gmapsupp.img — see $DEST/mkgmap.log"
+            fi
         fi
     fi
     log "QMapShack: Menu -> Setup Map Paths -> add $DEST/garmin"
