@@ -637,3 +637,30 @@ four-core load than it used to at rest, at 60% higher clock.
   as an expected condition.
 - §6.7's warning still stands for the historical numbers: everything measured
   before this section, except the 80.1 °C idle figure, was open-case.
+
+### §6.9 — the synthetic load test UNDERSTATES real thermal load
+
+`70-thermal-tune.sh measure` applies four `while :; do :; done` spinners. That is
+pure scalar ALU with the whole working set in L1 — it draws far less power than
+real work. Measured on the same machine, same cooler, case closed:
+
+| Load | Peak temp | Throttle flags |
+|---|---|---|
+| Synthetic busy-loop (§6.8) | **76.8 °C** | `0x0` — none |
+| llama.cpp compile, `-j4` | ~85 °C | `0x80000` — soft limit **occurred** |
+| **7B Q4_K_M inference** | **82.3 °C** | `0xe0008` — soft limit **ACTIVE NOW** |
+
+Bit 3 (`0x8`) means the SoC was sitting at the 85 °C soft limit while generating.
+The clock only eased from 2400 to 2366 MHz, so this is mild and the work
+completes — but it is not the "76.8 °C, zero throttling" headline from §6.8.
+
+**Why:** LLM inference saturates memory bandwidth and hammers NEON/SIMD. A
+scalar spin loop touches neither. The compile sits in between.
+
+**So §6.8's figure is a floor, not a ceiling.** The honest summary is: with the
+active cooler this deck sustains full clock under synthetic load and brushes the
+soft limit under genuinely heavy real work, without ever throttling hard. That is
+a working machine, not a marginal one — but a benchmark that reports 76.8 °C for
+a workload that really runs at 85 °C would mislead the next person to read it.
+
+Nothing to fix. Recorded so the number is not trusted beyond what it measures.

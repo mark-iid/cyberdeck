@@ -74,9 +74,20 @@ cmake -B build -DCMAKE_BUILD_TYPE=Release -DGGML_NATIVE=ON -DLLAMA_CURL=ON
 log "Building with -j$(build_jobs) — expect this to be slow while throttled"
 cmake --build build --config Release -j"$(build_jobs)"
 
-log "Installing llama-server and llama-cli"
-sudo install -Dm755 build/bin/llama-server /usr/local/bin/llama-server
-sudo install -Dm755 build/bin/llama-cli    /usr/local/bin/llama-cli
+# INSTALL PROPERLY, not by copying two binaries out of the build tree.
+#
+# llama.cpp builds SHARED libraries by default (libllama, libggml, libggml-cpu,
+# libllama-common, libllama-server-impl). `install`ing just the executables
+# leaves them resolving those .so files via an RPATH that points INTO
+# $BUILD_ROOT — verified 2026-09-02, llama-server was reading
+# .cache/cyberdeck-build/llama.cpp/build/bin/libllama.so.0 and would have broken
+# silently the first time that scratch directory was cleaned.
+#
+# `cmake --install` puts the libraries in /usr/local/lib and fixes the RPATH, so
+# the result survives deletion of the build tree. ldconfig picks them up.
+log "Installing llama.cpp (binaries + shared libraries) to /usr/local"
+sudo cmake --install build --prefix /usr/local
+sudo ldconfig
 
 # --- 3. systemd user unit ----------------------------------------------------
 # A USER unit, not system: the models live in $HOME and only this user needs it.

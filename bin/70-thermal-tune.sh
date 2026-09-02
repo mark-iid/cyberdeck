@@ -31,6 +31,10 @@ measure() {
     local dur="${1:-300}"
     log "Baseline: $(vcgencmd measure_temp), $(vcgencmd get_throttled), arm=$(vcgencmd measure_clock arm | cut -d= -f2)"
     log "Applying ${dur}s of 4-core load (steady state is the number that counts)..."
+    warn "NOTE: this is a scalar spin loop and UNDERSTATES real thermal load."
+    warn "Measured on this deck: synthetic 76.8C, compile ~85C, LLM inference 82.3C"
+    warn "with the soft limit active. See DESIGN §6.9. For a realistic figure,"
+    warn "load the machine with actual work and read vcgencmd during it."
     for i in 1 2 3 4; do (while :; do :; done) & done
     local pids; pids="$(jobs -p)"
     local t=0
