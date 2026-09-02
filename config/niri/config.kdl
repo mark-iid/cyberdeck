@@ -237,6 +237,22 @@ window-rule {
     open-maximized true
 }
 
+// qutebrowser is the primary reader for the offline stack (DESIGN §9): the ZIM
+// library on :8080 and the local model on :8081. Full width — it is reading
+// long-form reference material on a 1280px panel.
+// qutebrowser is the primary reader for the offline stack (DESIGN §9): ZIMs on
+// :8080, the local model on :8081.
+//
+// app-id VERIFIED as "org.qutebrowser.qutebrowser" — NOT "qutebrowser". A rule
+// anchored on the binary name matched nothing, silently. Reverse-DNS app-ids are
+// normal for Wayland-native apps; never assume the executable name.
+//
+// NO open-maximized rule, deliberately. `default-column-width { proportion 1.0 }`
+// above already makes every window full width: 1280 - 2*4px gaps = 1272, and
+// 800 - 24px bar - 8px gaps = 768. Measured, foot (no rule) and qutebrowser
+// (with one) were both 1272x768 — the rule changed nothing and was deleted
+// rather than left as decoration that looks like it does something.
+
 // Transient dialogs from anything above, matched on title because the app-id
 // belongs to the parent app. On an 800px panel these must float or they shove
 // the app they belong to out of the way.
@@ -278,7 +294,18 @@ binds {
     }
 
     // --- The deck's own apps, on the number row's neighbours ----------------
-    Mod+B hotkey-overlay-title="Kiwix — offline Wikipedia & manuals" { spawn "kiwix-desktop"; }
+    // The offline stack, both in qutebrowser — see DESIGN §9. kiwix-desktop's
+    // content area is a QtWebEngine view where following a link means
+    // Tab-cycling past every preceding one; qutebrowser's link hints (press f,
+    // type the letter) make that two keystrokes. On a deck with no mouse that is
+    // the difference between usable and not.
+    Mod+B hotkey-overlay-title="Kiwix library — 42 ZIMs (f = link hints)" {
+        spawn "qutebrowser" "http://127.0.0.1:8080";
+    }
+    Mod+A hotkey-overlay-title="Local AI — 7B Mistral, offline" {
+        spawn "qutebrowser" "http://127.0.0.1:8081";
+    }
+    // kiwix-desktop stays installed and is still in fuzzel (Mod+D) if wanted.
     Mod+M hotkey-overlay-title="MSHV — FT8/FT4, primary (waterfall: Ctrl+W)" { spawn "mshv"; }
     Mod+N hotkey-overlay-title="WSJT-X — FT8/FT4, fallback"                  { spawn "wsjtx"; }
 

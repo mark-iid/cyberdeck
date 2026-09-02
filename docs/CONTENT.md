@@ -1,4 +1,31 @@
-# Content gaps — what this deck is missing
+# Offline content
+
+**Purpose:** this deck is a doomsday device *and* a radio go-box companion, which
+is why the ham stack and the offline reference library are both treated as
+payload rather than extras.
+
+**Read it with `Mod+B`** — qutebrowser against kiwix-serve on :8080. Press `f`
+for link hints. See DESIGN §9 for why not kiwix-desktop.
+
+## Fetched 2026-09-02 (bin/51-fetch-content.sh)
+
+Library went 42 -> **49 books**. Medical was the largest gap and is now covered
+from three angles: WikiMed (encyclopaedic), WikEM (emergency clinician), FAS
+Military Medicine (austere field conditions).
+
+| Added | Size |
+|---|---|
+| WikiMed Medical Encyclopedia | 2.06 GB |
+| WikEM | ~0.5 GB |
+| Military Medicine (FAS) | 0.08 GB |
+| Post Disaster Resource Library | 0.65 GB |
+| iFixit | 3.57 GB |
+| Appropedia | 0.54 GB |
+| TruePrepper | 1.33 GB |
+
+273 GB still free.
+
+# Remaining gaps
 
 Assessed 2026-08-31 against the 42 ZIMs / 123 GB already in `~/kiwix-share`.
 Free space: **287 GB**, so most of this fits comfortably.

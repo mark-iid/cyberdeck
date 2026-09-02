@@ -132,9 +132,16 @@ remains installed but is a candidate for removal.
 - **Rust MSRV.** trixie ships rustc 1.85; niri v26.04 needs **1.87**. The build
   fails confusingly, not cleanly. `10-build-niri.sh` installs rustup.
   xwayland-satellite v0.8.2 pins 1.85.0 exactly and needs no rustup.
-- **`qtwayland5` is load-bearing.** The config sets `QT_QPA_PLATFORM=wayland`;
-  without that package *every* Qt app (wsjtx, jtdx, MSHV, gqrx) refuses to
-  start. It is installed — do not remove it.
+- **Wayland platform plugins are load-bearing, for BOTH Qt generations.** The
+  config sets `QT_QPA_PLATFORM=wayland` globally, and a Qt app whose generation
+  lacks its plugin does not fall back — it aborts with *"Could not find the Qt
+  platform plugin \"wayland\""*.
+  - `qtwayland5` covers **Qt5**: wsjtx, jtdx, MSHV, gqrx.
+  - `qt6-wayland` covers **Qt6**. This was MISSED initially: only Qt5 apps were
+    in play, so the gap stayed invisible until qutebrowser (PyQt6) was installed
+    and refused to launch. Any future Qt6 app would have hit the same wall.
+
+  Both are installed unconditionally. Do not remove either.
 - **`policykit-1-gnome` does not exist in trixie** (`Candidate: (none)`). The
   agent here is **`mate-polkit`** at `/usr/libexec/polkit-mate-authentication-agent-1`
   — already installed, and already what labwc autostarts. The parent config had
@@ -664,3 +671,49 @@ a working machine, not a marginal one — but a benchmark that reports 76.8 °C 
 a workload that really runs at 85 °C would mislead the next person to read it.
 
 Nothing to fix. Recorded so the number is not trusted beyond what it measures.
+
+---
+
+## §9 — Purpose, and reading the library without a mouse
+
+**This deck is two things at once: a doomsday device and a radio go-box
+companion.** That is why the ham stack is first-class rather than incidental,
+why the FT8 decision in §3 got measured rather than guessed, and why offline
+reference content is treated as payload rather than nice-to-have.
+
+### kiwix-desktop is only *partly* keyboard-navigable
+
+The deck has a touchscreen and a keyboard and **no mouse**. kiwix-desktop's
+application chrome is fine — `Ctrl+T`, `Ctrl+1-9`, `Ctrl+Tab`, `F6`/`Ctrl+L` for
+search, `Ctrl+B` for bookmarks. Its *content area* is a QtWebEngine view, so
+following a link inside an article means Tab-cycling through every link before
+it. On a Wikipedia page that is hundreds of keystrokes for the one you want, and
+following links is the single most common thing anyone does in an encyclopaedia.
+
+### The fix: serve the ZIMs, read them in qutebrowser
+
+`bin/52-kiwix-serve.sh` installs `kiwix-tools` + `qutebrowser` and runs
+kiwix-serve on **:8080** against the *existing* kiwix-desktop library.xml, so one
+catalogue feeds both front-ends.
+
+qutebrowser has vim-style **link hints**: press `f` and every visible link is
+labelled with a letter; type it to follow. The most common action drops from
+O(links) keystrokes to two or three. `j`/`k` scroll, `H`/`L` back/forward, `/`
+finds, `o` opens.
+
+It also unifies the machine: **one keyboard-driven browser reaches both the ZIM
+library (:8080) and the local 7B model (:8081)**. That is why §5 put llama-server
+on 8081 and left 8080 alone.
+
+kiwix-desktop stays installed. This is an addition.
+
+### Qt6 wayland — the trap that only appeared now
+
+qutebrowser is **PyQt6**, and only `qtwayland5` was installed. With
+`QT_QPA_PLATFORM=wayland` set globally, it aborted outright:
+
+    Could not find the Qt platform plugin "wayland" in ""
+
+`qt6-wayland` is now installed alongside `qtwayland5`. See §4 — the note there
+said qtwayland5 was load-bearing, which was right but only covered half the
+problem, because every Qt app on the deck happened to be Qt5.

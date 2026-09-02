@@ -46,8 +46,20 @@ apt_install libxcb1-dev libxcb-cursor-dev
 # libqt5websockets5-dev is required by MSHV_Slarm64_PI.pro's "QT += websockets".
 # libpulse-dev is required by its "-lpulse-simple -lpulse".
 apt_install \
-    qtbase5-dev qt5-qmake qtbase5-dev-tools qtwayland5 \
+    qtbase5-dev qt5-qmake qtbase5-dev-tools \
     qtmultimedia5-dev libqt5serialport5-dev libqt5websockets5-dev \
     libasound2-dev libpulse-dev libfftw3-dev
+
+# --- Wayland platform plugins for BOTH Qt generations ------------------------
+# config.kdl sets QT_QPA_PLATFORM=wayland globally. Any Qt app whose generation
+# lacks its wayland plugin then dies at startup with
+#   "Could not find the Qt platform plugin \"wayland\""
+# and the failure is total, not a fallback.
+#
+# qtwayland5 covers Qt5: wsjtx, jtdx, MSHV, gqrx.
+# qt6-wayland covers Qt6 — MISSED INITIALLY, and qutebrowser (PyQt6) would not
+# start until it was added. Any future Qt6 app hits the same wall, so both are
+# installed unconditionally rather than on demand.
+apt_install qtwayland5 qt6-wayland
 
 log "All packaged dependencies installed."
