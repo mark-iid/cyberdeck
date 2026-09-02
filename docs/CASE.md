@@ -74,7 +74,7 @@ vary by printer, and RF connectors especially want a snug hole.
 | **BNC** bulkhead | antenna feed (alt) | **~14 mm** round, keyed | Only if quick-swap at the panel matters; needs an SMA→BNC adapter for this kit. |
 | **USB-A** snap-in | data / peripherals | **26.5 × 12.3 mm** rectangular | Adafruit/McMaster snap-in panel-mount cable. Two of these. |
 | **DC barrel 2.1 mm** | 12 V in / charge | **~8 mm** round (0.31") | Panel jack, up to 8 mm panel thickness. |
-| **Anderson Powerpole** | battery / 12 V distribution | Powerwerx PanelPole2, or a printed PP15-45 retainer | Matches the existing external leads. Keep the Powerpole standard. |
+| **Anderson Powerpole** | external 12 V IN | Powerwerx PanelPole1/2, or a printed PP15-45 retainer (~16×8 mm/pair) | The external-power inlet. Internal battery also on Powerpole. See §5 on coexistence. |
 | **Rocker/toggle switch** | master power | **~12 mm** round or 13×19 mm rocker | Between battery and the buck converter. |
 
 **One RF connector, and make it SMA.** The operator's RTL-SDR is a Blog-V3-class
@@ -122,11 +122,28 @@ The self-contained 12 V module removes the two hardest parts of a go-box build:
   case only has to **not block the module's vents**. Combined with "never runs
   closed" (§1), thermal is a non-issue.
 
-What still needs adding for self-containment:
+**Power distribution — internal battery + external Powerpole input.** The
+Miady LFP8AH connects on Powerpole today, and the panel needs an **external
+Powerpole IN** so the deck can run off shore power, a larger battery, or solar
+while the internal pack is present. Standardise the whole bus on Powerpole (the
+ARES/RACES convention anyway).
 
-- **A LiFePO4 charger** (terminates at **14.6 V CV**, not lead-acid float) on a
-  panel jack, or charge the pack externally. The keyboard base already shows a
-  "Charge Power" LED — identify that circuit first.
+The one real gotcha is **how the two sources coexist on a LiFePO4 bus**:
+
+- **Simplest — a selector switch.** A DPDT (or a Powerpole A/B switch) picks
+  internal *or* external. No back-feeding, no charge-control surprises. Cheapest
+  and safest; the downside is manual switchover, not seamless failover.
+- **Seamless — a power-management board.** A West Mountain Super PWRgate (or
+  equivalent ideal-diode ORing board with a LiFePO4 charge profile) runs the
+  load from external power when present, floats/charges the pack, and fails over
+  to battery with no interruption. This is the "right" go-box answer if the
+  budget allows.
+- **Do NOT dumb-parallel** a bare external supply straight onto the battery
+  Powerpole unless that supply is a proper **14.6 V-CV LiFePO4 charger** — an
+  arbitrary 12–13.8 V bench supply will fight the pack's chemistry.
+
+Also required regardless of the above:
+
 - **An inline fuse** on the battery positive, close to the terminal.
 - **102.4 Wh is over the 100 Wh airline carry-on limit** — flyable in the
   100–160 Wh band with approval, max two spares. Only matters if it flies.
