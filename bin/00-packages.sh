@@ -21,7 +21,7 @@ apt_install \
     mako-notifier cliphist wl-clipboard wmctrl \
     xdg-desktop-portal-wlr xdg-desktop-portal-gtk \
     seatd xwayland \
-    brightnessctl playerctl \
+    brightnessctl playerctl libnotify-bin \
     network-manager-gnome blueman \
     mate-polkit pavucontrol wireplumber
 

@@ -24,7 +24,23 @@ source "$(dirname "$0")/lib.sh"
 DEST="${DEST:-$HOME/kiwix-share}"
 BASE=https://download.kiwix.org/zim
 
+# TIER 2, added 2026-09-02. Project Gutenberg is published split by Library of
+# Congress Classification, which matters here: the full set is 206GB and mostly
+# fiction, while the practically survival-relevant classes come to ~37GB.
+# Selected T/S/R/Q for build-fix-grow-treat, and U/V because field craft and
+# navigation cost 2.5GB between them. Literature (PR/PS/PZ, ~48GB) deliberately
+# left out for now -- real morale value, but not before the practical classes.
 ZIMS=(
+  "gutenberg/gutenberg_en_lcc-t_2026-03.zim"                # 12.25 GB TECHNOLOGY: engineering, crafts, mechanics
+  "gutenberg/gutenberg_en_lcc-s_2026-03.zim"                #  4.22 GB AGRICULTURE: growing and keeping food
+  "gutenberg/gutenberg_en_lcc-r_2026-03.zim"                #  1.88 GB MEDICINE
+  "gutenberg/gutenberg_en_lcc-q_2026-03.zim"                # 16.51 GB SCIENCE: chemistry, physics, biology
+  "gutenberg/gutenberg_en_lcc-u_2026-03.zim"                #  1.20 GB MILITARY SCIENCE: field craft
+  "gutenberg/gutenberg_en_lcc-v_2026-03.zim"                #  1.27 GB NAVAL SCIENCE: navigation, seamanship
+  "other/wikispecies_en_all_maxi_2026-07.zim"               #  3.19 GB species ID — foraging, hazards
+  "wiktionary/wiktionary_en_all_nopic_2026-08.zim"          #  8.53 GB dictionary
+  "other/energypedia_en_all_maxi_2026-06.zim"               #  0.74 GB off-grid power generation
+  "other/openstreetmap-wiki_en_all_maxi_2026-07.zim"        #  1.16 GB how to read/make OSM data
   "wikipedia/wikipedia_en_medicine_maxi_2026-04.zim"        # 2.06 GB  WikiMed
   "other/wikem_en_all_maxi_2026-07.zim"                     # ~0.5 GB  emergency medicine
   "zimit/irp.fas.org_en_military-medicine_2026-05.zim"      # 0.08 GB  field medicine

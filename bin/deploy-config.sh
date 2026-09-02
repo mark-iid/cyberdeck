@@ -24,5 +24,6 @@ link() {
 link niri
 link waybar
 link foot
+link mako
 
 log "Config deployed. Reload a running niri with:  niri msg action reload-config"

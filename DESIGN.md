@@ -717,3 +717,49 @@ qutebrowser is **PyQt6**, and only `qtwayland5` was installed. With
 `qt6-wayland` is now installed alongside `qtwayland5`. See §4 — the note there
 said qtwayland5 was load-bearing, which was right but only covered half the
 problem, because every Qt app on the deck happened to be Qt5.
+
+---
+
+## §10 — Notifications, and more offline reference
+
+### Auto-expiring notifications (config/mako/config)
+
+mako shipped with no config, so notifications stayed on screen until dismissed —
+and on a mouseless deck "dismiss" is a keybind reach for every "Bluetooth
+keyboard connected" or "Volume 40%". The config sets `default-timeout=5000` so
+transient status popups fade on their own, with one deliberate exception:
+`[urgency=critical]` keeps `default-timeout=0`, so a real thermal or power
+warning stays until acknowledged. That is the one case where click-to-dismiss is
+correct. (`libnotify-bin` provides `notify-send`, without which nothing can post
+a notification at all — added to 00-packages.sh.)
+
+### Content tiers fetched 2026-09-02
+
+- **Radio data** (`53-radio-data.sh`): 512 satellite TLEs — gpredict had NONE and
+  could not track anything; cty.dat rescued from the MSHV build tree to a stable
+  path for the four loggers; apt set to keep .debs for offline repair.
+- **Maps** (`54-maps.sh`): whole-US OSM extract (11.3 GB) plus mkgmap/osmium/gdal,
+  so a Garmin .img for ANY region can be built offline; TIGER2025 shapefiles for
+  ten southwestern-PA counties for Xastir; a prebuilt SW-PA Garmin map for
+  QMapShack. Formats differ per viewer — QMapShack needs Garmin .img (NOT
+  Mapsforge .map), Xastir needs Shapefiles.
+- **Computing** (`55-fetch-computing.sh`): 2026 StackExchange refreshes (the
+  deck's were 2023), full Python docs, Arch wiki, and the entire ~231-file
+  devdocs collection for ~0.57 GB — best value-per-byte on the machine.
+
+### Flipper Zero (56-flipper.sh)
+
+The operator already maintains a developed flipper repo on their NAS (~8800 .ir,
+~960 .nfc, an SD backup, and hand-written docs — cc1101 SubGHz guide, badusb
+cheatsheet, GPIO pinout, nRF24 notes), with credentials excluded via .gitignore.
+Nothing is re-downloaded from upstream; that would only fork the work. The gap
+was that none of it was on the DECK, and qflipper was not installed there — a
+go-box cannot manage the device if the reference and the flashing tool live only
+on the workstation.
+
+qflipper installed (42-flipperzero.rules present, user in dialout). The repo was
+transferred as a git bundle rather than by streaming the 312MB .git over ssh —
+the naive `tar .git | ssh` was cut off by a timeout mid-write and left a "bad
+object HEAD". A bundle is a single integrity-checked file, so the transfer either
+lands complete or fails cleanly. origin points at the NAS for future pulls once
+the deck has an ssh key (deliberately not generated here).

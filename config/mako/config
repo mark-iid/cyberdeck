@@ -1,0 +1,37 @@
+# mako — notification daemon for the cyberdeck.
+#
+# DEFAULT-TIMEOUT is the whole point of this file. With no config, mako keeps
+# every notification on screen until it is dismissed — and on a mouseless deck
+# "dismiss" means reaching for a keybind. Transient status popups ("Bluetooth
+# keyboard connected", "Volume 40%", "Battery low") should just fade. 5s default;
+# urgent notifications are given longer, and critical ones never expire.
+default-timeout=5000
+ignore-timeout=0
+
+# 1280x800 panel: keep the popup small and out of the way, top-right under waybar.
+anchor=top-right
+margin=8
+width=340
+height=110
+max-visible=4
+font=monospace 11
+padding=8
+border-size=2
+
+# Tokyo Night, matching foot/waybar.
+background-color=#1a1b26
+text-color=#c0caf5
+border-color=#7aa2f7
+
+[urgency=low]
+default-timeout=3000
+border-color=#505050
+
+[urgency=normal]
+default-timeout=5000
+
+# Critical stays until acknowledged — e.g. a real thermal or power warning.
+# This is the ONE case where "click to dismiss" is correct.
+[urgency=critical]
+default-timeout=0
+border-color=#f7768e
