@@ -59,20 +59,26 @@ vary by printer, and RF connectors especially want a snug hole.
 
 | Connector | Purpose | Cutout | Notes |
 |---|---|---|---|
-| **SO-239** (UHF) | HF/VHF antenna feed | **14.0 mm** centre + 4× **4.7 mm** on a **25.4 mm** square | The ham default. 4-hole flange; solder-cup or PL-259 through. |
-| **SMA** bulkhead | SDR / small whip | **6.5 mm** round (±0.1) | For the RTL-SDR. Add a flat or notch for anti-rotation. |
-| **BNC** | test/scope/some antennas | **~14 mm** round, keyed | Bayonet body ~14 mm; add an anti-rotation notch. |
-| **N-type** flange | high-power / low-loss feed | 5/8" (**15.9 mm**) single-hole, or 4-hole flange | Only if you run real feedline; heavier than SO-239. |
+| **BNC** bulkhead | antenna feed (RECOMMENDED) | **~14 mm** round, keyed | Quarter-turn bayonet — fast, glove-friendly, thousands of mate cycles. Add an anti-rotation notch or flat. |
+| **SMA** bulkhead | antenna feed (alt) | **6.5 mm** round (±0.1) | Smallest cutout, matches the RTL-SDR. Threaded and fiddly; ~500-cycle rating. Best if the antenna mostly stays on. |
 | **USB-A** snap-in | data / peripherals | **26.5 × 12.3 mm** rectangular | Adafruit/McMaster snap-in panel-mount cable. Two of these. |
 | **DC barrel 2.1 mm** | 12 V in / charge | **~8 mm** round (0.31") | Panel jack, up to 8 mm panel thickness. |
 | **Anderson Powerpole** | battery / 12 V distribution | Powerwerx PanelPole2, or a printed PP15-45 retainer | Matches the existing external leads. Keep the Powerpole standard. |
 | **Rocker/toggle switch** | master power | **~12 mm** round or 13×19 mm rocker | Between battery and the buck converter. |
 
+**One RF connector, not a rack of them.** SO-239, N-type and multiples are
+dropped: the operator carries adapters, so the panel needs a single antenna jack
+and everything else adapts to it. BNC is the functional pick for a field deck
+that plugs and unplugs often (bayonet quick-connect); SMA is the smaller-hole
+alternative if the antenna lives connected. Standardise on whichever, keep an
+SMA↔BNC adapter for the RTL-SDR, and the faceplate loses a 4-hole flange and two
+cutouts.
+
 ## §4 — Suggested faceplate layout
 
 ```
  ┌───────────────────────────────────────────────┐
- │  [SO-239]  [SMA]   [USB-A][USB-A]  [⏻ switch]  │  ← connector strip (rear lip
+ │  [BNC ant] [USB-A][USB-A]          [⏻ switch]  │  ← connector strip (rear lip
  │                                     [DC][PP]   │     or top border)
  │   ┌───────────────────────────────────────┐   │
  │   │                                       │   │
