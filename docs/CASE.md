@@ -206,11 +206,23 @@ Faceplate consequences:
 
 ## §8 — Open, needs the operator's measurements before CAD
 
-A precise faceplate cannot be drawn until these are known:
-- ~~screen module~~ KNOWN: JUNEBOX 203×136.5×51, VESA 75/100, 12V, own fan
-- the Perixx PERIBOARD-510H footprint and thickness (the wired unit, §9)
-- chosen shell, and therefore the usable interior faceplate rectangle
-- whether the display driver board mounts under the faceplate or beside the Pi
+KNOWN (do not re-measure): JUNEBOX outer 203×136.5×51, VESA 75/100, 12V, own
+fan, Pi+SSD inside · Perixx keyboard 230×160×23 · SMA antenna · Powerpole power.
 
-Once those exist, the connector table in §3 and the layout in §4 become a
-parametric plate.
+STILL NEEDED — four measurements, all with a ruler on the physical parts (the Pi
+is packed, so none of this comes off the running system):
+
+1. **JUNEBOX active (viewable) area, W×H.** The faceplate window must match the
+   LIT rectangle, not the 203×136.5 case outline — the bezel sits behind a lip.
+   (~172×107 mm is the typical 8" 1280×800 active area; measure the real one.)
+2. **Which edge the JUNEBOX's HDMI / USB / 12V connectors exit, and where along
+   it.** The Pi is inside the module, so these ARE the deck's I/O; their location
+   sets the connector-strip position and cable routing. Note whether 12V is a
+   barrel jack (needs a barrel→Powerpole pigtail for the bus).
+3. **Miady LFP8AH exact L×W×H and terminal position** — the cradle and the shell
+   choice depend on it. (Working estimate ~90×70×100 mm; confirm.)
+4. **Chosen shell and its REAL usable interior** — catalog interior overstates
+   it (gasket lip, radiused corners, ribs). Measure the flat inner floor.
+
+Once those four exist, the connector table in §3, the layout in §4, and the SVG
+in docs/design/faceplate.svg become a parametric plate.
