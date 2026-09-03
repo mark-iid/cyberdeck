@@ -389,12 +389,19 @@ no wedge is needed in the print list (§7).
 Contents total ~2.9 L against the 1400's 8.9 L, leaving **~3 L genuinely usable**
 after fan clearance and cable runs. Enough for the SDR kit and then some.
 
+Pelican publishes the 1400's depth split: **lid 1.18 in (30 mm), bottom 4.00 in
+(102 mm)**. That confirms two things without measuring — the 23 mm keyboard stows
+in the lid (Zone C), and the battery lying at 90 mm tall clears the ~97 mm of base
+below the faceplate with ~7 mm to spare. It also corrects Zone B downward: an
+earlier revision assumed a ~128 mm base and claimed ~77 mm of under-module air;
+against a 102 mm base it is **~45 mm**.
+
 ### Zones
 
 | Zone | Space | Holds |
 |---|---|---|
 | **A — back channel** | ~180 × 88 × 90 mm beside the battery | SDR dongle, coax coil, **antenna cylinder** |
-| **B — under the module** | ~77 mm of air below the module, 203 × 136.5 footprint | flat, non-fragile items — adapters, spare coax, parts tray |
+| **B — under the module** | ~45 mm of air below the module, 203 × 136.5 footprint | flat, non-fragile items — adapters, spare coax, parts tray |
 | **C — over the faceplate** | thin, full width, under the closed lid | the keyboard itself, notes, cheat sheets |
 
 **Zone B has one rule: do not pack it solid.** The module's fan lives on its back
@@ -455,16 +462,17 @@ DONE:
 
 STILL NEEDED — one measurement, with a tape on the shell:
 
-4. **The chosen 1400-class shell's REAL usable interior.** Catalog interior
-   overstates it — gasket lip, radiused corners, ribs. Measure the **flat inner
-   floor**, and separately the **base-vs-lid depth split** (that decides whether the
-   keyboard stows in the lid or lying on the faceplate — §11 Zone C). Pass/fail
-   thresholds for the layout as drawn:
-   - **Width ≥ 285 mm** → rails stay ~40 mm+. Below that, thin the rails or move the
-     SMA to a corner (it is the optional connector anyway). *This is the binding
-     dimension: 203 + 2×48 = 299 of 300.*
-   - **Depth ≥ ~113 mm** → battery-on-side (90) + keyboard (23) stack at close.
-   - **Back channel ≥ ~75 mm** → battery lying 70 mm deep plus terminal clearance.
+4. **The 1400's REAL flat floor WIDTH.** Catalog interior (300 mm) overstates it —
+   gasket lip, radiused corners, ribs. This is now the *only* open number, and it is
+   the binding one: the layout budgets **203 + 2 × 48 = 299 of 300 mm**, i.e. zero
+   catalog margin.
+   - **Expect ~285 mm usable**, giving rails of ~41 mm each. That still clears every
+     connector in §3 (widest is USB-A at 26.5 mm), so the design survives the
+     pessimistic case — the rails simply get drawn to the measured number.
+   - Below ~275 mm, move the SMA to a corner or drop it (it is optional anyway).
+
+   *Depth resolved from spec (§11): lid 30 mm, base 102 mm — keyboard stows in the
+   lid, battery clears the base with ~7 mm. No measurement needed.*
 
 Once those four exist, the connector table in §3, the layout in §4, and the SVG
 in docs/design/faceplate.svg become a parametric plate.
