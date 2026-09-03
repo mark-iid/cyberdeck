@@ -16,16 +16,16 @@
   </style>
 
   <text x="0" y="-38" class="hd">Cyberdeck faceplate — Pelican 1400 base, screen-in-lid, keyboard separate</text>
-  <text x="0" y="-27" class="sub">1 unit = 1 mm · verified connector cutouts · confirm module active-area before cutting the window</text>
+  <text x="0" y="-27" class="sub">1 unit = 1 mm · verified connector cutouts · window = measured 173×118 active area</text>
 
   <!-- ===== Pelican 1400 interior reference ===== -->
   <rect x="0" y="0" width="300" height="225" class="ref"/>
   <text x="150" y="240" text-anchor="middle" class="sub">Pelican 1400 interior  300 × 225 mm  (faceplate outline)</text>
 
   <!-- ===== Display module window (the screen module face) ===== -->
-  <!-- module outline 203 x 136.5; window cut 3mm smaller all round so bezel sits behind a lip -->
+  <!-- module outline 203 x 136.5; window = MEASURED 173x118 active area, centered, bezel behind a lip -->
   <rect x="48" y="18" width="203" height="136.5" class="ref"/>
-  <rect x="51" y="21" width="197" height="130.5" class="win"/>
+  <rect x="63" y="27.25" width="173" height="118" class="win"/>
   <text x="149" y="82" text-anchor="middle" class="grn">JUNEBOX MODULE</text>
   <text x="149" y="92" text-anchor="middle" class="sub">203×136.5×51 · Pi+SSD INSIDE</text>
   <text x="149" y="101" text-anchor="middle" class="sub">12V native · own fan · HDMI/USB/pwr out</text>
@@ -35,11 +35,11 @@
   <circle cx="112" cy="123.75" r="2.5" fill="none" stroke="#e0af68" stroke-width="1"/>
   <circle cx="187" cy="123.75" r="2.5" fill="none" stroke="#e0af68" stroke-width="1"/>
   <text x="149" y="140" text-anchor="middle" fill="#e0af68" font-size="6">VESA 75 · M4 · ⊞ 75×75</text>
-  <!-- window dims -->
-  <line x1="48" y1="10" x2="251" y2="10" class="dim"/>
-  <text x="149" y="8" text-anchor="middle" class="lbl">203</text>
-  <line x1="258" y1="18" x2="258" y2="154.5" class="dim"/>
-  <text x="268" y="90" text-anchor="middle" class="lbl" transform="rotate(90 268 90)">136.5</text>
+  <!-- window dims = measured active area (the cut line) -->
+  <line x1="63" y1="10" x2="236" y2="10" class="dim"/>
+  <text x="149" y="8" text-anchor="middle" class="lbl">173 (active)</text>
+  <line x1="258" y1="27.25" x2="258" y2="145.25" class="dim"/>
+  <text x="268" y="86" text-anchor="middle" class="lbl" transform="rotate(90 268 86)">118</text>
 
   <!-- ===== Connector strip along the bottom edge of the base ===== -->
   <text x="8" y="180" class="red">CONNECTOR STRIP  (rear lip — cables exit away from screen)</text>

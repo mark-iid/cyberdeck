@@ -209,12 +209,16 @@ Faceplate consequences:
 KNOWN (do not re-measure): JUNEBOX outer 203×136.5×51, VESA 75/100, 12V, own
 fan, Pi+SSD inside · Perixx keyboard 230×160×23 · SMA antenna · Powerpole power.
 
-STILL NEEDED — four measurements, all with a ruler on the physical parts (the Pi
+DONE:
+
+- ✅ **JUNEBOX active area = 173 × 118 mm** (measured 2026-09-02). The faceplate
+  window in docs/design/faceplate.svg is now cut to this, centered in the 203×136.5
+  module face. (Runs a hair taller than the 172×107 an 8" 1280×800 would predict —
+  cut to the measured number, not the theoretical.)
+
+STILL NEEDED — three measurements, all with a ruler on the physical parts (the Pi
 is packed, so none of this comes off the running system):
 
-1. **JUNEBOX active (viewable) area, W×H.** The faceplate window must match the
-   LIT rectangle, not the 203×136.5 case outline — the bezel sits behind a lip.
-   (~172×107 mm is the typical 8" 1280×800 active area; measure the real one.)
 2. **Which edge the JUNEBOX's HDMI / USB / 12V connectors exit, and where along
    it.** The Pi is inside the module, so these ARE the deck's I/O; their location
    sets the connector-strip position and cable routing. Note whether 12V is a
