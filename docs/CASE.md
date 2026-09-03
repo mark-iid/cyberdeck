@@ -375,6 +375,15 @@ ruled out for the "opens upside down" complaint and hinge fragility. The trade: 
 lies flatter and touches better, at the cost of a tilt foot for viewing angle and a
 keyboard placed in front.
 
+**An Osborne-style vertical posture was considered and declined (2026-09-02).** The
+same 1400 can stand on its hinge edge with the open lid flat as a foot, putting the
+faceplate near-vertical at no cost in volume or weight. It buys a better angle for
+long typing sessions, but the screen still sits only ~110 mm above the table (look
+*down* 20–30°, the Osborne 1's known neck-strain flaw), and a vertical screen makes
+the touchscreen gorilla-arm territory. **Decision: horizontal only.** Consequently
+the battery cradle may be a gravity-fit pocket rather than a strapped one (§11), and
+no wedge is needed in the print list (§7).
+
 ## §11 — Stowage
 
 Contents total ~2.9 L against the 1400's 8.9 L, leaving **~3 L genuinely usable**
