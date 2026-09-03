@@ -117,14 +117,43 @@ extensions off the Pi's two USB-A ports on the right edge.
 
 The self-contained 12 V module removes the two hardest parts of a go-box build:
 
-- **No power conversion.** The module is 12 V-native and does its own internal
-  12 V→5 V for the Pi. The 12.8 V LiFePO4 feeds it **directly** — no buck
-  converter to size, no 5 V rail to build, no brownout-throttle risk from an
-  undersized regulator. This is the cleanest possible power path.
+- **No power conversion — and this was a deliberate purchase decision, not luck.**
+  The module is 12 V-native *and powers the Pi from that same 12 V*, doing its own
+  internal 12 V→5 V. The 12.8 V LiFePO4 feeds it **directly** — no buck converter to
+  size, no 5 V rail to build, no brownout-throttle risk from an undersized
+  regulator, no second PSU to find room for. The deck has **exactly one power
+  inlet**, which is the cleanest possible path and the reason most of §5 is short.
 - **No cooling to design.** The module has its own active fan (and the Pi inside
   carries the Geekworm active cooler — DESIGN §6.8, full 2.4 GHz sustained). The
   case only has to **not block the module's vents**. Combined with "never runs
   closed" (§1), thermal is a non-issue.
+
+### Consequences of the single 12 V feed
+
+- **NEVER plug anything into the Pi's USB-C.** The Pi is powered *through* the
+  module. A charger or power bank on its USB-C port would be a second source
+  fighting the module's 5 V rail. That port is for data/OTG only — or, if the module
+  feeds the Pi via an internal USB-C jumper, it is already occupied. **Confirm
+  visually which** when the case is next open; either way, nothing external goes
+  there.
+- **One switch kills the whole deck.** The left-rail master switch sits on the 12 V
+  feed *upstream* of the module, so it cuts screen, Pi, SSD and fan together. No
+  partial-power states to reason about.
+- **Size the fuse for the sum, not the Pi.** Pi 5 under load with peripherals plus
+  the panel draws ~30 W worst case ≈ **2.5 A at 12 V**. A **5 A** fuse on the
+  battery positive gives headroom without letting a real fault run.
+- **Runtime comes off one number.** 102.4 Wh, derated ~10 % for practical LiFePO4
+  discharge:
+
+| Use | Draw | Runtime |
+|---|---|---|
+| Reading kiwix / maps, screen dim | ~10 W | ~9 h |
+| Typical operating (FT8, browsing) | ~15 W | ~6 h |
+| Heavy (local LLM, compiling) | ~28 W | ~3.5 h |
+
+  A full field day at typical load, or an overnight at light load. If that is short
+  for the intended trip, the fix is the panel Powerpole IN (below) rather than a
+  bigger internal pack.
 
 **Power distribution — internal battery + external Powerpole input.** The
 Miady LFP8AH connects on Powerpole today, and the panel needs an **external
