@@ -279,35 +279,55 @@ something if you buy new.
   the panel-mount connectors below, the LiFePO4 charger, the fuse holder.
   **No buck converter** — the module is 12 V-native (§5).
 
-### Parts to order (buy list)
-
-Orderable now, in parallel with the shell. Quantities are for one deck.
-
-| # | Part | Spec | Notes |
-|---|---|---|---|
-| 1 | SMA bulkhead, F–F | ⌀6.5 mm hole, anti-rotation flat | Left rail. Matches the all-SMA RTL-SDR kit — no adapter. |
-| 2 | SMA jumper, short | M–M, 100–150 mm | Bulkhead → dongle inside. |
-| 2× | USB-A panel mount | snap-in, 26.5 × 12.3 mm | Right rail. Extension-cable style (Adafruit/McMaster). |
-| 1 | Powerpole panel mount | Powerwerx PanelPole1 | Left rail, external 12 V IN. Or print a PP15-45 retainer. |
-| 1 | Master switch | ⌀12 mm round, **rated ≥ 5 A @ 12 VDC** | Left rail, upstream of the module (§5). Carries ~2.5 A. |
-| 1 | Inline fuse holder | ATC/ATO blade, in-line | On battery **positive**, close to the terminal. |
-| — | Fuses | **5 A** ATC, buy several | Sized for the ~2.5 A total draw (§5), not the Pi alone. |
-| — | Wire | 14 AWG red/black | Matches the existing Powerpole 15–45 crimps. |
-| — | Powerpole contacts + housings | 15–45 A, PP-standard | Bus is already Powerpole; keep it uniform. |
-
-**Optional / drop first if space or budget is tight:**
-
-- **RJ45 panel jack.** Ethernet is a home-provisioning convenience, not a field
-  need — the Pi's own port is reachable with the lid open. If you do want it, a
-  **Cat6 keystone jack in a printed keystone frame** (~14.7 × 16.2 mm opening) is
-  easier to source than an RJ45 panel coupler, and standardised.
-- **The SMA run itself** (rows 1–2) — the deck is fully functional without the SDR.
-
-Already sorted, do not re-buy: the barrel→Powerpole pigtail (fitted, §5) and the
-12.8 V LiFePO4 pack.
 - **Reference builds** worth reading first: Jake-Simek/Pelican-Deck (Pi +
   Pelican, self-contained, water-resistant I/O — closest to this) and the
   Printables cyberdeck tag for faceplate STLs to adapt rather than start blank.
+
+### Parts to order (buy list)
+
+Orderable now, in parallel with the shell. Quantities are for one deck. Search
+strings are given rather than links, which rot; **the verify column is the part that
+matters** — three of these have common traps (below).
+
+| Qty | Part | Search string | Verify |
+|---|---|---|---|
+| 1 | SMA bulkhead, F–F | `SMA female to female bulkhead panel mount connector` | **SMA, not RP-SMA.** ⌀6.5 mm hole, ships with nut + washer. Left rail; matches the all-SMA RTL-SDR kit with no adapter. |
+| 1 | SMA jumper | `SMA male to male cable RG316 15cm` | 100–150 mm. RG316/RG178 stays flexible. Bulkhead → dongle inside. |
+| 2 | USB-A panel mount | `USB 3.0 A female panel mount extension cable snap-in` | **Style sets the cutout** — snap-in is 26.5 × 12.3 mm. Get USB 3.0 to match the Pi's blue ports. Right rail. |
+| 1 | Powerpole panel inlet | `Powerwerx PanelPole1` | Often easier direct from powerwerx.com or DX Engineering. Fallback: `Anderson Powerpole panel mount bracket`, or print a PP15-45 retainer. |
+| 1 | Master switch | `16mm latching anti-vandal push button switch 12V 5A` | **Rated ≥ 5 A @ 12 VDC** and **latching, not momentary.** Left rail, upstream of the module (§5). |
+| 1 | Inline fuse holder | `ATC ATO inline fuse holder 12 AWG waterproof` | On battery **positive**, close to the terminal. |
+| several | Fuses | `ATC blade fuse 5 amp` | **5 A** — sized for the ~2.5 A total draw (§5), not the Pi alone. |
+| — | Wire | `14 AWG silicone wire red black` | Silicone stays flexible in tight bends; PVC goes stiff. |
+| — | Powerpole contacts + housings | `Anderson Powerpole 30 amp contacts housings kit` | **30 A contacts for 14 AWG** (45 A contacts are for 12 AWG). Keep the bus uniform. |
+| *opt* | RJ45 | `Cat6 keystone jack coupler` | Only if panel Ethernet is wanted — see below. |
+
+**The three traps**
+
+1. **SMA vs RP-SMA.** Reverse-polarity SMA is the WiFi-router variant, physically
+   incompatible with the RTL-SDR kit. Listings mix them and the photos look
+   identical. Confirm the title says plain **SMA**.
+2. **USB panel style changes the cutout.** §3's 26.5 × 12.3 mm assumes **snap-in**.
+   The round **D-type / Neutrik-style** needs a different ~24 mm opening instead.
+   Decide before the plate is cut.
+3. **Switch current rating.** Many 12 mm anti-vandal buttons are rated only **2 A** —
+   below the ~2.5 A continuous draw, meaning a hot switch and eventual failure. Use
+   16 mm rated 5 A+, or a toggle rated 10 A. (The SVG currently draws ⌀12; widen it
+   to match whatever is bought.)
+
+**Optional / drop first if space or budget is tight**
+
+- **RJ45 panel jack.** Ethernet is a home-provisioning convenience, not a field need
+  — the Pi's own port is reachable with the lid open. If wanted, a **Cat6 keystone
+  jack in a printed keystone frame** (~14.7 × 16.2 mm opening) is easier to source
+  than an RJ45 panel coupler, and standardised.
+- **The SMA run** (rows 1–2) — the deck is fully functional without the SDR.
+
+**Already sorted, do not re-buy:** the barrel→Powerpole pigtail (fitted, §5) and the
+12.8 V LiFePO4 pack. As a Powerpole user the operator likely already has contacts,
+housings, crimper, wire and heat-shrink — **check the shack before ordering**. The
+genuinely new items are the SMA bulkhead + jumper, two USB panel mounts, the panel
+Powerpole, and the switch.
 
 ## §9 — Input device: prefer the wired Perixx over the BT keyboard
 
@@ -503,6 +523,16 @@ STILL NEEDED — one measurement, with a tape on the shell:
 
    *Depth resolved from spec (§11): lid 30 mm, base 102 mm — keyboard stows in the
    lid, battery clears the base with ~7 mm. No measurement needed.*
+
+Two **purchase decisions** also gate the cut file — they set cutout geometry, so the
+plate cannot be finalised until the parts are chosen (§7 traps 2 and 3):
+
+5. **USB panel-mount style** — snap-in (26.5 × 12.3 mm rectangular) or D-type
+   (~24 mm round). Completely different cutouts.
+6. **Master switch diameter** — ⌀12 as currently drawn, or ⌀16 if the 5 A+ rating
+   forces the larger body (it usually does).
+
+With those two and the floor width, `docs/design/faceplate.svg` becomes a cut file.
 
 Once those four exist, the connector table in §3, the layout in §4, and the SVG
 in docs/design/faceplate.svg become a parametric plate.
