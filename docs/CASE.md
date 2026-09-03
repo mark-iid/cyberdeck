@@ -161,21 +161,64 @@ the JUNEBOX module + an 8" faceplate, does not fit the current ~1150-class shell
 | Shell | Interior (mm) | Fit |
 |---|---|---|
 | Pelican 1150 (current class) | 184 × 118 × 84 | Battery will not fit inside. Today's problem. |
-| **Pelican 1300** | 233 × 178 × 155 | Deep; battery stands upright in the base. |
-| **Pelican 1400** | 300 × 225 × 132 | Wide; battery + keyboard + SDR sit side-by-side. |
+| Pelican 1300 | 235 × 181 × 155 | **Rejected** — see below. |
+| **Pelican 1400** | 300 × 225 × 132 | Fits exactly: 203 module + 2 × ~48 mm rails. |
+| **Apache 4800** (Harbor Freight) | ~330 × 235 × 133 | Same class, ~30 mm more width. **Recommended.** |
 
-**Lean 1400.** The wider footprint keeps components in one layer beside each
-other rather than stacked — stacking is what traps heat and complicates the
-faceplate. Clone shells (Apache 4800, Harbor Freight Apache) share these
-dimensions at lower cost if the Pelican brand is not the point.
+### 1300 rejected on two hard numbers
+
+- **The keyboard alone rules it out.** The Perixx is **230 mm** wide against a
+  235 mm interior — 2.5 mm a side before corner radii or foam. It will not drop in.
+- **No room for the side rails.** The two-rail layout (§4) needs ~263 mm across for
+  module + rails on the edges where the I/O actually exits. At 235 mm the connectors
+  would have to move to the top/bottom edges and the cables run the wrong way.
+
+Its only win is depth (155 vs 132 mm) for standing the battery upright — moot,
+since the pack lies on its 70 mm side anyway.
+
+### 1400 vs Apache 4800
+
+**Note: Apache *is* Harbor Freight's house brand** — these are two options, not
+three. (An earlier revision of this doc wrongly listed them separately.)
+
+| | Pelican 1400 | Apache 4800 |
+|---|---|---|
+| Price | ~$110–140 | ~$25–40 |
+| Weight | ~2.0 kg, lighter | noticeably heavier |
+| Warranty | Lifetime, unconditional | Limited, far weaker |
+| Latches | Double-throw, excellent | Stiffer; some loosening reports |
+| Seal | IP67, o-ring + auto purge | Claims IP67-class, o-ring + purge |
+| Availability | Everywhere | HF store or their shipping |
+
+**Recommend the Apache 4800**, for reasons specific to this build:
+
+1. **Width is the binding constraint, and the Apache has more of it.** The 1400's
+   300 mm is consumed exactly by module + rails; the Apache's ~330 mm leaves ~30 mm
+   of slack on the one dimension that is tight.
+2. **Pelican's warranty premium buys nothing here.** It is void on shell
+   modification — normally what a deck build does. §1's no-penetrations rule means
+   neither shell gets cut, so the guarantee survives on both. The premium protects
+   against a risk this design already eliminated.
+3. **$25 lets you buy two** — one to build in, one to test-fit destructively while
+   the printed faceplate iterates.
+
+**Choose the Pelican 1400 instead if** low carry weight matters more than cost, or
+the deck will live in a truck bed / fly as checked baggage for years — the QC and
+latch gap is real under sustained abuse.
+
+Treat the Apache interior figures as **approximate**; HF listings vary by revision.
+This is exactly what §8's remaining measurement settles: measure the flat inner
+floor in-store. **Usable width ≥ 285 mm → buy it and the layout locks as drawn.**
+Below that, the rails thin or the SMA moves to a corner.
 
 ## §7 — Print vs buy
 
-- **Print:** the faceplate/bezel, the keyboard well, the connector rear-lip, the
-  battery cradle, standoff risers for the Pi and the display board.
+- **Print:** the faceplate/bezel (with the 173 × 118 window), the left/right
+  connector rails, the battery cradle (open above the terminals), a VESA-75 bracket
+  to hang the module from the plate, and a fold-out tilt foot for the front lip.
 - **Buy:** the shell (injection-moulded waterproof beats printed for the gasket),
-  the panel-mount connectors, the buck converter, the LiFePO4 charger, the fuse
-  holder.
+  the panel-mount connectors, the LiFePO4 charger, the fuse holder.
+  **No buck converter** — the module is 12 V-native (§5).
 - **Reference builds** worth reading first: Jake-Simek/Pelican-Deck (Pi +
   Pelican, self-contained, water-resistant I/O — closest to this) and the
   Printables cyberdeck tag for faceplate STLs to adapt rather than start blank.
@@ -242,10 +285,16 @@ DONE:
   cradle allows. The cradle must leave a clear pocket above the terminals — never
   let a lid or bracket press on the posts.
 
-STILL NEEDED — one measurement, with a ruler on the physical part:
+STILL NEEDED — one measurement, with a tape on the shell in-store:
 
-4. **Chosen shell and its REAL usable interior** — catalog interior overstates
-   it (gasket lip, radiused corners, ribs). Measure the flat inner floor.
+4. **The Apache 4800's REAL usable interior** (§6 picks it over the Pelican 1400).
+   Catalog interior overstates it — gasket lip, radiused corners, ribs. Measure the
+   **flat inner floor**, plus the base's usable height below the lid line. Pass/fail
+   thresholds for the layout as drawn:
+   - **Width ≥ 285 mm** → rails stay ~40 mm+. Below that, thin the rails or move the
+     SMA to a corner (it is the optional connector anyway).
+   - **Depth ≥ ~113 mm** → battery-on-side (90) + keyboard (23) stack at close.
+   - **Back channel ≥ ~75 mm** → battery lying 70 mm deep plus terminal clearance.
 
 Once those four exist, the connector table in §3, the layout in §4, and the SVG
 in docs/design/faceplate.svg become a parametric plate.
