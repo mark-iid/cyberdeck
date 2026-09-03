@@ -90,24 +90,28 @@ this kit it just adds a part.)
 ## §4 — Suggested faceplate layout
 
 ```
- ┌───────────────────────────────────────────────┐
- │  [BNC ant] [USB-A][USB-A]          [⏻ switch]  │  ← connector strip (rear lip
- │                                     [DC][PP]   │     or top border)
- │   ┌───────────────────────────────────────┐   │
- │   │                                       │   │
- │   │            7" TOUCHSCREEN             │   │
- │   │            1280 x 800                  │   │
- │   └───────────────────────────────────────┘   │
- │   ┌───────────────────────────────────────┐   │
- │   │            KEYBOARD WELL               │   │
- │   └───────────────────────────────────────┘   │
- └───────────────────────────────────────────────┘
+ ┌─────────────────────────────────────────────────┐
+ │           ┌───────────────────────────┐         │
+ │  LEFT     │                           │   RIGHT  │
+ │  RAIL     │                           │   RAIL   │
+ │  [SMA]    │      8" TOUCHSCREEN        │  [USB-A] │
+ │  [PP IN]  │        173 × 118          │  [USB-A] │
+ │  [⏻ SW]   │       (1280 × 800)        │  [RJ45]  │
+ │  [DC12V]* │                           │          │
+ │           └───────────────────────────┘         │
+ └─────────────────────────────────────────────────┘
+      keyboard = separate Perixx unit, stows alongside / in lid
 ```
 
-Put the connector strip on a **raised rear lip** (a short vertical wall at the
-back edge of the faceplate) so cables exit horizontally toward the operator's
-far side and route out over the open lid, rather than straight up into the
-screen's sightline.
+The module's own I/O drives the rail sides: **power/AV exit the module's LEFT
+edge, USB/Ethernet its RIGHT edge**, so the faceplate mirrors that — a power +
+antenna rail on the left, a data rail on the right, screen between them. Keep
+each rail on a **shallow raised lip** so cables exit sideways and route out over
+the open lid rather than up into the screen's sightline.
+
+\* The module's 12 V barrel already carries the Powerpole pigtail (see DONE
+list); the panel Powerpole IN parallels it. Faceplate USB-A jacks are panel-mount
+extensions off the Pi's two USB-A ports on the right edge.
 
 ## §5 — Power & cooling (mostly solved by the module)
 
@@ -148,11 +152,11 @@ Also required regardless of the above:
 - **102.4 Wh is over the 100 Wh airline carry-on limit** — flyable in the
   100–160 Wh band with approval, max two spares. Only matters if it flies.
 
-## §6 — Shell size## §6 — Shell size
+## §6 — Shell size
 
-The LFP8AH is a ~90 × 70 × 100 mm cube. It, plus the Pi + NVMe + cooler + a 7"
-faceplate, does not fit the current ~1150-class shell — which is exactly why the
-battery is external today.
+The LFP8AH is 90 × 70 × 100 mm (body; ~120 mm to the top of the wiring). It, plus
+the JUNEBOX module + an 8" faceplate, does not fit the current ~1150-class shell
+— which is exactly why the battery is external today.
 
 | Shell | Interior (mm) | Fit |
 |---|---|---|
@@ -215,13 +219,14 @@ DONE:
   window in docs/design/faceplate.svg is now cut to this, centered in the 203×136.5
   module face. (Runs a hair taller than the 172×107 an 8" 1280×800 would predict —
   cut to the measured number, not the theoretical.)
-- ✅ **Module I/O + power path** (photographed 2026-09-02). The brick exposes I/O on
-  **two adjacent edges** (an L), so the connector strip wraps the corner rather than
-  riding one rail:
-  - *Display-board edge:* `AUDIO` (3.5 mm), `HDMI` (full-size), `USB Type-C`, and
-    `DC 12V` — a **barrel jack**.
-  - *Pi edge:* **2× USB-A** (USB-3 blue stack), **Gigabit Ethernet** (RJ45), the
-    Pi's USB-C, and the NVMe/fan.
+- ✅ **Module I/O + power path** (photographed + confirmed 2026-09-02). Viewed from
+  the front (screen toward you), I/O is on the **left and right edges** — power on
+  the LEFT, USB/data on the RIGHT. So the faceplate gets **two rails flanking the
+  screen**, not a single strip: power/AV down the left, data down the right.
+  - *LEFT edge (display board):* `AUDIO` (3.5 mm), `HDMI` (full-size), `USB Type-C`,
+    and `DC 12V` — a **barrel jack**.
+  - *RIGHT edge (Pi):* **2× USB-A** (USB-3 blue stack), **Gigabit Ethernet** (RJ45),
+    the Pi's USB-C, and the NVMe/fan.
   - **Power path is already solved and already on Powerpole.** The 12 V inlet is the
     barrel, but a screw-terminal→barrel adapter (green Phoenix block) with a
     **Powerpole pigtail** is already fitted. No barrel→PP pigtail to build. The
@@ -229,10 +234,16 @@ DONE:
   - Faceplate USB-A jacks extend from the Pi's 2× USB-A. The module's AUDIO/HDMI/
     USB-C stay at the module edge for occasional use; they need not reach the plate.
 
-STILL NEEDED — two measurements, with a ruler on the physical parts:
+- ✅ **Miady LFP8AH = 90 W × 70 D × 100 H mm** (measured 2026-09-02; confirms the
+  working estimate). **The 100 mm is the body only — terminals sit proud of it.**
+  Add ~15–20 mm for the posts + Powerpole lugs + cable bend → **~120 mm to the top
+  of the wiring** when standing upright. That still clears a 1400's 132 mm depth,
+  but the margin is thin; laying the pack on its 70 mm side banks headroom if the
+  cradle allows. The cradle must leave a clear pocket above the terminals — never
+  let a lid or bracket press on the posts.
 
-3. **Miady LFP8AH exact L×W×H and terminal position** — the cradle and the shell
-   choice depend on it. (Working estimate ~90×70×100 mm; confirm.)
+STILL NEEDED — one measurement, with a ruler on the physical part:
+
 4. **Chosen shell and its REAL usable interior** — catalog interior overstates
    it (gasket lip, radiused corners, ribs). Measure the flat inner floor.
 

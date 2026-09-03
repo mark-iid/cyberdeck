@@ -41,33 +41,40 @@
   <line x1="258" y1="27.25" x2="258" y2="145.25" class="dim"/>
   <text x="268" y="86" text-anchor="middle" class="lbl" transform="rotate(90 268 86)">118</text>
 
-  <!-- ===== Connector strip along the bottom edge of the base ===== -->
-  <text x="8" y="180" class="red">CONNECTOR STRIP  (rear lip — cables exit away from screen)</text>
-  <!-- strip baseline y=200; place connectors left->right with center-to-center spacing -->
-  <!-- BNC 14mm hole -->
-  <circle cx="40" cy="205" r="3.25" class="cut"/>
-  <text x="40" y="223" text-anchor="middle" class="lbl">SMA†</text>
-  <text x="40" y="231" text-anchor="middle" class="sub">⌀6.5</text>
-  <!-- USB-A #1 26.5 x 12.3 -->
-  <rect x="82" y="198.85" width="26.5" height="12.3" class="cut"/>
-  <text x="95" y="223" text-anchor="middle" class="lbl">USB-A</text>
-  <text x="95" y="231" text-anchor="middle" class="sub">26.5×12.3</text>
+  <!-- ===== Connector rails flank the screen: power/antenna LEFT, data RIGHT ===== -->
+  <!-- Module I/O confirmed: power exits module LEFT edge, USB/data its RIGHT edge. -->
+
+  <!-- LEFT RAIL: antenna + external power + master switch -->
+  <text x="30" y="16" text-anchor="middle" class="red">LEFT RAIL</text>
+  <text x="30" y="24" text-anchor="middle" class="sub">power / ant</text>
+  <!-- SMA ⌀6.5 -->
+  <circle cx="30" cy="45" r="3.25" class="cut"/>
+  <text x="30" y="58" text-anchor="middle" class="lbl">SMA†</text>
+  <text x="30" y="66" text-anchor="middle" class="sub">⌀6.5</text>
+  <!-- Powerpole IN -->
+  <rect x="21" y="80" width="18" height="12" class="cut"/>
+  <text x="30" y="103" text-anchor="middle" class="lbl">PP IN</text>
+  <text x="30" y="111" text-anchor="middle" class="sub">ext 12V</text>
+  <!-- master switch ⌀12 -->
+  <circle cx="30" cy="128" r="6" class="cut"/>
+  <text x="30" y="146" text-anchor="middle" class="lbl">⏻ SW</text>
+  <text x="30" y="154" text-anchor="middle" class="sub">⌀12</text>
+
+  <!-- RIGHT RAIL: USB-A x2 + Ethernet, extended off the Pi's right-edge ports -->
+  <text x="277" y="16" text-anchor="middle" class="red">RIGHT RAIL</text>
+  <text x="277" y="24" text-anchor="middle" class="sub">data (from Pi)</text>
+  <!-- USB-A #1 -->
+  <rect x="263.75" y="38.85" width="26.5" height="12.3" class="cut"/>
+  <text x="277" y="62" text-anchor="middle" class="lbl">USB-A</text>
+  <text x="277" y="70" text-anchor="middle" class="sub">26.5×12.3</text>
   <!-- USB-A #2 -->
-  <rect x="132" y="198.85" width="26.5" height="12.3" class="cut"/>
-  <text x="145" y="223" text-anchor="middle" class="lbl">USB-A</text>
-  <text x="145" y="231" text-anchor="middle" class="sub">26.5×12.3</text>
-  <!-- HDMI passthrough ~ 16 x 6 -->
-  <rect x="182" y="202" width="16" height="6" class="cut"/>
-  <text x="190" y="223" text-anchor="middle" class="lbl">HDMI*</text>
-  <text x="190" y="231" text-anchor="middle" class="sub">optional ext</text>
-  <!-- power switch 12mm -->
-  <circle cx="232" cy="205" r="6" class="cut"/>
-  <text x="232" y="223" text-anchor="middle" class="lbl">⏻ SW</text>
-  <text x="232" y="231" text-anchor="middle" class="sub">⌀12</text>
-  <!-- 12V DC / Powerpole in -->
-  <rect x="258" y="199" width="18" height="12" class="cut"/>
-  <text x="267" y="223" text-anchor="middle" class="lbl">PP IN</text>
-  <text x="267" y="231" text-anchor="middle" class="sub">ext 12V</text>
+  <rect x="263.75" y="83.85" width="26.5" height="12.3" class="cut"/>
+  <text x="277" y="107" text-anchor="middle" class="lbl">USB-A</text>
+  <text x="277" y="115" text-anchor="middle" class="sub">26.5×12.3</text>
+  <!-- Ethernet RJ45 ~ 16 x 13.5 -->
+  <rect x="269" y="128" width="16" height="13.5" class="cut"/>
+  <text x="277" y="154" text-anchor="middle" class="lbl">RJ45</text>
+  <text x="277" y="162" text-anchor="middle" class="sub">16×13.5</text>
 
   <!-- ===== Keyboard, drawn to scale, SEPARATE ===== -->
   <g transform="translate(0,300)">
@@ -89,8 +96,8 @@
     <text x="0" y="38" class="sub">• Panel PP IN parallels battery to bus.</text>
     <text x="0" y="49" class="sub">• Antenna = 1 SMA jack. RTL-SDR Blog</text>
     <text x="0" y="60" class="sub">  kit is all-SMA — no adapter needed.</text>
-    <text x="0" y="71" class="sub">• USB-A jacks fed from the keyboard's</text>
-    <text x="0" y="82" class="sub">  2 built-in hubs, or Pi USB.</text>
+    <text x="0" y="71" class="sub">• RIGHT rail = panel-mount extensions off</text>
+    <text x="0" y="82" class="sub">  the Pi's 2 USB-A + RJ45 (module R edge).</text>
     <text x="0" y="93" class="sub">• Module has its OWN fan; cooling is</text>
     <text x="0" y="104" class="sub">  handled inside. Do not block its vents.</text>
     <text x="0" y="115" class="sub">• Mount screen by its VESA 75 holes;</text>
