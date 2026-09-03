@@ -89,29 +89,44 @@ this kit it just adds a part.)
 
 ## §4 — Suggested faceplate layout
 
+Sized for a 1400-class plate: **300 × 225 interior, ~290 × 215 usable** after the
+gasket lip and corner radii.
+
 ```
- ┌─────────────────────────────────────────────────┐
- │           ┌───────────────────────────┐         │
- │  LEFT     │                           │   RIGHT  │
- │  RAIL     │                           │   RAIL   │
- │  [SMA]    │      8" TOUCHSCREEN        │  [USB-A] │
- │  [PP IN]  │        173 × 118          │  [USB-A] │
- │  [⏻ SW]   │       (1280 × 800)        │  [RJ45]  │
- │  [DC12V]* │                           │          │
- │           └───────────────────────────┘         │
- └─────────────────────────────────────────────────┘
-      keyboard = separate Perixx unit, stows alongside / in lid
+ BACK ────────────────────── 300 mm ──────────────────────
+ ┌──────────────────────────────────────────────────────┐
+ │  ▒▒▒ BATTERY on side ▒▒▒  │  SDR · coax · antenna     │  back channel
+ │  ~118 × 90, terms inboard │  cylinder                 │  ~88 mm deep
+ ├───────┬──────────────────────────────────────┬───────┤
+ │ LEFT  │                                      │ RIGHT │
+ │ RAIL  │        8" TOUCHSCREEN                │ RAIL  │
+ │ 48 mm │          173 × 118                   │ 48 mm │
+ │ [SMA] │        (1280 × 800)                  │[USB-A]│
+ │ [PP]  │   module 203 × 136.5 hangs below     │[USB-A]│
+ │ [⏻SW] │                                      │[RJ45] │
+ └───────┴──────────────────────────────────────┴───────┘
+ FRONT (operator)
+          keyboard lifts out, sets on the surface in front
 ```
 
-The module's own I/O drives the rail sides: **power/AV exit the module's LEFT
-edge, USB/Ethernet its RIGHT edge**, so the faceplate mirrors that — a power +
-antenna rail on the left, a data rail on the right, screen between them. Keep
-each rail on a **shallow raised lip** so cables exit sideways and route out over
-the open lid rather than up into the screen's sightline.
+**Width budget is exact: 203 (module) + 2 × 48 (rails) = 299 of 300.** This is the
+binding dimension — if the measured floor comes in under ~285 mm the rails thin or
+the SMA moves to a corner (§8).
+
+**The module's own I/O sets which side is which** — power/AV exit its LEFT edge,
+USB/Ethernet its RIGHT — so the plate mirrors it: power + antenna left, data right,
+short cable runs on both. Keep each rail on a **shallow raised lip** so cables exit
+sideways rather than up into the screen's sightline.
+
+**Keyboard stays separate** (§9, §10). At 230 × 160 it cannot share the plate with
+a 136.5 mm-deep module inside 225 mm of depth — integrating it would require a
+1550/4800-class shell, ~2.8× the volume for one feature. It stows flat over the
+faceplate at close and is set on the surface in front during use, which is better
+ergonomics anyway: a mini keyboard with a touchpad wants to be positioned.
 
 \* The module's 12 V barrel already carries the Powerpole pigtail (see DONE
 list); the panel Powerpole IN parallels it. Faceplate USB-A jacks are panel-mount
-extensions off the Pi's two USB-A ports on the right edge.
+extensions off the Pi's right-edge ports.
 
 ## §5 — Power & cooling (mostly solved by the module)
 
@@ -130,12 +145,13 @@ The self-contained 12 V module removes the two hardest parts of a go-box build:
 
 ### Consequences of the single 12 V feed
 
-- **NEVER plug anything into the Pi's USB-C.** The Pi is powered *through* the
-  module. A charger or power bank on its USB-C port would be a second source
-  fighting the module's 5 V rail. That port is for data/OTG only — or, if the module
-  feeds the Pi via an internal USB-C jumper, it is already occupied. **Confirm
-  visually which** when the case is next open; either way, nothing external goes
-  there.
+- **NEVER plug power into the Pi's USB-C.** The Pi is powered *through* the module,
+  so a charger or power bank on that port would be a second source fighting the
+  module's 5 V rail. **Confirmed unused** (2026-09-02) — it is free for data/OTG,
+  and nothing else.
+- **USB budget, confirmed 2026-09-02.** One Pi USB-A is consumed internally by the
+  module's touch input; the rest are free. With the Perixx's two built-in hubs on
+  top, port count is not a constraint — the two panel USB-A jacks are comfortable.
 - **One switch kills the whole deck.** The left-rail master switch sits on the 12 V
   feed *upstream* of the module, so it cuts screen, Pi, SSD and fan together. No
   partial-power states to reason about.
@@ -192,7 +208,7 @@ the JUNEBOX module + an 8" faceplate, does not fit the current ~1150-class shell
 | Pelican 1150 (current class) | 184 × 118 × 84 | Battery will not fit inside. Today's problem. |
 | Pelican 1300 | 235 × 181 × 155 | **Rejected** — see below. |
 | **Pelican 1400** | 300 × 225 × 132 | Fits exactly: 203 module + 2 × ~48 mm rails. |
-| **Apache 4800** (Harbor Freight) | ~330 × 235 × 133 | Same class, ~30 mm more width. **Recommended.** |
+| Apache 4800 (Harbor Freight) | 454 × 327 × 168 | **Rejected** — 1550-class, 2.8× the volume. See below. |
 
 ### 1300 rejected on two hard numbers
 
@@ -219,26 +235,40 @@ three. (An earlier revision of this doc wrongly listed them separately.)
 | Seal | IP67, o-ring + auto purge | Claims IP67-class, o-ring + purge |
 | Availability | Everywhere | HF store or their shipping |
 
-**Recommend the Apache 4800**, for reasons specific to this build:
+### 4800 rejected — it is a 1550-class box, not a 1400 one
 
-1. **Width is the binding constraint, and the Apache has more of it.** The 1400's
-   300 mm is consumed exactly by module + rails; the Apache's ~330 mm leaves ~30 mm
-   of slack on the one dimension that is tight.
-2. **Pelican's warranty premium buys nothing here.** It is void on shell
-   modification — normally what a deck build does. §1's no-penetrations rule means
-   neither shell gets cut, so the guarantee survives on both. The premium protects
-   against a risk this design already eliminated.
-3. **$25 lets you buy two** — one to build in, one to test-fit destructively while
-   the printed faceplate iterates.
+**Correction (2026-09-02):** an earlier revision of this doc sized the 4800 at
+~330 × 235 × 133 and recommended it as a cheap 1400 equivalent with a little extra
+width. That was wrong. Harbor Freight lists it at **17-7/8 × 12-7/8 × 6-5/8 in =
+454 × 327 × 168 mm** and benchmarks it against a **Pelican 1550** — two classes up,
+**24.9 L against the 1400's 8.9 L**.
 
-**Choose the Pelican 1400 instead if** low carry weight matters more than cost, or
-the deck will live in a truck bed / fly as checked baggage for years — the QC and
-latch gap is real under sustained abuse.
+| | Pelican 1400 | Pelican 1500 | Apache 4800 |
+|---|---|---|---|
+| Volume | **8.9 L** | 18.7 L | 24.9 L |
+| Loaded weight | ~4.5 kg | ~6 kg | ~7 kg |
+| Keyboard on the plate? | no | no (284 < 296.5) | yes |
 
-Treat the Apache interior figures as **approximate**; HF listings vary by revision.
-This is exactly what §8's remaining measurement settles: measure the flat inner
-floor in-store. **Usable width ≥ 285 mm → buy it and the layout locks as drawn.**
-Below that, the rails thin or the SMA moves to a corner.
+The only thing the extra volume buys is the **integrated keyboard**, and that is a
+cliff rather than a slope: it needs module 136.5 + keyboard 160 = **296.5 mm of
+depth**, so the 1500 misses it by 12 mm and nothing below 1550-class clears it. So
+the choice is 2.8× the volume and ~2.5 kg for exactly one feature.
+
+**Not worth it here.** Total contents are ~2.9 L — in a 4800 the deck would be **12 %
+full**, carrying 22 L of air to avoid setting a keyboard down. The 1400 already fits
+module + rails + battery and still leaves **~3 L** for the SDR kit and antenna, which
+is the whole of the storage requirement (§11). And the Perixx is a mini keyboard with
+a built-in touchpad — a device meant to be positioned, so leaving it loose is
+arguably the better ergonomics, as §2 and §9 concluded first time round.
+
+**Decision: Pelican 1400 class.** Cheap equivalents in the same class (Apache 3800,
+Monoprice/Condition-1 weatherproof) are fine substitutes if the Pelican brand is not
+the point — verify the interior against 300 × 225 × 132 before buying, since HF
+listings vary by revision and the 4800 error above came from exactly that.
+
+Note §1's no-penetrations rule means the shell is never cut, so a Pelican's
+lifetime guarantee survives this build intact — unusual for a deck, and worth
+something if you buy new.
 
 ## §7 — Print vs buy
 
@@ -274,11 +304,111 @@ Faceplate consequences:
 - The keyboard well is sized for the **PERIBOARD-510H footprint** (a mini board,
   ~12–13 mm thick with X-scissor keys), not the slim BT slab. Measure the actual
   unit before cutting the well — §8.
-- One fewer thing on the connector strip: the keyboard is wired internally to a
-  Pi USB port or an internal hub, so it does not need a panel jack. Its own two
-  hub ports can BE the panel USB-A jacks, routed to the faceplate.
+- The keyboard plugs into a **right-rail panel USB-A jack**, not an internal port —
+  it is lifted out and set in front during use (§10), so its cable must reach the
+  outside of the plate. Its own two hub ports then extend the deck's port count at
+  the operator's hand, which is where extra ports are actually wanted.
 - No separate mouse needed, which keeps the slab uncluttered — the touchpad is
   the pointer.
+
+## §10 — Operating position
+
+The deck works like a **field radio laid flat on a surface — not a laptop.** The
+screen faces *up*; you look down at it and touch it like a tablet on a table, with
+the keyboard set in front. This is the direct consequence of §2's slab decision.
+
+### Deploying
+
+1. Set the case flat — table, tailgate, ammo can, lap, ground.
+2. Flip the latches, open the lid. A 1400-class lid hinges at the **back** and stops
+   near 100°, so it stands up behind the deck rather than folding away.
+3. Lift the **Perixx** out and set it on the surface in front. It stays plugged into
+   the right rail — you are unstowing it, not connecting it.
+4. Run coax from the left-rail SMA to the antenna on its stand. Plug external power
+   into the left-rail Powerpole if on shore power. Flip the master switch (§5: one
+   switch brings up screen, Pi, SSD and fan together).
+
+No assembly, nothing to prop.
+
+### Posture
+
+```
+          lid stands ~100° behind
+           ╲   (sun shade · wind/spray block)
+            ╲________________
+   screen    [   FACEPLATE   ]  ← look DOWN, touch here
+   faces up ┌┴───────────────┴┐
+            │ base: module,   │
+            │ battery, SDR    │
+            └─┬─────────────┬─┘
+   tilt foot ▏└─────────────┘   ← front lip raised 15–20°
+   ══════════════════════════════ surface
+       [ Perixx keyboard ]   ← separate, in front
+            operator  ▼
+```
+
+- **Screen up, reclined toward you.** Flat is fine for a quick lookup; for real work
+  a **fold-out tilt foot** under the front lip kicks the plate up 15–20°, the way a
+  radio's tilt bail does. That is how a slab gets a viewing angle without the
+  clamshell hinge §2 rejected.
+- **Touch-first geometry.** Reaching *down* at a reclined surface avoids the gorilla
+  arm of a vertical panel. The Perixx touchpad covers the fine pointing that touch
+  is bad at (qutebrowser links, SDR sliders).
+- **The open lid earns its keep.** At ~100° behind the screen it shades the display
+  from overhead sun and blocks wind/spray from the working side, without ever
+  obstructing an upward-facing screen. Pop it off if it is in the way.
+
+### Three modes it actually gets used in
+
+- **Field desk** — case flat on the tilt foot, keyboard out front. FT8/digital,
+  kiwix, maps. The primary mode.
+- **Lap / no table** — case on the thighs, screen up, keyboard beside or on the front
+  lip. Works *because* the screen is up and the keyboard is loose rather than hinged
+  to a fixed angle.
+- **Touch-only** — lid up, screen flat, stand over it and thumb through kiwix or maps
+  without pulling the keyboard at all.
+
+### What it is not
+
+It will not stand up and face you like a laptop — that needs the screen in the lid,
+ruled out for the "opens upside down" complaint and hinge fragility. The trade: it
+lies flatter and touches better, at the cost of a tilt foot for viewing angle and a
+keyboard placed in front.
+
+## §11 — Stowage
+
+Contents total ~2.9 L against the 1400's 8.9 L, leaving **~3 L genuinely usable**
+after fan clearance and cable runs. Enough for the SDR kit and then some.
+
+### Zones
+
+| Zone | Space | Holds |
+|---|---|---|
+| **A — back channel** | ~180 × 88 × 90 mm beside the battery | SDR dongle, coax coil, **antenna cylinder** |
+| **B — under the module** | ~77 mm of air below the module, 203 × 136.5 footprint | flat, non-fragile items — adapters, spare coax, parts tray |
+| **C — over the faceplate** | thin, full width, under the closed lid | the keyboard itself, notes, cheat sheets |
+
+**Zone B has one rule: do not pack it solid.** The module's fan lives on its back
+face and needs to breathe. Use the perimeter, leave the centre open.
+
+### The short hazard, and why it is already handled
+
+Bare telescopic antenna elements loose in the same channel as exposed battery
+terminals is a dead short on a LiFePO4 cell — a fire, not an inconvenience.
+
+**The antenna ships in a plastic cylinder case, which resolves this** as long as it
+actually gets put back in the tube. Belt and braces:
+
+- The battery cradle gets a **printed cover over the terminals** — open above for
+  clearance (§8), closed against intrusion.
+- Anything else metal-cased riding in Zone A (Flipper, adapters, tools) goes in a
+  pouch or a divided tray, not loose.
+
+### Suggested pack list
+
+Given ~3 L: SMA↔BNC↔PL-259 adapters, spare fuses, a small multimeter, QLG2 GPS
+puck, a headlamp, and a paper log book with pencil. That is the difference between a
+computer in a case and an actual go-kit.
 
 ## §8 — Open, needs the operator's measurements before CAD
 
@@ -314,14 +444,16 @@ DONE:
   cradle allows. The cradle must leave a clear pocket above the terminals — never
   let a lid or bracket press on the posts.
 
-STILL NEEDED — one measurement, with a tape on the shell in-store:
+STILL NEEDED — one measurement, with a tape on the shell:
 
-4. **The Apache 4800's REAL usable interior** (§6 picks it over the Pelican 1400).
-   Catalog interior overstates it — gasket lip, radiused corners, ribs. Measure the
-   **flat inner floor**, plus the base's usable height below the lid line. Pass/fail
+4. **The chosen 1400-class shell's REAL usable interior.** Catalog interior
+   overstates it — gasket lip, radiused corners, ribs. Measure the **flat inner
+   floor**, and separately the **base-vs-lid depth split** (that decides whether the
+   keyboard stows in the lid or lying on the faceplate — §11 Zone C). Pass/fail
    thresholds for the layout as drawn:
    - **Width ≥ 285 mm** → rails stay ~40 mm+. Below that, thin the rails or move the
-     SMA to a corner (it is the optional connector anyway).
+     SMA to a corner (it is the optional connector anyway). *This is the binding
+     dimension: 203 + 2×48 = 299 of 300.*
    - **Depth ≥ ~113 mm** → battery-on-side (90) + keyboard (23) stack at close.
    - **Back channel ≥ ~75 mm** → battery lying 70 mm deep plus terminal clearance.
 
