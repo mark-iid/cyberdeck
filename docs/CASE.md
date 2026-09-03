@@ -276,8 +276,35 @@ something if you buy new.
   connector rails, the battery cradle (open above the terminals), a VESA-75 bracket
   to hang the module from the plate, and a fold-out tilt foot for the front lip.
 - **Buy:** the shell (injection-moulded waterproof beats printed for the gasket),
-  the panel-mount connectors, the LiFePO4 charger, the fuse holder.
+  the panel-mount connectors below, the LiFePO4 charger, the fuse holder.
   **No buck converter** — the module is 12 V-native (§5).
+
+### Parts to order (buy list)
+
+Orderable now, in parallel with the shell. Quantities are for one deck.
+
+| # | Part | Spec | Notes |
+|---|---|---|---|
+| 1 | SMA bulkhead, F–F | ⌀6.5 mm hole, anti-rotation flat | Left rail. Matches the all-SMA RTL-SDR kit — no adapter. |
+| 2 | SMA jumper, short | M–M, 100–150 mm | Bulkhead → dongle inside. |
+| 2× | USB-A panel mount | snap-in, 26.5 × 12.3 mm | Right rail. Extension-cable style (Adafruit/McMaster). |
+| 1 | Powerpole panel mount | Powerwerx PanelPole1 | Left rail, external 12 V IN. Or print a PP15-45 retainer. |
+| 1 | Master switch | ⌀12 mm round, **rated ≥ 5 A @ 12 VDC** | Left rail, upstream of the module (§5). Carries ~2.5 A. |
+| 1 | Inline fuse holder | ATC/ATO blade, in-line | On battery **positive**, close to the terminal. |
+| — | Fuses | **5 A** ATC, buy several | Sized for the ~2.5 A total draw (§5), not the Pi alone. |
+| — | Wire | 14 AWG red/black | Matches the existing Powerpole 15–45 crimps. |
+| — | Powerpole contacts + housings | 15–45 A, PP-standard | Bus is already Powerpole; keep it uniform. |
+
+**Optional / drop first if space or budget is tight:**
+
+- **RJ45 panel jack.** Ethernet is a home-provisioning convenience, not a field
+  need — the Pi's own port is reachable with the lid open. If you do want it, a
+  **Cat6 keystone jack in a printed keystone frame** (~14.7 × 16.2 mm opening) is
+  easier to source than an RJ45 panel coupler, and standardised.
+- **The SMA run itself** (rows 1–2) — the deck is fully functional without the SDR.
+
+Already sorted, do not re-buy: the barrel→Powerpole pigtail (fitted, §5) and the
+12.8 V LiFePO4 pack.
 - **Reference builds** worth reading first: Jake-Simek/Pelican-Deck (Pi +
   Pelican, self-contained, water-resistant I/O — closest to this) and the
   Printables cyberdeck tag for faceplate STLs to adapt rather than start blank.
@@ -461,6 +488,9 @@ DONE:
   let a lid or bracket press on the posts.
 
 STILL NEEDED — one measurement, with a tape on the shell:
+
+**Shell ORDERED 2026-09-02** — Pelican 1400, dimensions confirmed against spec
+(§6, §11). One number remains, and it can only be taken once the case is in hand:
 
 4. **The 1400's REAL flat floor WIDTH.** Catalog interior (300 mm) overstates it —
    gasket lip, radiused corners, ribs. This is now the *only* open number, and it is
