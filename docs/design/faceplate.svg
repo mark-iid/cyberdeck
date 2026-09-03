@@ -28,7 +28,7 @@
   <rect x="63" y="27.25" width="173" height="118" class="win"/>
   <text x="149" y="82" text-anchor="middle" class="grn">JUNEBOX MODULE</text>
   <text x="149" y="92" text-anchor="middle" class="sub">203×136.5×51 · Pi+SSD INSIDE</text>
-  <text x="149" y="101" text-anchor="middle" class="sub">12V native · own fan · HDMI/USB/pwr out</text>
+  <text x="149" y="101" text-anchor="middle" class="sub">12V barrel (PP pigtail fitted) · I/O on 2 edges</text>
   <!-- VESA 75 mounting pattern (M4), for a printed bracket behind the plate -->
   <circle cx="112" cy="48.75" r="2.5" fill="none" stroke="#e0af68" stroke-width="1"/>
   <circle cx="187" cy="48.75" r="2.5" fill="none" stroke="#e0af68" stroke-width="1"/>

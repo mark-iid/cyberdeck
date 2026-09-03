@@ -215,14 +215,22 @@ DONE:
   window in docs/design/faceplate.svg is now cut to this, centered in the 203×136.5
   module face. (Runs a hair taller than the 172×107 an 8" 1280×800 would predict —
   cut to the measured number, not the theoretical.)
+- ✅ **Module I/O + power path** (photographed 2026-09-02). The brick exposes I/O on
+  **two adjacent edges** (an L), so the connector strip wraps the corner rather than
+  riding one rail:
+  - *Display-board edge:* `AUDIO` (3.5 mm), `HDMI` (full-size), `USB Type-C`, and
+    `DC 12V` — a **barrel jack**.
+  - *Pi edge:* **2× USB-A** (USB-3 blue stack), **Gigabit Ethernet** (RJ45), the
+    Pi's USB-C, and the NVMe/fan.
+  - **Power path is already solved and already on Powerpole.** The 12 V inlet is the
+    barrel, but a screw-terminal→barrel adapter (green Phoenix block) with a
+    **Powerpole pigtail** is already fitted. No barrel→PP pigtail to build. The
+    faceplate's external Powerpole IN just parallels this same feed onto the bus.
+  - Faceplate USB-A jacks extend from the Pi's 2× USB-A. The module's AUDIO/HDMI/
+    USB-C stay at the module edge for occasional use; they need not reach the plate.
 
-STILL NEEDED — three measurements, all with a ruler on the physical parts (the Pi
-is packed, so none of this comes off the running system):
+STILL NEEDED — two measurements, with a ruler on the physical parts:
 
-2. **Which edge the JUNEBOX's HDMI / USB / 12V connectors exit, and where along
-   it.** The Pi is inside the module, so these ARE the deck's I/O; their location
-   sets the connector-strip position and cable routing. Note whether 12V is a
-   barrel jack (needs a barrel→Powerpole pigtail for the bus).
 3. **Miady LFP8AH exact L×W×H and terminal position** — the cradle and the shell
    choice depend on it. (Working estimate ~90×70×100 mm; confirm.)
 4. **Chosen shell and its REAL usable interior** — catalog interior overstates
