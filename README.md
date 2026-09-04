@@ -1,12 +1,12 @@
 # cyberdeck
 
-![Platform](https://img.shields.io/badge/platform-Raspberry%20Pi%205-C51A4A?logo=raspberrypi&logoColor=white)
-![OS](https://img.shields.io/badge/Raspberry%20Pi%20OS-trixie%20(Debian%2013)-A81D33?logo=debian&logoColor=white)
-![Compositor](https://img.shields.io/badge/compositor-niri%20v26.04-5A4FCF)
-![Shell](https://img.shields.io/badge/shell-bash-4EAA25?logo=gnubash&logoColor=white)
-![Install](https://img.shields.io/badge/install-additive%20%C2%B7%20reversible-2E7D32)
-![Thermal](https://img.shields.io/badge/thermal-2400%20MHz%20unthrottled-2E7D32)
-![Case](https://img.shields.io/badge/case-Pelican%201400%20ordered-B8860B)
+![Platform](docs/badges/platform.svg)
+![OS](docs/badges/os.svg)
+![Compositor](docs/badges/compositor.svg)
+![Shell](docs/badges/shell.svg)
+![Install](docs/badges/install.svg)
+![Thermal](docs/badges/thermal.svg)
+![Case](docs/badges/case.svg)
 
 niri on a Raspberry Pi 5 cyberdeck: 1280x800 touchscreen, USB keyboard, no mouse,
 512GB NVMe, 123GB of offline reference material, and a ham radio stack.
