@@ -1,5 +1,13 @@
 # cyberdeck
 
+![Platform](https://img.shields.io/badge/platform-Raspberry%20Pi%205-C51A4A?logo=raspberrypi&logoColor=white)
+![OS](https://img.shields.io/badge/Raspberry%20Pi%20OS-trixie%20(Debian%2013)-A81D33?logo=debian&logoColor=white)
+![Compositor](https://img.shields.io/badge/compositor-niri%20v26.04-5A4FCF)
+![Shell](https://img.shields.io/badge/shell-bash-4EAA25?logo=gnubash&logoColor=white)
+![Install](https://img.shields.io/badge/install-additive%20%C2%B7%20reversible-2E7D32)
+![Thermal](https://img.shields.io/badge/thermal-2400%20MHz%20unthrottled-2E7D32)
+![Case](https://img.shields.io/badge/case-Pelican%201400%20ordered-B8860B)
+
 niri on a Raspberry Pi 5 cyberdeck: 1280x800 touchscreen, USB keyboard, no mouse,
 512GB NVMe, 123GB of offline reference material, and a ham radio stack.
 
@@ -47,6 +55,22 @@ Individual steps, if you would rather go one at a time:
 | `bin/10-build-niri.sh` | niri `v26.04` from source (**needs rustup — see below**) |
 | `bin/20-build-xwayland-satellite.sh` | X11 bridge `v0.8.2`, builds with Debian's rustc |
 | `bin/30-build-mshv.sh` | MSHV FT8/FT4, pinned commit, `MSHV_Slarm64_PI.pro` |
+| `bin/40-install-claude-code.sh` | Claude Code under `~/.local/share/claude` |
+| `bin/50-doomsday-extras.sh` | tiered offline extras — run bare to list the tiers |
+| `bin/51-fetch-content.sh` | fetch ZIMs, register them in the kiwix library |
+| `bin/52-kiwix-serve.sh` | `kiwix-serve` unit on `127.0.0.1:8080` (read in qutebrowser) |
+| `bin/53-radio-data.sh` | ham reference data — `cty.dat` and friends |
+| `bin/54-maps.sh` | TIGER shapefiles for Xastir + an offline-built Garmin `.img` |
+| `bin/55-fetch-computing.sh` | computing/reference ZIM tier |
+| `bin/56-flipper.sh` | qflipper + clone the existing flipper repo onto the deck |
+| `bin/60-local-ai.sh` | `llama-server` on `127.0.0.1` + `files/ai/ask-local.py` |
+| `bin/70-thermal-tune.sh` | `measure [secs]` — sustained-load thermal profile |
+| `bin/80-check-boot-integrity.sh` | run after ANY disk/clone change |
+| `bin/90-set-session.sh` | flip the boot session between `niri` and `labwc` |
+| `bin/91-tidy-units.sh` | trim units that only make sense under the Pi desktop |
+| `bin/deploy-config.sh` | symlink configs into `~/.config` |
+| `bin/sync-to-pi.sh` | push this repo to the deck, validate the KDL, live-reload |
+| `bin/verify-post-reboot.sh` | run after any kernel change |
 
 ## The three from-source builds, and why
 
@@ -61,14 +85,6 @@ freeze. Same for `xwayland-satellite` and MSHV.
 confusing error rather than a clean MSRV message. `10-build-niri.sh` installs
 rustup for this reason. `xwayland-satellite` v0.8.2 pins exactly 1.85.0 and
 builds fine with Debian's own toolchain.
-
-## Open decisions
-
-- **§3 FT8 software is not decided.** WSJT-X 2.7.0, JTDX 2.2.159, and MSHV are
-  all installed deliberately, to be compared on the real panel. See `DESIGN.md`.
-- **Every `app-id` in `config/niri/config.kdl` is unverified.** Run
-  `niri msg windows` on first login and correct them. A rule that matches
-  nothing fails silently.
 
 ## Optional extras
 
@@ -96,55 +112,48 @@ bin/70-thermal-tune.sh measure   # 5-min sustained-load thermal profile
 
 ## Read next
 
-- `DESIGN.md` — the reasoning. **§6 is the thermal problem; read it first.**
+- `DESIGN.md` — the reasoning. §6 is the thermal story, start to finish.
+- `docs/CASE.md` — the enclosure. **Where the active work is.**
+- `docs/design/faceplate.svg` — faceplate, window cut to the measured 173x118.
 - `docs/INVENTORY.md` — full baseline capture.
 - `docs/CONTENT.md` — offline content gaps (medical, maps, repair) and the
   GPS-time problem that silently breaks FT8 off-grid.
 
-## Where this was left — 2026-08-31
+## Where this was left — 2026-09-02
 
-**Working now.** The deck boots into niri (`autologin-session=niri`). niri 26.04,
-xwayland-satellite 0.8.2 and MSHV 2.76.7 are built and installed; configs are
-symlinked and validated. All window rules are verified against real app-ids from
-`niri msg windows` — no guesses remain.
+**The software deck is done.** It boots into niri (`autologin-session=niri`).
+niri 26.04, xwayland-satellite 0.8.2 and MSHV 2.76.7 are built and installed;
+configs are symlinked and validated. Every window rule is verified against real
+app-ids from `niri msg windows` — no guesses remain.
 
-**Blocked on hardware, all on order:**
-
-| Waiting for | Unblocks | Notes |
-|---|---|---|
-| Fan (5V 2-pin) | the thermal ceiling | Wire to GPIO **pin 4 (+5V)** and **pin 6 (GND)**. NOT the 4-pin header — 5V and GND are pins 1 and 3 there, not adjacent (DESIGN §6.5). |
-| Active cooler for under the X1001 | the real fix | The X1001 is documented to clear the official Pi 5 Active Cooler / H505 (DESIGN §6.1). Existing passive heatsinks must come off. |
-| RTC cell (ML2020) | off-grid timekeeping | `J5`/`BATT` is EMPTY. Charging stays **disabled** until a known-rechargeable cell is fitted (DESIGN §5, docs/CONTENT.md). |
-| QLG2 GPS | sub-second time for FT8 | **Jumper it to 3.3V logic first** — 5V default will damage a Pi GPIO. `bin/50-doomsday-extras.sh time` has both tiers. |
-
-**Thermal: SOLVED 2026-09-02.** An active cooler under the X1001 took the deck
-from 1500 MHz sustained (throttled, 80.1 °C at idle) to the **full 2400 MHz,
-closed case, peaking at 76.8 °C with zero throttle bits** (DESIGN §6.8). The fan
-appears as `cooling_device0` and ramps 3602 -> 9950 rpm. 75 °C is a fan-speed
-trip point, not a throttle point; throttling starts at 85 °C.
-
-**Now unblocked:**
+**Thermal: SOLVED.** An active cooler under the X1001 took the deck from 1500 MHz
+sustained (throttled, 80.1 °C at idle) to the **full 2400 MHz, closed case,
+peaking at 76.8 °C with zero throttle bits** (DESIGN §6.8). The fan appears as
+`cooling_device0` and ramps 3602 -> 9950 rpm. 75 °C is a fan-speed trip point,
+not a throttle point; throttling starts at 85 °C. Do NOT cap `arm_freq` —
+measured, does not help (DESIGN §6.4).
 
 ```sh
 bin/60-local-ai.sh                   # llama-server; was refused at 96.6C
 bin/70-thermal-tune.sh measure 300   # re-measure any time; expect 2400MHz flat
 ```
 
-**Still waiting on parts:**
+**FT8 software: DECIDED — MSHV** (DESIGN §3). JTDX is a WSJT-X fork, so it
+duplicates the fallback rather than adding one; `sudo apt remove jtdx` plus
+dropping its (verified-working) rules, when confirmed.
 
-| Waiting for | Unblocks | Notes |
+**The case is the open work** (`docs/CASE.md`). The **Pelican 1400 is ordered**;
+the JUNEBOX module is the whole computer (Pi + NVMe inside its backboard, 12 V
+in, VESA 75/100, own fan), so the build is module + keyboard + LiFePO4 pack.
+
+| Open | Blocks | Notes |
 |---|---|---|
+| The 1400's **real flat floor width** | CAD, faceplate rails | Catalog says 300 mm; layout budgets 203 + 2×48 = **299 of 300**, i.e. zero margin. Expect ~285 mm usable. Tape on the shell once it lands — CASE §8. |
 | RTC cell (ML2020) | off-grid timekeeping | `J5`/`BATT` is EMPTY. Charging stays **disabled** until a known-rechargeable cell is fitted. |
 | QLG2 GPS | sub-second time for FT8 | **Jumper it to 3.3V logic first** — 5V default will damage a Pi GPIO. `bin/50-doomsday-extras.sh time`. |
 
-**Open decisions:**
-
-- **JTDX**: operator does not intend to use it. It is a WSJT-X fork, so it
-  duplicates the fallback rather than adding one. `sudo apt remove jtdx` plus
-  dropping its (verified-working) rules, when confirmed.
-- **`mariadbd`** is enabled and burns 7-11% CPU at idle with no user databases
-  on the machine. `systemctl disable --now mariadb` is free heat and RAM.
-- Do NOT cap `arm_freq` — measured, does not help (DESIGN §6.4).
+**Free win, not yet taken:** `mariadbd` is enabled and burns 7-11% CPU at idle
+with no user databases on the machine. `systemctl disable --now mariadb`.
 
 **If niri ever fails to come up:** there is no greeter to fall back to. ssh in,
 or Ctrl+Alt+F1..F6, then `bin/90-set-session.sh labwc && sudo systemctl restart lightdm`.
