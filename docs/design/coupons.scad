@@ -10,9 +10,20 @@
 // Print in the SAME filament, nozzle and layer height as the real plate. A
 // coupon printed in another material tells you about that material.
 //
-//   openscad -o usb_size.stl  -D 'PART="usb_size"'  coupons.scad
-//   openscad -o usb_thick.stl -D 'PART="usb_thick"' coupons.scad
-//   openscad -o rail.stl      -D 'PART="rail"'      coupons.scad
+// OpenSCAD on this machine is a FLATPAK, not on PATH. From the repo root:
+//
+//   mkdir -p build/coupons
+//   for p in usb_size usb_thick rail; do
+//     flatpak run --filesystem=host org.openscad.OpenSCAD \
+//       -o "$PWD/build/coupons/$p.stl" -D "PART=\"$p\"" "$PWD/docs/design/coupons.scad"
+//   done
+//
+// Pass ABSOLUTE paths — the flatpak has its own private /tmp and will not see a
+// relative or /tmp output path. build/ is gitignored; STLs are regenerable.
+// Plain `openscad ...` works wherever it is a normal PATH binary.
+//
+// Verified 2026-09-04: all three render manifold (CGAL "Simple: yes"), bboxes
+// 146x50x4.5, 146x50x4.5, 170x75x4.5, each originating at 0,0,0.
 //
 // Then write the winning numbers into CASE.md §3 and cut faceplate.svg to them.
 // This is a measuring tool, not a part.
