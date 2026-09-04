@@ -600,11 +600,21 @@ STILL NEEDED — one measurement, with a tape on the shell:
    capability in this whole section. Sidewall drilling is irreversible on a £110+
    shell, so do it after the deck is working, not before.
 
-5. ⚠️ **USB — measured, and it fits.** Vendor sheet 2026-09-04: flange
-   **25.4 × 28.6 mm** (1" × 1-1/8"), body **28.6 mm** deep behind the plate,
-   cable neck 19.05 mm. Comfortable in either rail width. Two things still open:
-   the **cutout** itself is not dimensioned (the flange overhangs it — calipers
-   across the snap tabs), and the buckle's panel-thickness range is still unstated. What was ordered is a
+5. ⚠️ **USB — the bezel is measured, the cutout is not, and never will be.**
+   Vendor sheet 2026-09-04: bezel **25.4 × 28.6 mm** (1" × 1-1/8"), **28.6 mm** tall
+   overall, cable neck 19.05 mm. Comfortable in either rail width.
+
+   **The bezel is not the cutout and cannot be.** A flush-mount bezel has to overhang
+   the hole to seat against the panel — if the opening were 25.4 × 28.6 the part would
+   drop straight through. The dimension lines on the vendor image land on the bezel's
+   outer corners; below it the body steps in at a shoulder with four snap tabs. Neither
+   the body cross-section nor the thickness those tabs will clamp is published
+   anywhere, and no amount of further searching will surface them.
+
+   **So stop looking and print for it.** `docs/design/coupons.scad` ladders the opening
+   from a 2 mm-per-side inset to 0.5 mm (`usb_size`) and the web thickness across
+   1.5–3.0 mm (`usb_thick`). Two 20-minute prints answer both questions by test fit,
+   which is what §3 asked for in the first place. What was ordered is a
    **dual-port square flush-mount** unit with a buckle — not the 2× snap-in the buy
    list assumed. Two consequences, neither cosmetic:
    - **One square cutout, not two rectangles.** §3's 26.5 × 12.3 no longer applies to
