@@ -306,7 +306,7 @@ matters** — three of these have common traps (below).
 | 1 | SMA bulkhead, F–F | `SMA female to female bulkhead panel mount connector` | **SMA, not RP-SMA.** ⌀6.5 mm hole, ships with nut + washer. Left rail; matches the all-SMA RTL-SDR kit with no adapter. |
 | 1 | SMA jumper | `SMA male to male cable RG316 15cm` | 100–150 mm. RG316/RG178 stays flexible. Bulkhead → dongle inside. |
 | ~~2~~ **1** | USB-A dual, square flush ✅ | `Dual Ports Square USB 3.0 Panel Flush Mount Extension Cable with Buckle` | **ORDERED 2026-09-04.** Supersedes the 2× snap-in row. Both ports in one square housing = **one** cutout. Measure the opening and the buckle's panel-thickness range on arrival (§8 #5). Right rail. |
-| 1 | Powerpole panel inlet | `Powerwerx PanelPole1` | Often easier direct from powerwerx.com or DX Engineering. Fallback: `Anderson Powerpole panel mount bracket`, or print a PP15-45 retainer. |
+| 0 | Powerpole panel inlet | ~~`Powerwerx PanelPole1`~~ | ⚠️ **Do not buy.** PanelPole1 needs a 1-1/8" hole — no smaller than the round socket already ordered, and both are far too big for the rail. **Print a PP15-45 retainer instead** (~16 × 8.3 mm/pair). The ordered socket moves to the case sidewall. §8 #7. |
 | 1 | Master switch ✅ | `16mm latching anti-vandal push button switch 12V 5A` | **ORDERED 2026-09-04, ⌀16 latching 5 A+.** Trap 3 avoided. SVG widened ⌀12 → ⌀16. Left rail, upstream of the module (§5). |
 | 1 | Inline fuse holder | `ATC ATO inline fuse holder 12 AWG waterproof` | On battery **positive**, close to the terminal. |
 | several | Fuses | `ATC blade fuse 5 amp` | **5 A** — sized for the ~2.5 A total draw (§5), not the Pi alone. |
@@ -567,11 +567,38 @@ STILL NEEDED — one measurement, with a tape on the shell:
    diameter**, which the photo shows is visibly larger than the hole. If it is
    ~40 mm, it does not fit a 41 mm rail at all, and barely fits 48.
 
-   Three outs, cheapest first: mount it on the **case sidewall** instead of the
-   faceplate (it is weatherproof and gasketed, it is the one part that can live
-   outside the plate, and shore power then works with the lid shut); move it to the
-   **back channel** wall; or fall back to a printed PP15-45 retainer and keep the
-   round socket as a spare. **Do not cut the plate until this is measured.**
+   **RESOLVED 2026-09-04 — print the retainer, and move the socket outside.**
+
+   There is no smaller commercial panel mount. The buy list's own suggestion, the
+   Powerwerx **PanelPole1, needs a 1-1/8" (28.6 mm) hole** — 1.9 mm less than the
+   socket already bought, and it still carries a flange and a rear nut. The whole
+   PanelPole family is built around that hole. Swapping parts does not fix this.
+
+   What does fix it is not buying anything. A **PP15-45 housing is 24.6 × 8.3 × 7.9 mm**
+   (Anderson datasheet), so a bonded pair presents **~16 × 8.3 mm** to the panel —
+   confirming §7's estimate exactly:
+
+   | Option | Panel face | Area | Plate left @41 mm rail | @48 mm |
+   |---|---|---|---|---|
+   | Round flip-cap (ordered) | ⌀30.5 | 730 mm² | 5.3 mm | 8.8 mm |
+   | Powerwerx PanelPole1 | ⌀28.6 | 641 mm² | 6.2 mm | 9.7 mm |
+   | **Printed PP15-45 retainer** | **16 × 8.3** | **133 mm²** | **12.5 mm** | **16.0 mm** |
+
+   **5.5× less hole**, and it turns the worst cutout on the plate into the smallest.
+   Housings dovetail together and pin with a standard 3/32" roll pin, so the printed
+   part is a pocket with a pin hole and a lip — no fasteners, no purchase, and it
+   re-scales freely if the floor measures short.
+
+   **The weather cap buys nothing here.** The faceplate sits *inside* the base, under
+   the closed lid (§11 Zone C) — the Pelican's own gasket is the IP67 seal. A cap on
+   the faceplate is sealing against weather that already cannot reach it.
+
+   **So keep the socket, and put it where its gasket earns its keep**: through the
+   **case sidewall**, as a second, external inlet. There the 30.5 mm hole is trivial
+   (the wall is 300 mm long, not 41), and it does something the faceplate inlet
+   cannot — **shore power with the lid shut**. That is the one genuinely new
+   capability in this whole section. Sidewall drilling is irreversible on a £110+
+   shell, so do it after the deck is working, not before.
 
 5. ⚠️ **USB — measured, and it fits.** Vendor sheet 2026-09-04: flange
    **25.4 × 28.6 mm** (1" × 1-1/8"), body **28.6 mm** deep behind the plate,

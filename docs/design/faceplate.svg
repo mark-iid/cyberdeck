@@ -53,13 +53,15 @@
   <circle cx="30" cy="45" r="3.25" class="cut"/>
   <text x="30" y="58" text-anchor="middle" class="lbl">SMA†</text>
   <text x="30" y="66" text-anchor="middle" class="sub">⌀6.5</text>
-  <!-- Powerpole IN - round flip-cap panel socket, needs a 1.2" = 30.5 hole.
-       NOT the 18x12 rect this used to show. At cx=30 it reaches x=45.2, leaving
-       only 2.8mm of plate before the module edge - it wants moving to the rail
-       centre, and the FLANGE/CAP diameter is still unmeasured. See CASE.md S8 #7. -->
-  <circle cx="30" cy="86" r="15.24" class="tbd"/>
-  <text x="30" y="109" text-anchor="middle" class="lbl">PP IN</text>
-  <text x="30" y="117" text-anchor="middle" class="amb">⌀30.5 hole</text>
+  <!-- Powerpole IN - PRINTED PP15-45 retainer, resolved 2026-09-04 (CASE.md S8 #7).
+       A bonded pair presents 16 x 8.3. The round flip-cap socket (30.5 hole) does
+       NOT go here - it moves to the case sidewall, where its gasket is worth
+       something and shore power works lid-shut. Dashed ring = that rejected 30.5. -->
+  <circle cx="30" cy="86" r="15.24" class="ref"/>
+  <rect x="22" y="81.85" width="16" height="8.3" class="cut"/>
+  <text x="30" y="105" text-anchor="middle" class="lbl">PP IN</text>
+  <text x="30" y="113" text-anchor="middle" class="sub">16×8.3 printed</text>
+  <text x="30" y="121" text-anchor="middle" class="sub">(⌀30.5 = rejected)</text>
   <!-- master switch ⌀16 — 16mm latching 5A+, ordered 2026-09-04 -->
   <circle cx="30" cy="128" r="8" class="cut"/>
   <!-- hex flange across corners 20.55 - the real rail clearance -->
