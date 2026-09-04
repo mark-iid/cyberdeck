@@ -5,6 +5,8 @@
     .cut{fill:#0a0b10;stroke:#f7768e;stroke-width:1.2}
     .win{fill:#0a0b10;stroke:#9ece6a;stroke-width:1.5}
     .ref{fill:none;stroke:#565f89;stroke-width:0.8;stroke-dasharray:5 4}
+    .tbd{fill:#0a0b10;stroke:#e0af68;stroke-width:1.2;stroke-dasharray:4 3}
+    .amb{fill:#e0af68;font-size:7px}
     .dim{stroke:#c0caf5;stroke-width:0.4}
     .lbl{fill:#c0caf5;font-size:8px}
     .lbl small{font-size:6px}
@@ -51,30 +53,36 @@
   <circle cx="30" cy="45" r="3.25" class="cut"/>
   <text x="30" y="58" text-anchor="middle" class="lbl">SMA†</text>
   <text x="30" y="66" text-anchor="middle" class="sub">⌀6.5</text>
-  <!-- Powerpole IN -->
-  <rect x="21" y="80" width="18" height="12" class="cut"/>
-  <text x="30" y="103" text-anchor="middle" class="lbl">PP IN</text>
-  <text x="30" y="111" text-anchor="middle" class="sub">ext 12V</text>
-  <!-- master switch ⌀12 -->
-  <circle cx="30" cy="128" r="6" class="cut"/>
+  <!-- Powerpole IN - round flip-cap panel socket, needs a 1.2" = 30.5 hole.
+       NOT the 18x12 rect this used to show. At cx=30 it reaches x=45.2, leaving
+       only 2.8mm of plate before the module edge - it wants moving to the rail
+       centre, and the FLANGE/CAP diameter is still unmeasured. See CASE.md S8 #7. -->
+  <circle cx="30" cy="86" r="15.24" class="tbd"/>
+  <text x="30" y="109" text-anchor="middle" class="lbl">PP IN</text>
+  <text x="30" y="117" text-anchor="middle" class="amb">⌀30.5 hole</text>
+  <!-- master switch ⌀16 — 16mm latching 5A+, ordered 2026-09-04 -->
+  <circle cx="30" cy="128" r="8" class="cut"/>
+  <!-- hex flange across corners 20.55 - the real rail clearance -->
+  <circle cx="30" cy="128" r="10.28" class="ref"/>
   <text x="30" y="146" text-anchor="middle" class="lbl">⏻ SW</text>
-  <text x="30" y="154" text-anchor="middle" class="sub">⌀12</text>
+  <text x="30" y="154" text-anchor="middle" class="sub">⌀16</text>
 
   <!-- RIGHT RAIL: USB-A x2 + Ethernet, extended off the Pi's right-edge ports -->
   <text x="277" y="16" text-anchor="middle" class="red">RIGHT RAIL</text>
   <text x="277" y="24" text-anchor="middle" class="sub">data (from Pi)</text>
-  <!-- USB-A #1 -->
-  <rect x="263.75" y="38.85" width="26.5" height="12.3" class="cut"/>
-  <text x="277" y="62" text-anchor="middle" class="lbl">USB-A</text>
-  <text x="277" y="70" text-anchor="middle" class="sub">26.5×12.3</text>
-  <!-- USB-A #2 -->
-  <rect x="263.75" y="83.85" width="26.5" height="12.3" class="cut"/>
-  <text x="277" y="107" text-anchor="middle" class="lbl">USB-A</text>
-  <text x="277" y="115" text-anchor="middle" class="sub">26.5×12.3</text>
-  <!-- Ethernet RJ45 ~ 16 x 13.5 -->
-  <rect x="269" y="128" width="16" height="13.5" class="cut"/>
+  <!-- DUAL USB-A in ONE square flush-mount housing (ordered 2026-09-04).
+       NOT the 2x snap-in the buy list assumed. One cutout, not two.
+       Placeholder ~29 sq - MEASURE THE PART, and see CASE.md S8 #5 on the
+       buckle-vs-plate-thickness trap. Dashed = not a cut file yet. -->
+  <rect x="264.3" y="40" width="25.4" height="28.6" class="tbd"/>
+  <text x="277" y="80" text-anchor="middle" class="lbl">USB-A ×2</text>
+  <text x="277" y="88" text-anchor="middle" class="amb">flange 25.4×28.6</text>
+  <text x="277" y="96" text-anchor="middle" class="amb">cutout TBD</text>
+  <!-- Cat6A keystone, VERIFIED 14.6x16.2 from vendor sheet 2026-09-04.
+       32.6 deep. Goes in a thin printed frame, not the 4-5mm plate. -->
+  <rect x="269.7" y="128" width="14.6" height="16.2" class="cut"/>
   <text x="277" y="154" text-anchor="middle" class="lbl">RJ45</text>
-  <text x="277" y="162" text-anchor="middle" class="sub">16×13.5</text>
+  <text x="277" y="162" text-anchor="middle" class="sub">14.6×16.2 ✓</text>
 
   <!-- ===== Keyboard, drawn to scale, SEPARATE ===== -->
   <g transform="translate(0,300)">

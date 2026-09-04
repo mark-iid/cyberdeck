@@ -72,10 +72,22 @@ vary by printer, and RF connectors especially want a snug hole.
 |---|---|---|---|
 | **SMA** bulkhead | antenna feed (RECOMMENDED) | **6.5 mm** round (±0.1) | Matches the all-SMA RTL-SDR kit with no adapter. Panel jack stays mated (coax to a stand), so the mating-cycle limit is moot. Add a flat/notch for anti-rotation. |
 | **BNC** bulkhead | antenna feed (alt) | **~14 mm** round, keyed | Only if quick-swap at the panel matters; needs an SMA→BNC adapter for this kit. |
-| **USB-A** snap-in | data / peripherals | **26.5 × 12.3 mm** rectangular | Adafruit/McMaster snap-in panel-mount cable. Two of these. |
+| **USB-A ×2, dual square** | data / peripherals | **ONE square cutout, ~29 mm — MEASURE IT** | Ordered 2026-09-04: a *dual-port square flush-mount* extension with buckle, **not** two snap-ins. One housing, one hole. See §8 #5 — the buckle sets a max plate thickness. |
 | **DC barrel 2.1 mm** | 12 V in / charge | **~8 mm** round (0.31") | Panel jack, up to 8 mm panel thickness. |
-| **Anderson Powerpole** | external 12 V IN | Powerwerx PanelPole1/2, or a printed PP15-45 retainer (~16×8 mm/pair) | The external-power inlet. Internal battery also on Powerpole. See §5 on coexistence. |
-| **Rocker/toggle switch** | master power | **~12 mm** round or 13×19 mm rocker | Between battery and the buck converter. |
+| **Cat6A keystone coupler** | panel Ethernet | **14.6 × 16.2 mm** keystone opening (vendor sheet, 2026-09-04) | Confirms the 14.7 × 16.2 estimate to 0.1 mm. Body **32.6 mm** deep behind the plate. It is a **coupler** — needs a short Cat6 patch cable inside, Pi → back of jack. Goes in a printed keystone frame, not straight into the plate (see the thin-panel note below §3). |
+| **Anderson Powerpole** | external 12 V IN | **⌀30.5 mm round** (1.2", vendor sheet 2026-09-04) | ⚠️ Round flip-cap weatherproof socket, **not** the flat PanelPole1 the buy list assumed and **not** a rectangle. Biggest cutout on the plate. Flange + cap diameter still unmeasured — see §8 #7, this is the one that may not fit the rail. |
+| **16 mm anti-vandal button** | master power | **⌀16.0 mm** round (vendor sheet, 2026-09-04) | Latching, 5 A+. Hex flange **17.8 across flats = 20.6 across corners** — that, not 16, is the clearance the rail must give. Body **32 mm** deep behind the plate. Screw terminals on **8.3 mm** pitch. Between battery and the module — **there is no buck converter** (§5). |
+
+**The thin-panel problem, and the one fix for all of it.** Two of the ordered parts
+retain themselves by snapping to the panel — the USB unit's buckle and the keystone's
+latch. Both are designed for **sheet metal or ~2–3 mm wall plate**. A printed faceplate
+stiff enough to carry an 8" module wants **4–5 mm**. Neither will click home in that.
+
+Do not thin the whole plate. **Print thin carrier inserts** — a keystone frame, a USB
+bezel — each at the thickness its part expects, dropped into a larger rebated opening
+in the thick plate and held with M3s from behind. One pattern, both parts, and it makes
+either connector replaceable later without recutting the plate. §7 already called for
+this for the keystone; it now applies to the USB too.
 
 **One RF connector, and make it SMA.** The operator's RTL-SDR is a Blog-V3-class
 kit — dongle, coax, and telescopic dipole all SMA. So an **SMA bulkhead on the
@@ -293,14 +305,14 @@ matters** — three of these have common traps (below).
 |---|---|---|---|
 | 1 | SMA bulkhead, F–F | `SMA female to female bulkhead panel mount connector` | **SMA, not RP-SMA.** ⌀6.5 mm hole, ships with nut + washer. Left rail; matches the all-SMA RTL-SDR kit with no adapter. |
 | 1 | SMA jumper | `SMA male to male cable RG316 15cm` | 100–150 mm. RG316/RG178 stays flexible. Bulkhead → dongle inside. |
-| 2 | USB-A panel mount | `USB 3.0 A female panel mount extension cable snap-in` | **Style sets the cutout** — snap-in is 26.5 × 12.3 mm. Get USB 3.0 to match the Pi's blue ports. Right rail. |
+| ~~2~~ **1** | USB-A dual, square flush ✅ | `Dual Ports Square USB 3.0 Panel Flush Mount Extension Cable with Buckle` | **ORDERED 2026-09-04.** Supersedes the 2× snap-in row. Both ports in one square housing = **one** cutout. Measure the opening and the buckle's panel-thickness range on arrival (§8 #5). Right rail. |
 | 1 | Powerpole panel inlet | `Powerwerx PanelPole1` | Often easier direct from powerwerx.com or DX Engineering. Fallback: `Anderson Powerpole panel mount bracket`, or print a PP15-45 retainer. |
-| 1 | Master switch | `16mm latching anti-vandal push button switch 12V 5A` | **Rated ≥ 5 A @ 12 VDC** and **latching, not momentary.** Left rail, upstream of the module (§5). |
+| 1 | Master switch ✅ | `16mm latching anti-vandal push button switch 12V 5A` | **ORDERED 2026-09-04, ⌀16 latching 5 A+.** Trap 3 avoided. SVG widened ⌀12 → ⌀16. Left rail, upstream of the module (§5). |
 | 1 | Inline fuse holder | `ATC ATO inline fuse holder 12 AWG waterproof` | On battery **positive**, close to the terminal. |
 | several | Fuses | `ATC blade fuse 5 amp` | **5 A** — sized for the ~2.5 A total draw (§5), not the Pi alone. |
 | — | Wire | `14 AWG silicone wire red black` | Silicone stays flexible in tight bends; PVC goes stiff. |
 | — | Powerpole contacts + housings | `Anderson Powerpole 30 amp contacts housings kit` | **30 A contacts for 14 AWG** (45 A contacts are for 12 AWG). Keep the bus uniform. |
-| *opt* | RJ45 | `Cat6 keystone jack coupler` | Only if panel Ethernet is wanted — see below. |
+| 1 | RJ45 keystone ✅ | `Cat6 keystone jack coupler` | **ORDERED 2026-09-04 — no longer optional.** Right rail gets a third cutout, 14.7 × 16.2 portrait, in a printed keystone frame. |
 
 **The three traps**
 
@@ -524,15 +536,64 @@ STILL NEEDED — one measurement, with a tape on the shell:
    *Depth resolved from spec (§11): lid 30 mm, base 102 mm — keyboard stows in the
    lid, battery clears the base with ~7 mm. No measurement needed.*
 
-Two **purchase decisions** also gate the cut file — they set cutout geometry, so the
-plate cannot be finalised until the parts are chosen (§7 traps 2 and 3):
+**All connectors ordered 2026-09-04.** That closes #6 and reshapes #5.
 
-5. **USB panel-mount style** — snap-in (26.5 × 12.3 mm rectangular) or D-type
-   (~24 mm round). Completely different cutouts.
-6. **Master switch diameter** — ⌀12 as currently drawn, or ⌀16 if the 5 A+ rating
-   forces the larger body (it usually does).
+6. ✅ **Master switch = ⌀16**, latching, 5 A+. Trap 3 avoided. SVG widened.
+   Vendor dimension sheet read 2026-09-04 — ⌀16.0 mounting hole confirmed, plus three
+   numbers the doc did not have:
+   - **Hex flange 17.8 mm across flats → 20.6 across corners.** The rail must clear
+     20.6, not 16. Fine either way: ~10 mm spare per side at a 41 mm rail, ~14 at 48.
+   - **32 mm body length.** Protrudes behind the plate; harmless in the rail (full
+     base depth beside the module) but it rules out mounting the switch anywhere
+     over Zone B's ~45 mm once wire bend radius is added.
+   - **Screw terminals on 8.3 mm pitch.** ⚠️ The buy list specifies **14 AWG** for the
+     bus. 14 AWG silicone into a terminal that small is a fight — plan on ring or
+     spade lugs crimped on, or a short 16 AWG pigtail up to the first Powerpole.
+     Do not just jam bare strands under the screw.
+   ✅ **RJ45 keystone is in** — right rail carries three cutouts, not two.
 
-With those two and the floor width, `docs/design/faceplate.svg` becomes a cut file.
+7. ⚠️ **NEW — the Powerpole inlet may not fit the left rail.** The socket ordered is
+   a round flip-cap type needing a **⌀30.5 mm** hole. Against the rail budget:
+
+   | Part | Footprint | Plate left each side @ 48 mm rail | @ 41 mm rail |
+   |---|---|---|---|
+   | Switch flange | 20.6 | 13.7 mm | 10.2 mm |
+   | USB flange | 25.4 | 11.3 mm | 7.8 mm |
+   | **Powerpole hole** | **30.5** | **8.8 mm** | **5.3 mm** |
+
+   The *hole* fits even in the pessimistic 41 mm rail, with 5.3 mm of plate each
+   side — thin for a 4–5 mm printed part carrying a latching switch's push force
+   nearby, but survivable. **The unmeasured number is the flange and flip-cap
+   diameter**, which the photo shows is visibly larger than the hole. If it is
+   ~40 mm, it does not fit a 41 mm rail at all, and barely fits 48.
+
+   Three outs, cheapest first: mount it on the **case sidewall** instead of the
+   faceplate (it is weatherproof and gasketed, it is the one part that can live
+   outside the plate, and shore power then works with the lid shut); move it to the
+   **back channel** wall; or fall back to a printed PP15-45 retainer and keep the
+   round socket as a spare. **Do not cut the plate until this is measured.**
+
+5. ⚠️ **USB — measured, and it fits.** Vendor sheet 2026-09-04: flange
+   **25.4 × 28.6 mm** (1" × 1-1/8"), body **28.6 mm** deep behind the plate,
+   cable neck 19.05 mm. Comfortable in either rail width. Two things still open:
+   the **cutout** itself is not dimensioned (the flange overhangs it — calipers
+   across the snap tabs), and the buckle's panel-thickness range is still unstated. What was ordered is a
+   **dual-port square flush-mount** unit with a buckle — not the 2× snap-in the buy
+   list assumed. Two consequences, neither cosmetic:
+   - **One square cutout, not two rectangles.** §3's 26.5 × 12.3 no longer applies to
+     anything on this plate. The SVG carries a dashed ~29 mm placeholder; it is not a
+     cut dimension. Calipers on the housing when it lands.
+   - **The buckle sets a maximum plate thickness.** These snap-latch automotive parts
+     are designed for sheet metal or dash plastic, typically **~1–3 mm**. A printed
+     faceplate stiff enough to carry an 8" module wants **4–5 mm**. If the buckle
+     will not close, the fix is a **local recess** — thin the plate to the buckle's
+     range in a pocket around the opening, keeping full thickness everywhere else.
+     Design the recess in from the start; it is painful to retrofit.
+
+So the plate is gated on **three measurements, all taken with parts in hand**: the
+1400's floor width (#4), the USB cutout + buckle thickness range (#5), and the
+Powerpole flange/cap diameter (#7). None needs a decision — only calipers. #7 is the
+one that can force a layout change rather than just a number.
 
 Once those four exist, the connector table in §3, the layout in §4, and the SVG
 in docs/design/faceplate.svg become a parametric plate.
