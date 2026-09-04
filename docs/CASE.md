@@ -632,5 +632,33 @@ So the plate is gated on **three measurements, all taken with parts in hand**: t
 Powerpole flange/cap diameter (#7). None needs a decision — only calipers. #7 is the
 one that can force a layout change rather than just a number.
 
-Once those four exist, the connector table in §3, the layout in §4, and the SVG
+Once those three exist, the connector table in §3, the layout in §4, and the SVG
 in docs/design/faceplate.svg become a parametric plate.
+
+### Coupons printed 2026-09-04 — the desk work is done
+
+All three (`usb_size`, `usb_thick`, `rail`) are off the printer, in the faceplate's
+own filament, nozzle and layer height. Nothing else can be resolved by reading a
+vendor sheet: every number still open is a test fit or a tape measure, and both are
+waiting on delivery. The Powerpole retainer (#7) is printed too, and is likewise
+unverifiable until a PP15-45 housing can be pushed into its pocket.
+
+INTAKE — the day the boxes land, in this order:
+
+| # | Part | Tool | Number it closes |
+|---|---|---|---|
+| 4 | Pelican 1400 | tape, across the flat floor | usable floor WIDTH → rail width |
+| 5 | USB unit | `usb_size` coupon | which opening clicks home |
+| 5 | USB unit | `usb_thick` coupon | web thickness the tabs clamp |
+| 5 | USB unit | calipers on the buckle | max plate thickness → recess, or none |
+| 6 | switch, SMA | `rail` coupon | ⌀16 and ⌀6.5 as *this* printer cuts them |
+| 6 | RJ45 keystone | `rail` coupon | keystone opening |
+| 7 | PP15-45 housings | printed retainer + `rail` coupon | pocket fit; retires the ⌀30.5 socket to the sidewall |
+| 7 | Powerpole socket | calipers on flange + flip-cap | sidewall hole only — no longer gates the plate |
+
+Take #4 first: it sets the rail width every other number is judged against. A
+coupon that fits at 48 mm of rail and not at 41 tells you nothing until the floor
+is measured. Then write the winners into §3 and cut faceplate.svg to them.
+
+Do **not** drill the shell sidewall for the external Powerpole inlet on intake day —
+that stays last, after the deck is working (§8 #7).
