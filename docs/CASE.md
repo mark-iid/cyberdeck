@@ -201,9 +201,25 @@ Anything resting on the floor is bounded by the flat **270 × 200** inside the f
 not by 305 × 230.
 
 **Above the plate: 25 mm** (75 mm shelf in a 100 mm base). The Perixx is 23 mm thick,
-so the keyboard may stow in the *base* recess rather than the lid — which would free
-the lid entirely and change §11's zoning. What decides it is how far the switch and
-USB protrude above the plate, so do not commit until those are test-fitted (§8 intake).
+so **the keyboard stows in the base recess, lying on the plate** — the lid is freed.
+Measured protrusions, parts seated in their winning coupon holes (2026-09-04):
+
+| Part | Stands proud | Under a 23 mm keyboard in a 25 mm recess |
+|---|---|---|
+| Switch | **1.5 mm** | fits |
+| USB | **2.0 mm** | exactly at the limit — touching, zero clearance |
+| SMA | **9.7 mm** | 5× over |
+
+**The keyboard's footprint is a 2 mm keep-out zone**, and that is the whole budget:
+75 + 23 = 98 against a 100 mm base. Centred, a 230 × 160 keyboard on a 304 × 229 plate
+covers x ∈ [37, 267] and leaves the outer **37 mm of each rail uncovered** — so the
+rail connectors are clear provided they sit outboard, which a 50 mm rail gives them
+room to do. **The SMA must be kept out of the footprint deliberately**, not by luck:
+outboard on the left rail, or back with the SDR and coax in the back channel where its
+jumper wants to run anyway.
+
+Stowing in the base beats the lid on retention too — a keyboard lying on a plate under
+a closed lid cannot fall out when the case is opened, which a lid-mounted one can.
 
 ## §5 — Power & cooling (mostly solved by the module)
 
@@ -432,7 +448,7 @@ matters** — three of these have common traps (below).
 | 1 | SMA bulkhead, F–F | `SMA female to female bulkhead panel mount connector` | **SMA, not RP-SMA.** ⌀6.5 mm hole, ships with nut + washer. Left rail; matches the all-SMA RTL-SDR kit with no adapter. |
 | 1 | SMA jumper | `SMA male to male cable RG316 15cm` | 100–150 mm. RG316/RG178 stays flexible. Bulkhead → dongle inside. |
 | ~~2~~ **1** | USB-A dual, square flush ✅ | `Dual Ports Square USB 3.0 Panel Flush Mount Extension Cable with Buckle` | **ORDERED 2026-09-04.** Supersedes the 2× snap-in row. Both ports in one square housing = **one** cutout. Measure the opening and the buckle's panel-thickness range on arrival (§8 #5). Right rail. |
-| 0 | Powerpole panel inlet | ~~`Powerwerx PanelPole1`~~ | ⚠️ **Do not buy.** PanelPole1 needs a 1-1/8" hole — no smaller than the round socket already ordered, and both are far too big for the rail. **Print a PP15-45 retainer instead** (~16 × 8.3 mm/pair). The ordered socket moves to the case sidewall. §8 #7. |
+| 0 | Powerpole panel inlet | ~~`Powerwerx PanelPole1`~~ · round socket now **surplus** | ⚠️ **Do not buy.** PanelPole1 needs a 1-1/8" hole — no smaller than the round socket already ordered, and both are far too big for the rail. **Print a PP15-45 retainer instead** (~16 × 8.3 mm/pair). The ordered socket moves to the case sidewall. §8 #7. |
 | 1 | Master switch ✅ | `16mm latching anti-vandal push button switch 12V 5A` | **ORDERED 2026-09-04, ⌀16 latching 5 A+.** Trap 3 avoided. SVG widened ⌀12 → ⌀16. Left rail, upstream of the module (§5). |
 | 1 | Inline fuse holder | `ATC ATO inline fuse holder 12 AWG waterproof` | On battery **positive**, close to the terminal. |
 | several | Fuses | `ATC blade fuse 5 amp` | **5 A** — sized for the ~2.5 A total draw (§5), not the Pi alone. |
@@ -585,10 +601,11 @@ re-cuts every number in this section:
   orientation assumed above, which no longer clears the underside of the plate. At
   70 mm it has 5 mm of headroom. Terminals point sideways in this orientation, so the
   cradle's clear pocket moves from above the posts to beside them.
-- **Above the plate there is now 25 mm of recess**, which is new space this section
-  never had. A 23 mm keyboard fits it, so Zone C may move from the lid to the base —
-  see §4. Undecided until the connectors are test-fitted, because a protruding switch
-  body is what would rule it out.
+- **Above the plate there is now 25 mm of recess**, and the keyboard takes it. Test
+  fits give switch 1.5 mm proud and USB 2.0 against a 2 mm budget, so the switch was
+  never the threat — **the SMA is, at 9.7 mm**, and it gets placed outside the
+  keyboard's footprint (§4). **Zone C moves from the lid to the base**, and the lid
+  becomes free storage for the SDR kit, coax and antenna.
 
 ### Zones
 
@@ -702,6 +719,8 @@ DONE:
    ~40 mm, it does not fit a 41 mm rail at all, and barely fits 48.
 
    **RESOLVED 2026-09-04 — print the retainer, and move the socket outside.**
+   *(Resolved as a direction. The retainer is **not yet modelled** — see the intake
+   note at the end of this section for what has to be measured before it can be.)*
 
    There is no smaller commercial panel mount. The buy list's own suggestion, the
    Powerwerx **PanelPole1, needs a 1-1/8" (28.6 mm) hole** — 1.9 mm less than the
@@ -813,8 +832,66 @@ settled.
 All three (`usb_size`, `usb_thick`, `rail`) are off the printer, in the faceplate's
 own filament, nozzle and layer height. Nothing else can be resolved by reading a
 vendor sheet: every number still open is a test fit or a tape measure, and both are
-waiting on delivery. The Powerpole retainer (#7) is printed too, and is likewise
-unverifiable until a PP15-45 housing can be pushed into its pocket.
+waiting on delivery.
+
+**SUPERSEDED 2026-09-04 — the sidewall inlet is dropped, and nothing is drilled.**
+The operator's call, and the right one. What the sidewall socket bought was shore power
+with the lid shut; the deck only runs with the lid *open*, so that reduces to charging
+in transit or storage. Against that: the one penetration of a shell §1 says is never
+cut, on a case whose lifetime warranty and IP67 both currently survive this build.
+
+- **Design: charge with the lid open**, through the faceplate's Powerpole inlet. No
+  parts, no risk, and the loss is confined to charging while stowed.
+- **Escape hatch: a flat pass-through laid across the gasket** while charging, removed
+  after. Unsealed in use, but the operator is present in use. Fully reversible.
+- **Rejected: replacing the pressure-equalisation valve.** The screw-in manual purge
+  valve is a *Storm*-series part; the 1400 is a Protector with a press-fit valve, and
+  the hole is too small for a bonded pair regardless. It would also trade away the
+  anti-vacuum-lock function to gain nothing.
+
+Two consequences. **The round ⌀30.5 socket is now surplus** — it has no role left on
+the deck. And the faceplate's printed retainer becomes the **only** power entry, so the
+PP15-45 housings stop blocking one feature and start blocking power entirely.
+
+The measurements below are kept because they are what closed the question, not because
+anything still needs them.
+
+**Socket measured 2026-09-04: threaded barrel ⌀28.7, flange ⌀35.** The vendor's
+⌀30.5 hole is confirmed sane — 1.8 mm of clearance on the barrel, with the flange
+overhanging 2.25 mm per side. **Sidewall hole: 29–30.5.** Tighter is better for
+concentricity but 30.5 is the published number and lands on common bit sizes. The
+flip-cap was not measured and is larger than the flange; it only has to clear outside
+the shell, where nothing constrains it. This remains the one irreversible cut in the
+build (§1), so it stays last regardless.
+
+**The 35 mm flange settles the faceplate question, on a new argument.** §8 #7 rejected
+the socket on hole-vs-rail; at 50 mm rails that objection had weakened to 9.75 mm of
+plate each side. What kills it now is the *keep-out zone*: the keyboard covers all but
+the outer 37 mm of each rail (§4), and a 35 mm flange consumes essentially that whole
+strip — while competing for it with the SMA, which at 9.7 mm proud has nowhere else to
+go either. The printed retainer's 16 × 8.3 takes none of it.
+
+**So the retainer route stands, and the housings become a blocking buy.** Nothing is
+wasted either way: the internal bus is Powerpole and the sidewall inlet will want
+contacts too.
+
+**Intake 2026-09-04 — the housings did not arrive.** Only the round ⌀30.5 socket did.
+The buy list carries "Powerpole contacts + housings" on the assumption a Powerpole user
+already has them in the shack; that assumption is wrong here, so **PP15-45 housings,
+30 A contacts and 3/32" roll pins are an outstanding buy**, and the faceplate's power
+inlet is blocked on them — the one item on the plate that is.
+
+This also reopens the round socket as a fallback rather than a reject. §8 #7 rejected
+it against a 41–48 mm rail; the rails measured **50 mm**, so a ⌀30.5 hole now leaves
+**9.75 mm of plate each side** rather than 5.3. That is no longer obviously unusable.
+The flange and flip-cap diameter — never measured, and the reason #7 stayed open — is
+what decides it, and the socket is in hand, so it can be settled now.
+
+**The Powerpole retainer is a decision, not a part.** §8 #7 resolved *that* it should
+be printed; nothing was ever modelled or printed, and an earlier revision of this
+section wrongly said otherwise. It cannot be drawn responsibly yet either — the pocket
+size comes from the `rail` coupon's PP ladder and the roll-pin position has to be
+measured off a housing in hand. Both are intake tasks, and neither has been done.
 
 INTAKE — the day the boxes land, in this order:
 
@@ -826,7 +903,7 @@ INTAKE — the day the boxes land, in this order:
 | 5 | USB unit | calipers on the buckle | *optional now* — the web ladder answered it empirically |
 | 6 | ✅ switch, SMA | `rail` | *done* — **16.2** and **6.7** (+0.2 offset) |
 | 8 | RJ45 keystone | `keystone` coupon | ⚠️ enters 14.9, will not latch — web ladder |
-| 7 | PP15-45 housings | printed retainer + `rail` coupon | pocket fit; retires the ⌀30.5 socket to the sidewall |
+| 7 | ⛔ PP15-45 housings | *not in hand 2026-09-04* | blocked — only the round socket arrived; housings/contacts/pins must be bought |
 | 7 | Powerpole socket | calipers on flange + flip-cap | sidewall hole only — no longer gates the plate |
 
 #4 is done, and it set the rail width the coupon results are judged against — 50 mm,
