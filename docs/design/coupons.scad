@@ -13,7 +13,7 @@
 // OpenSCAD on this machine is a FLATPAK, not on PATH. From the repo root:
 //
 //   mkdir -p build/coupons
-//   for p in usb_size usb_thick rail; do
+//   for p in usb_size usb_thick rail keystone; do
 //     flatpak run --filesystem=host org.openscad.OpenSCAD \
 //       -o "$PWD/build/coupons/$p.stl" -D "PART=\"$p\"" "$PWD/docs/design/coupons.scad"
 //   done
@@ -22,8 +22,8 @@
 // relative or /tmp output path. build/ is gitignored; STLs are regenerable.
 // Plain `openscad ...` works wherever it is a normal PATH binary.
 //
-// Verified 2026-09-04: all three render manifold (CGAL "Simple: yes"), bboxes
-// 146x50x4.5, 146x50x4.5, 170x75x4.5, each originating at 0,0,0.
+// Verified 2026-09-04: all four render manifold (CGAL "Simple: yes"), bboxes
+// 146x50x4.5, 146x50x4.5, 170x75x4.5, 140x78x4.5, each originating at 0,0,0.
 //
 // Then write the winning numbers into CASE.md §3 and cut faceplate.svg to them.
 // This is a measuring tool, not a part.
@@ -115,7 +115,39 @@ module rail() {
     }
 }
 
+// ---------------------------------------------------------------------------
+// Keystone — SECOND PASS, 2026-09-04. The rail coupon's ladder missed, and not
+// in the axis it laddered: the VCE coupler ENTERS the 14.9 opening but will not
+// LATCH. Width was never the problem. A keystone hooks a fixed lip over the
+// front of the panel and snaps a sprung tab over the back, so the variable is
+// the web that tab must close over — fixed at 2.0 on the rail coupon and never
+// tested. Same miss as the USB, where usb_thick was the coupon that answered it.
+//
+// Grid: web thickness across (labelled), opening length down. Width is held at
+// the 14.9 known to admit the part.
+// ---------------------------------------------------------------------------
+KEY2_W = 14.9;
+KEY2_T = [1.0, 1.4, 1.8, 2.2, 2.6];   // web the latch closes over
+KEY2_L = [16.2, 16.8];                // 16.2 = rail coupon's value; 16.8 gives
+                                      // the hook room to swing if that is it
+
+module keystone() {
+    px = 26; py = 32; n = len(KEY2_T); m = len(KEY2_L);
+    difference() {
+        cube([px*n + 10, py*m + 14, PLATE_T]);
+        for (j = [0:m-1]) for (i = [0:n-1]) {
+            cx = 18 + px*i;
+            cy = 20 + py*j;
+            snap_hole(cx, cy, KEY2_W, KEY2_L[j], KEY2_T[i]);
+            translate([cx, cy - KEY2_L[j]/2 - 5.5, 0]) lbl(str(KEY2_T[i]), 2.8);
+        }
+        translate([px*n/2 + 5, py*m + 10, 0]) lbl("KEYSTONE 14.9 — web across, L down", 3.2);
+    }
+}
+
 if      (PART == "usb_size")  usb_size();
 else if (PART == "usb_thick") usb_thick();
 else if (PART == "rail")      rail();
-else { usb_size(); translate([0,55,0]) usb_thick(); translate([0,110,0]) rail(); }
+else if (PART == "keystone")  keystone();
+else { usb_size(); translate([0,55,0]) usb_thick(); translate([0,110,0]) rail();
+       translate([0,195,0]) keystone(); }

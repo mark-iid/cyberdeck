@@ -70,13 +70,19 @@ vary by printer, and RF connectors especially want a snug hole.
 
 | Connector | Purpose | Cutout | Notes |
 |---|---|---|---|
-| **SMA** bulkhead | antenna feed (RECOMMENDED) | **6.5 mm** round (±0.1) | Matches the all-SMA RTL-SDR kit with no adapter. Panel jack stays mated (coax to a stand), so the mating-cycle limit is moot. Add a flat/notch for anti-rotation. |
+| **SMA** bulkhead | antenna feed (RECOMMENDED) | **⌀6.7 as printed** (6.5 nominal + 0.2) | Matches the all-SMA RTL-SDR kit with no adapter. Panel jack stays mated (coax to a stand), so the mating-cycle limit is moot. Add a flat/notch for anti-rotation. |
 | **BNC** bulkhead | antenna feed (alt) | **~14 mm** round, keyed | Only if quick-swap at the panel matters; needs an SMA→BNC adapter for this kit. |
-| **USB-A ×2, dual square** | data / peripherals | **ONE square cutout, ~29 mm — MEASURE IT** | Ordered 2026-09-04: a *dual-port square flush-mount* extension with buckle, **not** two snap-ins. One housing, one hole. See §8 #5 — the buckle sets a max plate thickness. |
+| **USB-A ×2, dual square** | data / peripherals | **21.5 × 24.5 mm**, local web **2.0 mm** | **Test-fitted 2026-09-04**, not from a vendor sheet — the sheet never had it. One housing, one hole. Bezel 25.4 × 28.6 overhangs ~2 mm per side. The 2.0 mm web is a rebate in the 4.5 mm tile, not a thinner tile. |
 | **DC barrel 2.1 mm** | 12 V in / charge | **~8 mm** round (0.31") | Panel jack, up to 8 mm panel thickness. |
-| **Cat6A keystone coupler** | panel Ethernet | **14.6 × 16.2 mm** keystone opening (vendor sheet, 2026-09-04) | Confirms the 14.7 × 16.2 estimate to 0.1 mm. Body **32.6 mm** deep behind the plate. It is a **coupler** — needs a short Cat6 patch cable inside, Pi → back of jack. Goes in a printed keystone frame, not straight into the plate (see the thin-panel note below §3). |
+| **Cat6A keystone coupler** | panel Ethernet | ⚠️ **UNRESOLVED — enters 14.9 × 16.2, will not latch** (test fit 2026-09-04, §8 #8) | Confirms the 14.7 × 16.2 estimate to 0.1 mm. Body **32.6 mm** deep behind the plate. It is a **coupler** — needs a short Cat6 patch cable inside, Pi → back of jack. Goes in a printed keystone frame, not straight into the plate (see the thin-panel note below §3). |
 | **Anderson Powerpole** | external 12 V IN | **⌀30.5 mm round** (1.2", vendor sheet 2026-09-04) | ⚠️ Round flip-cap weatherproof socket, **not** the flat PanelPole1 the buy list assumed and **not** a rectangle. Biggest cutout on the plate. Flange + cap diameter still unmeasured — see §8 #7, this is the one that may not fit the rail. |
-| **16 mm anti-vandal button** | master power | **⌀16.0 mm** round (vendor sheet, 2026-09-04) | Latching, 5 A+. Hex flange **17.8 across flats = 20.6 across corners** — that, not 16, is the clearance the rail must give. Body **32 mm** deep behind the plate. Screw terminals on **8.3 mm** pitch. Between battery and the module — **there is no buck converter** (§5). |
+| **16 mm anti-vandal button** | master power | **⌀16.2 as printed** (16.0 nominal + 0.2) | Latching, 5 A+. Hex flange **17.8 across flats = 20.6 across corners** — that, not 16, is the clearance the rail must give. Body **32 mm** deep behind the plate. Screw terminals on **8.3 mm** pitch. Between battery and the module — **there is no buck converter** (§5). |
+
+**This printer runs holes 0.2 mm undersize.** Two independent ladders on the `rail`
+coupon landed on the same offset — SMA wanted 6.7 for a 6.5 part, the switch wanted
+16.2 for a 16.0 one. That is systematic shrinkage, so **every round hole on the plate
+gets nominal + 0.2** rather than its own experiment. The USB result is consistent with
+it too: 21.5 × 24.5 retains a part whose snap shoulder is nominally a touch larger.
 
 **The thin-panel problem, and the one fix for all of it.** Two of the ordered parts
 retain themselves by snapping to the panel — the USB unit's buckle and the keystone's
@@ -101,18 +107,19 @@ this kit it just adds a part.)
 
 ## §4 — Suggested faceplate layout
 
-Sized for a 1400-class plate: **300 × 225 interior, ~290 × 215 usable** after the
-gasket lip and corner radii.
+Sized to the **measured** interior (§6): **305 × 230**, vertical walls, plate riding
+the moulded rib shelf at **75 mm**. Usable plate is **304 × 229** — in six or more
+printed pieces, for reasons below.
 
 ```
- BACK ────────────────────── 300 mm ──────────────────────
+ BACK ────────────────────── 305 mm ──────────────────────
  ┌──────────────────────────────────────────────────────┐
  │  ▒▒▒ BATTERY on side ▒▒▒  │  SDR · coax · antenna     │  back channel
  │  ~118 × 90, terms inboard │  cylinder                 │  ~88 mm deep
  ├───────┬──────────────────────────────────────┬───────┤
  │ LEFT  │                                      │ RIGHT │
  │ RAIL  │        8" TOUCHSCREEN                │ RAIL  │
- │ 48 mm │          173 × 118                   │ 48 mm │
+ │ 50 mm │          173 × 118                   │ 50 mm │
  │ [SMA] │        (1280 × 800)                  │[USB-A]│
  │ [PP]  │   module 203 × 136.5 hangs below     │[USB-A]│
  │ [⏻SW] │                                      │[RJ45] │
@@ -121,9 +128,11 @@ gasket lip and corner radii.
           keyboard lifts out, sets on the surface in front
 ```
 
-**Width budget is exact: 203 (module) + 2 × 48 (rails) = 299 of 300.** This is the
-binding dimension — if the measured floor comes in under ~285 mm the rails thin or
-the SMA moves to a corner (§8).
+**Width budget: 203 (module) + 2 × 50 (rails) = 303 of 304.** This stopped being the
+binding dimension the moment the shell was measured — it came in 5 mm *wider* than
+catalog, so the rails gained 2 mm each over the drawn 48 and the "SMA moves to a
+corner" contingency in §8 #4 is dead. Depth is comfortable too: 136.5 module + ~90 mm
+back channel against 229.
 
 **The module's own I/O sets which side is which** — power/AV exit its LEFT edge,
 USB/Ethernet its RIGHT — so the plate mirrors it: power + antenna left, data right,
@@ -139,6 +148,62 @@ ergonomics anyway: a mini keyboard with a touchpad wants to be positioned.
 \* The module's 12 V barrel already carries the Powerpole pigtail (see DONE
 list); the panel Powerpole IN parallels it. Faceplate USB-A jacks are panel-mount
 extensions off the Pi's right-edge ports.
+
+### Construction — a frame on the rib shelf, tiles in the frame
+
+**2 mm of ledge is enough, but only because the plate is trapped.** The rib inner
+edges sit at 2 and 303, so the shelf opening is 301. A plate of width P has 305 − P
+of lateral freedom, so if it slides fully to one side the thin side retains exactly
+**P − 303 mm** of bearing:
+
+| Plate width | Guaranteed bearing per side | Verdict |
+|---|---|---|
+| 303 | 0 | can lose the shelf entirely — no |
+| **304** | **1.0 mm** | drop-in, 1 mm total clearance |
+| 304.5 | 1.5 mm | sand to fit |
+
+Load was never the concern — 1 mm across twelve ribs carries a 2 kg module and plate
+without noticing. The concern was the plate walking off its shelf in transport, and it
+cannot: escaping needs 2 mm of sideways travel and the wall stops it at 1.
+
+The taper cuts the same way. Interior at the shelf is 305.0, and it *narrows* going
+down (0.09 mm per mm), so a 304 frame drops in freely from a 307 rim and is stopped by
+the ribs, not wedged by the wall. 304.5 would give 1.5 mm of bearing and a light wedge
+right at the seat — the better number if the print comes off the bed accurate enough to
+risk it, since anything oversize simply sits proud of 75 mm rather than not fitting.
+
+**Corner radius is ~18 mm**, so the frame's corners are arcs and each side wall offers
+**~193 mm of straight run** for connectors. **Rib centres are at 0 and ±74.5 mm** on
+every wall (Pelican CAD, §6) — the long sides' lap joints go there.
+
+**Nothing here prints in one piece.** The Ender 3 is 220 × 220 × 250, ~215 × 215 once
+the nozzle's corner reach is allowed for. 304 × 229 is not close, and a full-length
+frame rail does not fit diagonally either — a 215 mm square tops out near 304 mm of
+combined length + width. A 304 mm plate at 4.5 mm would warp off that bed regardless.
+
+So the plate is two kinds of part:
+
+- **Frame** — outer 304 × 229, section ~12 mm wide, resting on all twelve rib tops.
+  Six members: each long side split in two, each short side whole, lap-jointed with
+  M3s. Being continuous it does not care where the ribs fall along a wall — but the
+  **joints must land over a rib**, never mid-span.
+- **Tiles** — screen bezel, left rail, right rail, back-channel fillers — dropped into
+  the frame's inner flange. The flange turns a 2 mm ledge into a 10–12 mm one, so no
+  tile inherits the tolerance problem the frame solves once.
+
+The split delivers what §3 asked for independently: the USB and keystone carriers
+wanted to be separate thin parts anyway, and now every connector sits on a piece small
+enough to reprint alone when a cutout comes out wrong.
+
+**Under the plate: 75 mm.** The module hangs 51 mm below, leaving ~20 mm of floor
+clearance for cable runs; the battery on its 70 mm side clears the underside with 5 mm.
+Anything resting on the floor is bounded by the flat **270 × 200** inside the fillet,
+not by 305 × 230.
+
+**Above the plate: 25 mm** (75 mm shelf in a 100 mm base). The Perixx is 23 mm thick,
+so the keyboard may stow in the *base* recess rather than the lid — which would free
+the lid entirely and change §11's zoning. What decides it is how far the switch and
+USB protrude above the plate, so do not commit until those are test-fitted (§8 intake).
 
 ## §5 — Power & cooling (mostly solved by the module)
 
@@ -219,8 +284,65 @@ the JUNEBOX module + an 8" faceplate, does not fit the current ~1150-class shell
 |---|---|---|
 | Pelican 1150 (current class) | 184 × 118 × 84 | Battery will not fit inside. Today's problem. |
 | Pelican 1300 | 235 × 181 × 155 | **Rejected** — see below. |
-| **Pelican 1400** | 300 × 225 × 132 | Fits exactly: 203 module + 2 × ~48 mm rails. |
+| **Pelican 1400** | 300 × 225 × 132 catalog · **305 × 230 × 100 measured** | 203 module + 2 × **50 mm** rails. See the survey below. |
 | Apache 4800 (Harbor Freight) | 454 × 327 × 168 | **Rejected** — 1550-class, 2.8× the volume. See below. |
+
+### Measured 2026-09-04 — the catalog numbers describe a different box
+
+Shell in hand, tape on the interior:
+
+Confirmed a genuine Pelican 1400, not one of the clones §6 allows.
+
+| | Catalog | Measured | Pelican CAD |
+|---|---|---|---|
+| Interior W × D @ 75 mm | 300 × 225 | 305 × 230 *(tape @ 85)* | **305.0 × 231.4** |
+| Base interior height | 132 *(incl. lid)* | **100** *(calipers)* | ~100 |
+| Flat floor W × D | — | **270 × 200** | fillet ends ~20 mm |
+| Corner radius | — | — | **~18 mm** (slight ellipse, 18.2 × 18.3) |
+| Rib shelf | — | **2 mm proud, tops at 75 mm** *(calipers)* | 0.5 mm, ends ~82 |
+| Rib positions | — | 3 per wall × 4 walls | **centre and ±74.5 mm** |
+
+Three corrections follow:
+
+- **The walls taper, gently — about 2.5°.** The interior grows from 299.6 × 226.0 at
+  20 mm to 306.8 × 233.1 at 100 mm: 0.09 mm of width per mm of height. This doc got
+  it wrong twice in one day, first reading the 270 mm floor as heavy draft, then
+  declaring the walls vertical because that is exactly how 2.5° looks to the eye and
+  to a cloth tape. It matters because **plate width is tied to the height it rides
+  at** after all. At the 75 mm shelf the interior is **305.0 × 231.4**.
+- **300 × 225 was never the usable number, in either direction.** It understates the
+  interior at plate height by 5 mm and overstates the floor by 30 — it is the
+  interior taken down near the fillet. §8 #4 expected ~285 mm usable and braced for
+  rails as thin as 41 mm; the real answer is 50, wider than the 48 the layout was
+  drawn against.
+- **Base height is 100, not 102.** The catalog 132 includes the lid.
+
+### Cross-checked against Pelican's own CAD
+
+Pelican publishes STEP models; the 1400 base is mirrored at
+[DIYsciBorg/Pelican](https://github.com/DIYsciBorg/Pelican) as `1400_step/1400-bot.STEP`
+(SolidWorks 2007, dated 2009). FreeCAD is installed here as the flatpak
+`org.freecad.FreeCAD`; slice it and read the interior profile off directly:
+
+    flatpak run --filesystem=host --command=freecadcmd org.freecad.FreeCAD /abs/path/script.py
+
+Same flatpak trap as OpenSCAD — absolute paths only, and it cannot see /tmp.
+
+**What the CAD is good for:** the envelope, the taper, the ~18 mm corner radius, and
+the rib *positions* (centre and ±74.5 mm on every wall — which is where the frame's
+lap joints go). It also vindicated the tape: the model says 305.7 at 85 mm where the
+tape read 305.
+
+**What it is wrong about: the ribs themselves.** It draws them 0.5 mm proud running to
+~82 mm; calipers on the actual case give **2 mm proud, topping out at 75 mm**. A
+seventeen-year-old simplified model loses exactly the feature this build wants to hang
+a plate on, and 0.5 mm would not be a shelf at all. **The part wins.** Use the CAD for
+the box and the calipers for the ribs.
+
+The rib shelf is the find that matters. §1 forbids penetrating the shell, so the
+plate had to be carried *somehow*, and the assumption was printed feet off the floor.
+The shell already carries it — twelve flat pads at a single height. §4 has the frame
+that uses them.
 
 ### 1300 rejected on two hard numbers
 
@@ -284,9 +406,13 @@ something if you buy new.
 
 ## §7 — Print vs buy
 
-- **Print:** the faceplate/bezel (with the 173 × 118 window), the left/right
-  connector rails, the battery cradle (open above the terminals), a VESA-75 bracket
-  to hang the module from the plate, and a fold-out tilt foot for the front lip.
+- **Print:** the plate **frame** (six members) and its **tiles** — screen bezel with
+  the 173 × 118 window, left/right connector rails, back-channel fillers (§4) — plus
+  the battery cradle (open above the terminals), a VESA-75 bracket to hang the module
+  from the plate, and a fold-out tilt foot for the front lip.
+  **Printer on hand: Creality Ender 3 + Sprite Pro direct extruder, 220 × 220 × 250
+  nominal, ~215 × 215 usable.** Recorded 2026-09-04 — it had never been written down,
+  and it is a hard constraint on every printed part in this doc.
 - **Buy:** the shell (injection-moulded waterproof beats printed for the gasket),
   the panel-mount connectors below, the LiFePO4 charger, the fuse holder.
   **No buck converter** — the module is 12 V-native (§5).
@@ -448,19 +574,28 @@ no wedge is needed in the print list (§7).
 Contents total ~2.9 L against the 1400's 8.9 L, leaving **~3 L genuinely usable**
 after fan clearance and cable runs. Enough for the SDR kit and then some.
 
-Pelican publishes the 1400's depth split: **lid 1.18 in (30 mm), bottom 4.00 in
-(102 mm)**. That confirms two things without measuring — the 23 mm keyboard stows
-in the lid (Zone C), and the battery lying at 90 mm tall clears the ~97 mm of base
-below the faceplate with ~7 mm to spare. It also corrects Zone B downward: an
-earlier revision assumed a ~128 mm base and claimed ~77 mm of under-module air;
-against a 102 mm base it is **~45 mm**.
+Pelican publishes the 1400's depth split as lid 1.18 in (30 mm), bottom 4.00 in
+(102 mm). **Measured 2026-09-04 the base is 100 mm**, and — more to the point — the
+faceplate does not sit at the rim. It rides the rib shelf at **75 mm** (§4, §6), which
+re-cuts every number in this section:
+
+- **Under the plate: 75 mm**, not ~97. The module hangs 51 mm below it, so Zone B is
+  **~24 mm** of air, not 45.
+- **The battery must lie on its 90 × 100 face, 70 mm tall** — not the 90 mm-tall
+  orientation assumed above, which no longer clears the underside of the plate. At
+  70 mm it has 5 mm of headroom. Terminals point sideways in this orientation, so the
+  cradle's clear pocket moves from above the posts to beside them.
+- **Above the plate there is now 25 mm of recess**, which is new space this section
+  never had. A 23 mm keyboard fits it, so Zone C may move from the lid to the base —
+  see §4. Undecided until the connectors are test-fitted, because a protruding switch
+  body is what would rule it out.
 
 ### Zones
 
 | Zone | Space | Holds |
 |---|---|---|
 | **A — back channel** | ~180 × 88 × 90 mm beside the battery | SDR dongle, coax coil, **antenna cylinder** |
-| **B — under the module** | ~45 mm of air below the module, 203 × 136.5 footprint | flat, non-fragile items — adapters, spare coax, parts tray |
+| **B — under the module** | ~24 mm of air below the module, 203 × 136.5 footprint | flat, non-fragile items — adapters, spare coax, parts tray |
 | **C — over the faceplate** | thin, full width, under the closed lid | the keyboard itself, notes, cheat sheets |
 
 **Zone B has one rule: do not pack it solid.** The module's fan lives on its back
@@ -519,22 +654,21 @@ DONE:
   cradle allows. The cradle must leave a clear pocket above the terminals — never
   let a lid or bracket press on the posts.
 
-STILL NEEDED — one measurement, with a tape on the shell:
+4. ✅ **RESOLVED 2026-09-04 — the shell is measured, and it is bigger than catalog.**
+   **305 × 230 × 100** interior, vertical walls, flat floor **270 × 200** inside a
+   ~17 mm fillet, and a **12-rib shelf at 75 mm**. The pessimistic case never
+   arrived: rails go to **50 mm**, wider than the 48 the layout was drawn against,
+   and the "move the SMA to a corner" contingency is dead. Full survey in §6; the
+   frame that sits on the ribs is in §4.
 
-**Shell ORDERED 2026-09-02** — Pelican 1400, dimensions confirmed against spec
-(§6, §11). One number remains, and it can only be taken once the case is in hand:
+   Two things this measurement overturned rather than confirmed. The flare from
+   270 to 305 is a **floor fillet, not wall draft** — plate width does not depend on
+   the height it rides at. And the plate does not need printed feet, because the
+   shell's own ribs are a shelf. Both had been assumed the other way.
 
-4. **The 1400's REAL flat floor WIDTH.** Catalog interior (300 mm) overstates it —
-   gasket lip, radiused corners, ribs. This is now the *only* open number, and it is
-   the binding one: the layout budgets **203 + 2 × 48 = 299 of 300 mm**, i.e. zero
-   catalog margin.
-   - **Expect ~285 mm usable**, giving rails of ~41 mm each. That still clears every
-     connector in §3 (widest is USB-A at 26.5 mm), so the design survives the
-     pessimistic case — the rails simply get drawn to the measured number.
-   - Below ~275 mm, move the SMA to a corner or drop it (it is optional anyway).
-
-   *Depth resolved from spec (§11): lid 30 mm, base 102 mm — keyboard stows in the
-   lid, battery clears the base with ~7 mm. No measurement needed.*
+   *Depth resolved from spec (§11): lid 30 mm, base 100 mm measured — battery clears
+   the base underneath the plate. Keyboard stowage is now open again in a good way:
+   25 mm of recess above the plate against a 23 mm keyboard (§4).*
 
 **All connectors ordered 2026-09-04.** That closes #6 and reshapes #5.
 
@@ -600,7 +734,18 @@ STILL NEEDED — one measurement, with a tape on the shell:
    capability in this whole section. Sidewall drilling is irreversible on a £110+
    shell, so do it after the deck is working, not before.
 
-5. ⚠️ **USB — the bezel is measured, the cutout is not, and never will be.**
+5. ✅ **RESOLVED 2026-09-04 by test fit — cutout 21.5 × 24.5, web 2.0 mm.**
+   Both coupons agree and they were independent: the size ladder is cut at a 2.0 mm
+   web throughout and picked 21.5 × 24.5; the web ladder is cut at 23.5 × 26.5 and
+   picked 2.0. The unit seats in the *smallest* rung of the size ladder, so the
+   ladder bottomed out — a tighter opening might also work, but there is no reason to
+   chase it: at a 50 mm rail, 21.5 leaves plate to spare and a smaller hole buys
+   nothing. The 21.5 × 24.5 + 2.0 mm pair has not been printed *together* yet; that
+   combination is the USB tile itself, so it gets verified on the first tile print.
+
+   The reasoning that got here, kept because it generalises:
+
+   ⚠️ **The bezel was measured, the cutout was not, and never would be.**
    Vendor sheet 2026-09-04: bezel **25.4 × 28.6 mm** (1" × 1-1/8"), **28.6 mm** tall
    overall, cable neck 19.05 mm. Comfortable in either rail width.
 
@@ -627,13 +772,41 @@ STILL NEEDED — one measurement, with a tape on the shell:
      range in a pocket around the opening, keeping full thickness everywhere else.
      Design the recess in from the start; it is painful to retrofit.
 
-So the plate is gated on **three measurements, all taken with parts in hand**: the
-1400's floor width (#4), the USB cutout + buckle thickness range (#5), and the
-Powerpole flange/cap diameter (#7). None needs a decision — only calipers. #7 is the
-one that can force a layout change rather than just a number.
+**The plate is no longer gated.** #4 closed with a tape and a CAD cross-check, #5
+closed by test fit. What remains of #7 — the flange and flip-cap diameter of the round
+Powerpole socket — sizes a *sidewall* hole that is deliberately the last operation in
+the build (§8 #7), and the faceplate stopped depending on it the moment the printed
+retainer replaced it.
 
-Once those three exist, the connector table in §3, the layout in §4, and the SVG
-in docs/design/faceplate.svg become a parametric plate.
+So the connector table in §3, the layout in §4, and the SVG in
+docs/design/faceplate.svg can be cut now. What is still open is the **rail coupon**
+(SMA, switch, keystone) and the **retainer fit** — those set this printer's offset per
+hole, not whether the design works.
+
+### 8. ⚠️ NEW — the keystone enters but will not latch
+
+The VCE Cat6A coupler **fits the 14.9 opening and will not click into it**. Width was
+never the problem, so the width ladder could not have answered this however far it ran.
+
+A keystone retains by hooking a fixed lip over the front of the panel and snapping a
+sprung tab over the back. If it enters and does not catch, the open variable is the
+**web that tab closes over** — which `rail` fixes at 2.0 mm for every keystone rung and
+never varies. Same miss as the USB, where the size ladder found the opening and
+`usb_thick` was the coupon that actually made it latch. **One ladder per axis of
+failure, not one per part** — that is the lesson worth keeping from both.
+
+`coupons.scad` gains a **`keystone`** part: width held at the 14.9 known to admit the
+coupler, web laddered **1.0 / 1.4 / 1.8 / 2.2 / 2.6**, against opening lengths **16.2
+and 16.8** — the second row in case the hook needs room to swing rather than a thinner
+web. Ten cells, one print, 140 × 78 × 4.5, render-verified manifold.
+
+If a cell latches, its web is the number and the keystone tile is cut to it. If none
+does, the part wants something outside 1.0–2.6 mm and the next move is calipers on the
+lip-to-tab distance, not a third ladder.
+
+Nothing else is blocked by this. The keystone is one tile on the right rail, and tiles
+are independently reprintable (§4); the rest of the plate can be cut while it is
+settled.
 
 ### Coupons printed 2026-09-04 — the desk work is done
 
@@ -647,18 +820,18 @@ INTAKE — the day the boxes land, in this order:
 
 | # | Part | Tool | Number it closes |
 |---|---|---|---|
-| 4 | Pelican 1400 | tape, across the flat floor | usable floor WIDTH → rail width |
-| 5 | USB unit | `usb_size` coupon | which opening clicks home |
-| 5 | USB unit | `usb_thick` coupon | web thickness the tabs clamp |
-| 5 | USB unit | calipers on the buckle | max plate thickness → recess, or none |
-| 6 | switch, SMA | `rail` coupon | ⌀16 and ⌀6.5 as *this* printer cuts them |
-| 6 | RJ45 keystone | `rail` coupon | keystone opening |
+| 4 | ✅ Pelican 1400 | *done 2026-09-04* | 305 × 230 × 100, ribs at 75 → **50 mm rails** |
+| 5 | ✅ USB unit | `usb_size` | *done* — **21.5 × 24.5** |
+| 5 | ✅ USB unit | `usb_thick` | *done* — web **2.0 mm** |
+| 5 | USB unit | calipers on the buckle | *optional now* — the web ladder answered it empirically |
+| 6 | ✅ switch, SMA | `rail` | *done* — **16.2** and **6.7** (+0.2 offset) |
+| 8 | RJ45 keystone | `keystone` coupon | ⚠️ enters 14.9, will not latch — web ladder |
 | 7 | PP15-45 housings | printed retainer + `rail` coupon | pocket fit; retires the ⌀30.5 socket to the sidewall |
 | 7 | Powerpole socket | calipers on flange + flip-cap | sidewall hole only — no longer gates the plate |
 
-Take #4 first: it sets the rail width every other number is judged against. A
-coupon that fits at 48 mm of rail and not at 41 tells you nothing until the floor
-is measured. Then write the winners into §3 and cut faceplate.svg to them.
+#4 is done, and it set the rail width the coupon results are judged against — 50 mm,
+so every connector in §3 clears comfortably and no fit result can force a relayout.
+Write the winners into §3 and cut faceplate.svg to them.
 
 Do **not** drill the shell sidewall for the external Powerpole inlet on intake day —
 that stays last, after the deck is working (§8 #7).
