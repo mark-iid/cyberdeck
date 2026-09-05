@@ -229,8 +229,16 @@ module rail_blank() {
 // The keyboard covers the inboard 14 mm of this tile, so the SMA at 9.7 mm
 // proud is placed OUTBOARD. The rocker at 2.0 mm proud sits on the keep-out
 // line; its 35 x 25.3 bezel is broad enough to bear a keyboard without harm.
-RK_W = 28.7; RK_L = 21.2;
-RK_WEB = 1.2;                     // PROVISIONAL - the `rocker` coupon settles it
+// APIELE DPDT ON-OFF-ON, vendor drawing 2026-09-05. Panel opening 28.5 x 21,
+// bezel 35 x 25.3 +-0.3, body 27.5 deep, terminals 6.3 x 0.8 on 10.3 centres,
+// rated 20A/125VAC and 16A/250VAC - both AC, there is no DC figure.
+RK_W = 28.7; RK_L = 21.2;         // 28.5 x 21 + the 0.2 offset
+RK_BEZ_W = 25.3; RK_BEZ_L = 35;   // across the rail / along it
+// 2.0, from the "2" on the drawing - the step between the bezel underside and
+// the snap catch, which IS the panel thickness the switch is built for. Was
+// guessed at 1.2. Corroborated by the USB, a part of the same family, whose
+// web tested at exactly 2.0 on the coupon (S8 #5).
+RK_WEB = 2.0;
 PP_W = 16.2; PP_H = 8.5;
 REBATE = 3;                       // relief margin around a snapped-in part
 // SMA_D and AUDIO_D live in deck.scad with the rest of the connector openings.
@@ -253,7 +261,11 @@ LEFT_FEATURES = [
     ["SMA",       -50, "round",  SMA_D,   SMA_D],
     ["audio",       0, "round_rb", AUDIO_D, AUDIO_D, AUDIO_RB_D, AUDIO_WEB],
     ["Powerpole", -20, "rect",   PP_W,    PP_H],
-    ["rocker",     30, "rebate", RK_W,    RK_L,   RK_WEB],
+    // 21 ACROSS the rail, 28.5 along. An earlier revision had this the other
+    // way up, putting 28.7 across a 39.25 tile - 5.27 mm of material each side,
+    // which S3 had already written down as "too thin". The doc said one thing
+    // and the geometry did the other, and nothing compared them.
+    ["rocker",     30, "rebate", RK_L, RK_W, RK_WEB, RK_BEZ_W, RK_BEZ_L],
 ];
 
 // Right rail tile — data. Two panel-mount extensions, both fitted from behind
@@ -270,6 +282,7 @@ LEFT_FEATURES = [
 // finishes flush under the keyboard, and it works whether the ears turn out
 // threaded or plain-with-a-nut - which is still unknown until the part lands.
 USB_W = 21.5; USB_L = 24.5; USB_WEB = 2.0;
+USB_BEZ_W = 25.4; USB_BEZ_L = 28.6;   // vendor sheet
 RJ_W = 16.6; RJ_L = 13.6;
 RJ_EAR = 31;                      // PROVISIONAL - confirm on arrival (S8 #8)
 RJ_CLEAR = 3.6;                   // M3 clearance, drawn 0.2 over (holes print
@@ -278,20 +291,31 @@ RJ_CSK_D = 6.4;                   // M3 90 deg countersunk head, same 0.2
 
 RIGHT_FEATURES = [
     ["RJ45",     -20, "rj45",   RJ_W,  RJ_L],
-    ["dual USB",  34, "rebate", USB_W, USB_L, USB_WEB],
+    ["dual USB",  34, "rebate", USB_W, USB_L, USB_WEB, USB_BEZ_W, USB_BEZ_L],
 ];
 
 // The space a cutout really occupies, which is not always the hole. A rebate
 // needs REBATE of relief all round; the RJ45's footprint is set by its screw
 // ears and their heads, not by the aperture between them.
+// rebated() sinks the bezel into the relief pocket, so the pocket has to be
+// bigger than the BEZEL, not just than the opening. Derived, because the rocker
+// needed 3.65 and a flat REBATE of 3 gave 3 - a 34.7 pocket for a 35 bezel,
+// which does not go in.
+function rb_margin(f) = max(REBATE, (f[6] - f[3])/2 + 0.5, (f[7] - f[4])/2 + 0.5);
 function f_across(f) =
-    f[2] == "rebate"   ? f[3] + 2*REBATE :
+    f[2] == "rebate"   ? f[3] + 2*rb_margin(f) :
     f[2] == "rj45"     ? max(f[3], RJ_CSK_D) :
     f[2] == "round_rb" ? f[5] : f[3];
 function f_along(f) =
-    f[2] == "rebate"   ? f[4] + 2*REBATE :
+    f[2] == "rebate"   ? f[4] + 2*rb_margin(f) :
     f[2] == "rj45"     ? RJ_EAR + RJ_CSK_D :
     f[2] == "round_rb" ? f[5] : f[4];
+
+// A sunk bezel must actually fit the pocket cut for it.
+for (r = RAILS) for (f = r[1]) if (f[2] == "rebate") {
+    assert(f[3] + 2*rb_margin(f) >= f[6], str(f[0], " bezel is wider than its pocket"));
+    assert(f[4] + 2*rb_margin(f) >= f[7], str(f[0], " bezel is longer than its pocket"));
+}
 
 // Both rails, checked by the same three rules.
 RAILS = [["left", LEFT_FEATURES], ["right", RIGHT_FEATURES]];
@@ -322,7 +346,7 @@ module feature(f) {
         translate([0, f[1], -1]) cylinder(d=f[5], h=TILE_T - f[6] + 1);
     }
     else if (f[2] == "rect")   through(f[1], f[3], f[4]);
-    else if (f[2] == "rebate") rebated(0, f[1], f[3], f[4], f[5]);
+    else if (f[2] == "rebate") rebated(0, f[1], f[3], f[4], f[5], rb_margin(f));
     else if (f[2] == "rj45") {
         through(f[1], f[3], f[4]);
         for (y = [f[1] - RJ_EAR/2, f[1] + RJ_EAR/2]) {

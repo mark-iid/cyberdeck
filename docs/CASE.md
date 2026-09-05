@@ -79,7 +79,7 @@ vary by printer, and RF connectors especially want a snug hole.
 | **3.5 mm audio jack, panel extension** | headphones / powered speaker | **⌀6.2 drawn** ⚠️ **PROVISIONAL** | **NEW 2026-09-05.** Source is the module's own `AUDIO` socket on its **left edge** — same side as this rail, so the run is short. Added because the battery ends up 2.75 mm from the module's speakers and muffles them (§13 #13); this gives the sound somewhere to go. Sits at **y = 0**, in the 32 mm gap between the Powerpole and the rocker. **Not bought yet** — ⌀6.2 is a placeholder, not a measurement. Confirm the barrel thread diameter *and* the panel thickness range against a 4.5 mm tile before the left rail prints. |
 | **3.5 mm audio jack** | headphones / powered speaker | **⌀6.2 drawn** + **⌀13 relief from behind**, 2.5 web | **Vendor drawing 2026-09-05.** Thread is only **6.86 long** — against a 4.5 mm tile that leaves 2.36 mm for a nut needing 2.4, so it does not go. Same shape as the keystone: a part built for sheet metal. Fixed by counterboring the tile's **back** face ⌀13 (the body is 12.45), which seats the body 2 mm deeper and leaves a 2.5 mm web; thread then spans 2.5 + 2.4 = 4.9 with 2 mm to spare, and the nut lands on the front face rather than in a recess. |
 | **Anderson Powerpole** | external 12 V IN | **16.2 × 8.5** printed retainer for a bonded PP15-45 pair | Measured 2026-09-04: the round socket is barrel ⌀28.7 / flange ⌀35 and is **surplus** — the sidewall inlet it was bought for is cancelled (§8 #7). The retainer is 133 mm² of hole against the socket's 730. Feeds the **A/B selector**, not the bus directly (§5). |
-| **DPDT ON-OFF-ON rocker** | master power **and** source select | **28.7 × 21.2** opening (28.5 × 21 vendor + 0.2), web ⚠️ **untested** | **Replaces the ⌀16 anti-vandal button, 2026-09-04** — one control does both jobs (§5). Bezel **35 × 25.3**, stands **2 mm** proud, body **27.5 mm** deep. **6.3 mm spade terminals**, which take a 14 AWG crimp directly and delete §8 #6's problem. Mount with the **21 mm across the rail** (9 mm of tile each side); 28.5 across would leave 5.25 and is too thin. |
+| **DPDT ON-OFF-ON rocker** ✅ | master power **and** source select | **28.7 × 21.2** opening (28.5 × 21 vendor + 0.2), web **2.0** | **APIELE, vendor drawing 2026-09-05 — fully specified, no coupon needed.** DPDT, ON-OFF-ON, 6-pin. Bezel **35 × 25.3 ±0.3**, body **27.5 deep**, terminals **6.3 × 0.8 on 10.3 centres**. Rated **20 A/125 VAC, 16 A/250 VAC** — both AC; there is still no DC figure, but 12 V / 2.5 A is far inside it. **Web 2.0** comes from the drawing's 2 mm step between bezel underside and snap catch, and matches the USB's tested 2.0 exactly. Mounted **21 across the rail**, 28.5 along. |
 | ~~**16 mm anti-vandal button**~~ | ~~master power~~ | ~~⌀16.2~~ | **Deleted 2026-09-04**, superseded by the rocker above. Test fit gave ⌀16.2 (16.0 + 0.2) and that is what established this printer's offset, so the measurement survives its part. |
 
 **Published dimensions govern; the offset is a printer correction, not a rival
@@ -1814,6 +1814,27 @@ The insert-wall assertion was checking `FRAME_W` (12) when the binding case is t
 **front** member at `FRAME_WF` (8). It now checks the narrowest member. It still passes —
 2.0 mm of wall against ruthex's 1.6 — but it was passing for the wrong reason, and
 `BOSS_D` is 8 against a front member of 8, so there is no margin left to spend there.
+
+### §14 #10 — the rocker was drawn on its side, 2026-09-05
+
+The drawing settled `RK_WEB` at **2.0** and then caught something bigger. §3 has said
+since 2026-09-04: *"Mount with the **21 mm across the rail** (9 mm of tile each side);
+28.5 across would leave 5.25 and is too thin."* **The model did the opposite.** The
+feature table passed `RK_W` (28.7) as the across-the-rail dimension:
+
+| | Opening across | Pocket | Tile each side |
+|---|---|---|---|
+| as drawn | 28.7 | 34.7 | **2.27 mm** |
+| as §3 specified | 21.2 | 28.5 | **5.375 mm** |
+
+The doc said one thing and the geometry did the other for a day, and nothing compared
+them — the same fault as the plinth and the cradle, in a third place.
+
+**And the pocket was too small for the bezel.** `rebated()` sinks the bezel into the
+relief, so the pocket must clear the *bezel*, not just the opening. A flat 3 mm margin
+gave a **34.7 mm pocket for a 35 mm bezel**. The margin is now derived from the bezel —
+3.65 for the rocker, still 3 for the USB, so the tested USB geometry is untouched — with
+an assertion that a sunk bezel fits the pocket cut for it.
 
 ### §14 #7 — plenum venting: DECIDED 2026-09-05, vent the back tiles
 
