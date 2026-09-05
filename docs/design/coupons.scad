@@ -152,9 +152,35 @@ module keycarrier() {
     }
 }
 
+// ---------------------------------------------------------------------------
+// Rocker — DPDT ON-OFF-ON, master + source selector in one (CASE.md S5).
+// Same retention family as the USB: the body passes THROUGH the opening and
+// two spring tabs snap out behind, so snap_hole's relief pocket is right here
+// (unlike the keystone, which sits behind the panel and defeated it twice).
+//
+// The opening is published - 28.5 x 21, +0.2 for this printer - so only one
+// axis is unknown: the web the tabs close over. The vendor drawing dimensions
+// a 0.8 mm step on the tab, against a 4.5 mm tile.
+// ---------------------------------------------------------------------------
+RK_W = 28.7; RK_L = 21.2;
+RK_T = [0.8, 1.2, 1.6, 2.0];   // 2.4 dropped: 5 rungs ran 210 mm, too near the bed edge
+
+module rocker() {
+    px = 38; n = len(RK_T);
+    difference() {
+        cube([px*n + 10, 46, PLATE_T]);
+        for (i = [0:n-1]) {
+            cx = 25 + px*i;
+            snap_hole(cx, 27, RK_W, RK_L, RK_T[i], 3);
+            translate([cx, 7, 0]) lbl(str(RK_T[i]), 3.4);
+        }
+    }
+}
+
 if      (PART == "usb_size")  usb_size();
 else if (PART == "usb_thick") usb_thick();
 else if (PART == "rail")      rail();
 else if (PART == "keycarrier") keycarrier();
+else if (PART == "rocker")     rocker();
 else { usb_size(); translate([0,55,0]) usb_thick(); translate([0,110,0]) rail();
        translate([0,195,0]) keycarrier(); }

@@ -93,6 +93,39 @@ module rail_blank() {
         cube([RAIL_W, MOD_D + 2*TILE_GAP, TILE_T]);
 }
 
+// Left rail tile — power/RF. One switch now does master AND source select
+// (CASE.md S5), so this carries three cutouts, not four:
+//   rocker 28.7 x 21.2 (21.2 across the rail, 9 mm of tile each side)
+//   Powerpole retainer pocket 16.2 x 8.5
+//   SMA 6.7
+// The keyboard covers the inboard 14 mm of this tile, so the SMA at 9.7 mm
+// proud is placed OUTBOARD. The rocker at 2.0 mm proud sits on the keep-out
+// line; its 35 x 25.3 bezel is broad enough to bear a keyboard without harm.
+RAIL_D   = MOD_D + 2*TILE_GAP;    // 139.5
+RK_W = 28.7; RK_L = 21.2;
+RK_WEB = 1.2;                     // PROVISIONAL - the `rocker` coupon settles it
+PP_W = 16.2; PP_H = 8.5;
+SMA_D = 6.7;
+REBATE = 3;                       // relief margin around a snapped-in part
+
+module rebated(cx, cy, w, l, web, margin=REBATE) {
+    translate([cx - w/2 - margin, cy - l/2 - margin, web])
+        cube([w + 2*margin, l + 2*margin, TILE_T]);
+    translate([cx - w/2, cy - l/2, -1]) cube([w, l, TILE_T + 2]);
+}
+
+module left_rail() {
+    outb = RAIL_W - 12;           // 27: outboard band the keyboard does not cover
+    difference() {
+        translate([-RAIL_W/2, -RAIL_D/2, 0]) cube([RAIL_W, RAIL_D, TILE_T]);
+        rebated(0, 30, RK_W, RK_L, RK_WEB);                 // rocker, centred across
+        translate([RAIL_W/2 - outb/2 - 6, -20, 0])
+            cube([PP_W, PP_H, TILE_T + 2], center=true);    // Powerpole retainer
+        translate([RAIL_W/2 - outb/2 - 6, -50, -1])
+            cylinder(d=SMA_D, h=TILE_T + 2);                 // SMA, outboard
+    }
+}
+
 // One joint, both halves plus the splice - a small print to prove the butt
 // joint and the M3 pattern before committing to four large members.
 module joint_test() {
@@ -108,6 +141,7 @@ if      (PART == "member")     member();
 else if (PART == "splice")     splice();
 else if (PART == "screen_tile") screen_tile();
 else if (PART == "rail_blank") rail_blank();
+else if (PART == "left_rail")  left_rail();
 else if (PART == "joint_test") joint_test();
 else if (PART == "frame_full") frame_full();
 else { frame_full(); translate([0,0,20]) screen_tile(); }

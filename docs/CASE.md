@@ -76,7 +76,8 @@ vary by printer, and RF connectors especially want a snug hole.
 | ~~**DC barrel 2.1 mm**~~ | ~~12 V in / charge~~ | **not on the plate** | Vestigial. Power enters on Powerpole; the only barrel in the build is the module's own inlet, which already carries a Powerpole pigtail (§8 DONE). Kept as a row so it is not re-added by someone reading an old revision. |
 | **Cat6A keystone coupler** | panel Ethernet | ⚠️ **OPEN — see §8 #8** | Enters a 14.9 × 16.2 opening and will not latch. The spec face is 14.5 × 16.0 and retention is a *rotational* snap against a moulded plate, not a clip through a panel — so the opening size was never the variable. Body **32.6 mm** deep behind the plate. It is a **coupler**: needs a short Cat6 patch inside, Pi → back of jack. **Not optional** — the Pi's own RJ45 is buried under the plate. |
 | **Anderson Powerpole** | external 12 V IN | **16.2 × 8.5** printed retainer for a bonded PP15-45 pair | Measured 2026-09-04: the round socket is barrel ⌀28.7 / flange ⌀35 and is **surplus** — the sidewall inlet it was bought for is cancelled (§8 #7). The retainer is 133 mm² of hole against the socket's 730. Feeds the **A/B selector**, not the bus directly (§5). |
-| **16 mm anti-vandal button** | master power | **⌀16.2 as printed** (16.0 nominal + 0.2) | Latching, 5 A+. Hex flange **17.8 across flats = 20.6 across corners** — that, not 16, is the clearance the rail must give. Body **32 mm** deep behind the plate. Screw terminals on **8.3 mm** pitch. Between battery and the module — **there is no buck converter** (§5). |
+| **DPDT ON-OFF-ON rocker** | master power **and** source select | **28.7 × 21.2** opening (28.5 × 21 vendor + 0.2), web ⚠️ **untested** | **Replaces the ⌀16 anti-vandal button, 2026-09-04** — one control does both jobs (§5). Bezel **35 × 25.3**, stands **2 mm** proud, body **27.5 mm** deep. **6.3 mm spade terminals**, which take a 14 AWG crimp directly and delete §8 #6's problem. Mount with the **21 mm across the rail** (9 mm of tile each side); 28.5 across would leave 5.25 and is too thin. |
+| ~~**16 mm anti-vandal button**~~ | ~~master power~~ | ~~⌀16.2~~ | **Deleted 2026-09-04**, superseded by the rocker above. Test fit gave ⌀16.2 (16.0 + 0.2) and that is what established this printer's offset, so the measurement survives its part. |
 
 **This printer runs holes 0.2 mm undersize.** Two independent ladders on the `rail`
 coupon landed on the same offset — SMA wanted 6.7 for a 6.5 part, the switch wanted
@@ -304,16 +305,36 @@ reference cannot back-feed either. Chosen over the alternatives:
 The selector makes back-feeding **impossible by construction rather than by
 discipline**, which is why it wins for a box that gets used tired and in the dark.
 
-**The chain, in order:**
+**One switch, not two (2026-09-04).** A **DPDT ON-OFF-ON rocker** does both jobs: its
+three positions are **INT / OFF / EXT**. The ⌀16 anti-vandal button is deleted.
 
 ```
 battery ── fuse ──┐
-                  ├── A/B selector ── MASTER switch ── module 12 V barrel
-panel PP IN ─ fuse┘
+                  ├── DPDT ON-OFF-ON ── module 12 V barrel
+panel PP IN ─ fuse┘        INT / OFF / EXT
 ```
 
-Source select first, master switch second, so **the master switch kills the deck
-whichever source is selected**. Each source gets its own fuse close to its origin.
+Each source gets its own fuse close to its origin. Beyond the obvious simplification
+this deletes a real annoyance: §8 #6 flagged that the anti-vandal button's **8.3 mm
+screw terminals** would not take 14 AWG without lugs or a pigtail. The rocker's
+**6.3 mm spades** take a 14 AWG crimp directly.
+
+**Label the plate INT / OFF / EXT.** A rocker's two ON positions are not
+self-explanatory, and this one is the difference between running off the pack and
+running off shore power.
+
+### The hole this exposed: nothing charges the pack
+
+An A/B selector runs the load from *one* source and disconnects the other. **No position
+ever connects the panel inlet to the battery**, so the internal pack has no charge path —
+in either the two-switch or the one-switch version. §5's earlier line that "if runtime is
+short, the fix is the panel Powerpole IN" is true for *extending* runtime by running on
+shore power indefinitely; it is not a charging story, and this doc read it as one.
+
+**Fix, and it needs no more switches: a charge pigtail off the battery**, run up into the
+back channel and terminated in a Powerpole. A charger plugs straight onto the pack with
+the lid open and nothing dismantled. It also keeps the charger where it belongs — talking
+directly to the cells on its own 14.6 V CV profile, with no other load on the bus.
 
 **Still do NOT dumb-parallel** a bare external supply onto the battery Powerpole. The
 selector removes the temptation, but the rule stands for any future rewiring: an
@@ -489,18 +510,19 @@ matters** — three of these have common traps (below).
 | 1 | SMA jumper | `SMA male to male cable RG316 15cm` | 100–150 mm. RG316/RG178 stays flexible. Bulkhead → dongle inside. |
 | ~~2~~ **1** | USB-A dual, square flush ✅ | `Dual Ports Square USB 3.0 Panel Flush Mount Extension Cable with Buckle` | **ORDERED 2026-09-04.** Supersedes the 2× snap-in row. Both ports in one square housing = **one** cutout. Measure the opening and the buckle's panel-thickness range on arrival (§8 #5). Right rail. |
 | 0 | Powerpole panel inlet | ~~`Powerwerx PanelPole1`~~ · round socket now **surplus** | ⚠️ **Do not buy.** PanelPole1 needs a 1-1/8" hole — no smaller than the round socket already ordered, and both are far too big for the rail. **Print a PP15-45 retainer instead** (~16 × 8.3 mm/pair). The ordered socket moves to the case sidewall. §8 #7. |
-| 1 | Master switch ✅ | `16mm latching anti-vandal push button switch 12V 5A` | **ORDERED 2026-09-04, ⌀16 latching 5 A+.** Trap 3 avoided. SVG widened ⌀12 → ⌀16. Left rail, upstream of the module (§5). |
+| 1 | **Master + selector switch** | `DPDT ON-OFF-ON rocker 6 pin 16A` | **NEW 2026-09-04.** One part replaces both the anti-vandal button and the A/B selector (§5). Panel opening 28.5 × 21, 6.3 mm spades. Verify **DPDT** and **ON-OFF-ON**, not ON-OFF. The 16 A is an *AC* rating — fine at 12 V / 2.5 A, but it is not a DC figure. |
+| ~~1~~ | ~~Master switch~~ ✅ | ~~`16mm latching anti-vandal push button`~~ | **Superseded 2026-09-04.** Bought and test-fitted; its ⌀16.2 result is what established this printer's +0.2 offset, so it earned its keep before being replaced. Keep as a spare. |
+| 1 | **Battery charge pigtail** | `Anderson Powerpole pigtail 14 AWG` | §5: nothing else charges the pack. Runs off the battery into the back channel so a charger plugs on with the lid open. |
 | 1 | Inline fuse holder | `ATC ATO inline fuse holder 12 AWG waterproof` | On battery **positive**, close to the terminal. |
 | several | Fuses | `ATC blade fuse 5 amp` | **5 A** — sized for the ~2.5 A total draw (§5), not the Pi alone. |
 | — | Wire | `14 AWG silicone wire red black` | Silicone stays flexible in tight bends; PVC goes stiff. |
 | — | Powerpole contacts + housings | `Anderson Powerpole 30 amp contacts housings kit` | **30 A contacts for 14 AWG** (45 A contacts are for 12 AWG). Keep the bus uniform. |
 | 1 | RJ45 keystone ✅ | `Cat6 keystone jack coupler` | **ORDERED 2026-09-04 — no longer optional**, because the Pi's own RJ45 is buried under the plate. Right rail, portrait. Mounting unresolved — §8 #8. |
-| 1 | **A/B source selector** | `DPDT rotary switch 10A panel mount` or `Powerwerx Powerpole A/B switch` | **NEW 2026-09-04 (§5).** Must switch **both** conductors and carry 5 A+. Left rail, upstream of the master switch. Without it the panel inlet dumb-parallels the pack. |
 | 1 | **LiFePO4 charger** | `12.8V LiFePO4 charger 14.6V CV` | §7 always said buy one; it was never on this list. 14.6 V CV profile — a lead-acid charger will not fully charge the pack and a bench supply will fight it. |
 | 1 | **2nd inline fuse** | `ATC ATO inline fuse holder` | One per source (§5). The external inlet needs its own, close to the panel. |
 | 1 | **Keystone wall plate** | `1-port keystone wall plate` | Reference geometry for §8 #8 — measure its opening and thickness, or cut the fragment out and bolt it into the tile. A couple of pounds either way. |
 | — | **M3 hardware** | `M3 screws assortment` + `M3 heat set inserts` | **Structural, and absent until 2026-09-04.** The frame is lap-jointed with M3s, every tile is retained with them, the plinth bolts VESA-75, and the carriers mount from behind. Heat-set inserts for anything that gets unscrewed more than once. |
-| — | **Ring/spade lugs** | `M3 ring terminal 16 AWG crimp` | §8 #6: 14 AWG will not go into the switch's 8.3 mm screw terminals. Lug it, or run a short 16 AWG pigtail to the first Powerpole. |
+| — | **6.3 mm spade crimps** | `6.3mm female spade connector 14 AWG insulated` | For the rocker's six terminals. Replaces the ring-lug workaround §8 #6 needed for the deleted anti-vandal switch. |
 
 **The three traps**
 
@@ -668,6 +690,9 @@ re-cuts every number in this section:
 **Zone B has one rule: do not pack it solid.** The module's fan lives on its back
 face and needs to breathe. Use the perimeter, leave the centre open.
 
+**Storage isolation comes free.** The rocker's centre OFF disconnects *both* sources,
+so the deck can be stowed with the pack isolated without relying on a separate cut-off.
+
 ### The short hazard, and why it is already handled
 
 Bare telescopic antenna elements loose in the same channel as exposed battery
@@ -757,10 +782,9 @@ DONE:
    - **32 mm body length.** Protrudes behind the plate; harmless in the rail (full
      base depth beside the module) but it rules out mounting the switch anywhere
      over Zone B's ~45 mm once wire bend radius is added.
-   - **Screw terminals on 8.3 mm pitch.** ⚠️ The buy list specifies **14 AWG** for the
-     bus. 14 AWG silicone into a terminal that small is a fight — plan on ring or
-     spade lugs crimped on, or a short 16 AWG pigtail up to the first Powerpole.
-     Do not just jam bare strands under the screw.
+   - **Screw terminals on 8.3 mm pitch.** ⚠️ 14 AWG into a terminal that small is a
+     fight. **Moot from 2026-09-04** — this switch is replaced by a DPDT rocker with
+     6.3 mm spades, which take a 14 AWG crimp directly (§5).
    ✅ **RJ45 keystone is in** — right rail carries three cutouts, not two.
 
 7. ⚠️ **NEW — the Powerpole inlet may not fit the left rail.** The socket ordered is
@@ -1170,6 +1194,16 @@ Audit of 2026-09-04. Everything here is either undecided, undrawn, or unverified
    300 × 225 with 48 mm rails and the module at x=48. Delete or regenerate it.
    The rail cutouts cannot be finished until §8 #8 (keystone) closes and the A/B
    selector is bought and measured.
+
+### New, and the same shape as two earlier misses
+
+9. ⚠️ **The rocker is a snap-into-thin-panel part.** Its drawing dimensions a 0.8 mm
+   step on the snap tab; switches of this style expect sheet metal or ~1 mm dash
+   plastic, and the rail tile is 4.5. This is the third part in the build that retains
+   by clipping to a panel thinner than the plate — the USB (solved), the keystone
+   (still open), and now this. The opening is *published* (28.5 × 21), so unlike the
+   keystone only one axis is unknown: **the web left by a local rebate**. One ladder,
+   0.8 → 2.4, in `coupons.scad` as `rocker`.
 
 ### Needs a measurement, not a decision
 
