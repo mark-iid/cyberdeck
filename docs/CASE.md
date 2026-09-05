@@ -989,6 +989,30 @@ Nothing else is blocked by this. The keystone is one tile on the right rail, and
 are independently reprintable (§4); the rest of the plate can be cut while it is
 settled.
 
+### When a coupon is justified — and when it is waste
+
+Three of 2026-09-04's prints were waste. Two were the keystone, printed twice against a
+wrong model of how the part retains; one was the joint coupon, drawn with its halves
+touching so OpenSCAD fused them into a single bar that tested nothing. The rules that
+would have prevented all three:
+
+1. **No coupon where the vendor publishes the number.** The rocker's panel opening and
+   the RJ45's jack face are both published; those need the printer offset, not a ladder.
+   Ladder only what is genuinely unknown — as the USB cutout was, and the printer's own
+   offset was.
+2. **Understand the retention mechanism before laddering a dimension.** Both keystone
+   coupons laddered the right numbers against the wrong mechanism. No rung of either
+   could have worked.
+3. **Run `docs/design/check-stl.py` before slicing.** It reports the bounding box, bed
+   fit, whether the part sits on z=0, and — the one that mattered — **how many
+   disconnected solids the file actually contains**:
+
+       python3 docs/design/check-stl.py build/plate/joint_test.stl --solids 3
+
+4. **Put snap-in parts on small carriers, not on tiles.** A wrong web thickness should
+   cost a three-minute insert, not a forty-minute rail. This is what §3 called for
+   originally, and what the screw-mount RJ45 achieved by sidestepping snapping entirely.
+
 ### Coupons printed 2026-09-04 — the desk work is done
 
 All three (`usb_size`, `usb_thick`, `rail`) are off the printer, in the faceplate's
