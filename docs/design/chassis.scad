@@ -1,7 +1,9 @@
 // cyberdeck — floor chassis: module plinth (tray and cradle to follow).
 //
 // The module's screen must finish level with the rib shelf at 75 mm (CASE.md S12).
-// Module is 44 mm thick (measured), so it stands on a 31 mm plinth: 31 + 44 = 75.
+// Module is 44 mm thick (measured) and the plinth does NOT stand on the floor -
+// it bolts down onto the 4 mm floor tray, which is what ties the two tray halves
+// together. So the stack is 4 + plinth + 44 = 75.
 //
 // Deliberately a skeleton, not a block. The module's vents are on its BACK face,
 // which points down here, and the operator has cut further vents into that cover.
@@ -11,9 +13,17 @@
 //   flatpak run --filesystem=host org.openscad.OpenSCAD \
 //     -o "$PWD/build/plate/plinth.stl" -D 'PART="plinth"' "$PWD/docs/design/chassis.scad"
 
+include <deck.scad>
+
 PART = "plinth";
 
-// 30.5, not 31 - drawn deliberately short.
+// 26.5, not 31 - the tray eats 4 mm, and 0.5 more is deliberate.
+//
+// CORRECTED 2026-09-05. The first value, 30.5, came from 75 - 44 - 0.5 and
+// silently assumed the plinth sat on the case FLOOR. It does not: it sits on
+// the tray, and 4 + 30.5 + 44 = 78.5 would have stood the module 3.5 mm proud
+// of the rib shelf and lifted the plate off all twelve ribs - the exact failure
+// the 0.5 bias below exists to prevent.
 //
 // Not printer compensation: the calibration bar remeasured at 6.05 for a drawn
 // 6.00, so Z is accurate. The bias is against OVER-CONSTRAINT. The plate is
@@ -23,20 +33,18 @@ PART = "plinth";
 // its ribs and leaves it bearing on the module alone. Drawn 0.5 short, the
 // module always lands slightly low and a strip of foam tape on its top face
 // takes up the gap - a compliant support instead of a rigid one that competes.
-PLINTH_H = 30.5;    // 75 shelf - 44 module - 0.5 deliberate
-VESA     = 75;      // M4, centred on the 200 x 137.5 face
-BOSS_D   = 10;      // kept small: contact only around the VESA bosses
-M4_CLEAR = 4.5;
+// PLINTH_H, TRAY_T, VESA, M3_CLEAR and M4_CLEAR now live in deck.scad, where
+// the stack that produces them is assert()ed. Do not redeclare them here.
+PIER_D   = 10;      // kept small: contact only around the VESA bosses
 RIB_H    = 6;
 RIB_W    = 8;
-M3_CLEAR = 3.4;
 $fn = 48;
 
 module plinth() {
     difference() {
         union() {
             for (x = [-1, 1], y = [-1, 1])
-                translate([x*VESA/2, y*VESA/2, 0]) cylinder(d=BOSS_D, h=PLINTH_H);
+                translate([x*VESA/2, y*VESA/2, 0]) cylinder(d=PIER_D, h=PLINTH_H);
             for (y = [-1, 1])
                 translate([-VESA/2, y*VESA/2 - RIB_W/2, 0]) cube([VESA, RIB_W, RIB_H]);
             for (x = [-1, 1])
@@ -45,9 +53,10 @@ module plinth() {
         // M4 up into the module's VESA threads
         for (x = [-1, 1], y = [-1, 1])
             translate([x*VESA/2, y*VESA/2, -1]) cylinder(d=M4_CLEAR, h=PLINTH_H + 2);
-        // M3 down into the floor tray, mid-span on each rib
-        for (p = [[0, VESA/2], [0, -VESA/2], [VESA/2, 0], [-VESA/2, 0]])
-            translate([p[0], p[1], -1]) cylinder(d=M3_CLEAR, h=RIB_H + 2);
+        // M3 down into the floor tray, taken from the SHARED pattern in case
+        // coordinates so the plinth and the tray cannot disagree about it.
+        for (b = PLINTH_BOLT)
+            translate([b[0], b[1] - MOD_CY, -1]) cylinder(d=M3_CLEAR, h=RIB_H + 2);
     }
 }
 
@@ -67,16 +76,9 @@ if (PART == "plinth") plinth();
 // ---------------------------------------------------------------------------
 TRAY_W = 132.5;    // per half
 TRAY_D = 195;
-TRAY_T = 4;
-RIB    = 12;
+RIB    = 12;       // TRAY_T is declared up with the plinth, which stands on it
 
-// Plinth bolts, in case coordinates. Module centre is at y = -41.5 (S13 #0),
-// plinth ribs run at +-37.5 from it, holes offset +-20 in x so that NONE lands
-// on the x=0 tray seam.
-PLINTH_BOLT_Y = [-79, -4];
-PLINTH_BOLT_X = 20;
-// Battery cradle bolts. Pack stands at y +30..+100, x -53..+53.
-CRADLE_BOLT = [[40, 38], [40, 92]];
+// Plinth and cradle bolts come from deck.scad in CASE coordinates.
 
 module tray_window(x0, y0, x1, y1) {
     translate([x0, y0, -1]) cube([x1 - x0, y1 - y0, TRAY_T + 2]);
@@ -90,10 +92,9 @@ module tray_half() {
         tray_window(RIB, -48, TRAY_W - RIB, 10);
         // back channel, beside the battery
         tray_window(66, 24, TRAY_W - RIB, TRAY_D/2 - RIB);
-        for (y = PLINTH_BOLT_Y)
-            translate([PLINTH_BOLT_X, y, -1]) cylinder(d=M3_CLEAR, h=TRAY_T + 2);
-        for (p = CRADLE_BOLT)
-            translate([p[0], p[1], -1]) cylinder(d=M3_CLEAR, h=TRAY_T + 2);
+        // Only the holes falling on THIS half (x >= 0); the mirror gets the rest.
+        for (b = concat(PLINTH_BOLT, CRADLE_BOLT)) if (b[0] >= 0)
+            translate([b[0], b[1], -1]) cylinder(d=M3_CLEAR, h=TRAY_T + 2);
     }
 }
 
@@ -103,7 +104,9 @@ module tray_half() {
 // the plate's own back well (S13 #0) catches it again at 75-81 mm, so the two
 // together stop it moving without needing a strap over the top.
 // ---------------------------------------------------------------------------
-BATT_W = 106; BATT_D = 70;
+// BATT_W/BATT_D come from deck.scad. CR_FLOOR too - the pack stands on the
+// cradle floor on top of the tray, not on the case floor, and deck.scad
+// assert()s the resulting height against the rim.
 CR_WALL = 3; CR_H = 20; CR_FLANGE = 8;
 
 module cradle() {
@@ -113,16 +116,16 @@ module cradle() {
         union() {
             translate([-ow/2, -od/2, 0]) cube([ow, od, CR_H]);
             translate([-ow/2 - CR_FLANGE, -od/2, 0])
-                cube([ow + 2*CR_FLANGE, od, TRAY_T]);
+                cube([ow + 2*CR_FLANGE, od, CR_FLOOR]);
         }
-        translate([-(BATT_W + 1)/2, -(BATT_D + 1)/2, TRAY_T])
+        translate([-(BATT_W + 1)/2, -(BATT_D + 1)/2, CR_FLOOR])
             cube([BATT_W + 1, BATT_D + 1, CR_H]);
         // wire exit, one end of the 106 axis
-        translate([(BATT_W + 1)/2 - 1, -12, TRAY_T + 6])
+        translate([(BATT_W + 1)/2 - 1, -12, CR_FLOOR + 6])
             cube([CR_WALL + 2, 24, CR_H]);
         for (x = [-1, 1], y = [-1, 1])
             translate([x*(ow/2 + CR_FLANGE/2), y*(od/2 - 6), -1])
-                cylinder(d=M3_CLEAR, h=TRAY_T + 2);
+                cylinder(d=M3_CLEAR, h=CR_FLOOR + 2);
     }
 }
 

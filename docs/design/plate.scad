@@ -13,6 +13,8 @@
 //   done
 // Absolute paths - the flatpak cannot see /tmp.
 
+include <deck.scad>
+
 PART = "all";
 
 // 304.5, not 304 - biased deliberately oversize.
@@ -32,20 +34,16 @@ CORNER_R = 18;
 
 FRAME_W  = 12;    // section width on the sides and back
 FRAME_WF = 8;     // FRONT member, narrowed to buy the battery its depth (S13 #0)
-FRAME_H = 6;      // full height of the rim
 LEDGE_W  = 10;    // ledge reaching further inward, under the tiles
 LEDGE_WF = 5;     // and narrowed at the front for the same reason
-LEDGE_H = 1.5;    // so a 4.5 tile sits flush with the 6 mm rim (S12)
-TILE_T  = 4.5;
+// FRAME_H, LEDGE_H and TILE_T come from deck.scad, which assert()s that a
+// tile sits flush in the frame.
 
-MOD_W = 200; MOD_D = 137.5;      // measured 2026-09-04
 // Module shifted FORWARD, front edge at -110.25, so its back edge lands at
 // +27.25 and leaves 72.75 mm of floor behind it for the battery standing on
 // its 70 x 106 base (S13 #0). Only the 173 x 118 active area must stay inside
 // the opening; the module's front bezel tucks under the narrowed front member.
-MOD_FRONT = -110.25;
-MOD_CY    = MOD_FRONT + MOD_D/2;   // -41.5
-BATT_W = 106; BATT_D = 70;         // 90 x 70 x 106 incl. terminals, standing 90 tall
+// MOD_*, BATT_* from deck.scad.
 BATT_FRONT = 30; BATT_BACK = 100;
 WIN_W = 173; WIN_D = 118;        // active area, centred
 TILE_GAP = 1;                    // clearance of screen tile around the module
@@ -109,10 +107,8 @@ module member() {
 // S11 has only 3.5 mm of headroom under the rim - each hole gets a local boss
 // on the UNDERSIDE, where there is 75 mm of nothing. The splice is
 // counterbored to swallow the boss and still clamp flat.
-INSERT_D = 4.2;    // -> 4.0 as printed = ruthex's number
-INSERT_H = 6.7;    // ruthex minimum. Was 5 - too shallow for a 5.7 insert.
-BOSS_H   = 1.7;    // 6 member + 1.7 = 7.7 = 6.7 hole + 1.0 skin
-BOSS_D   = 8;      // 4.0 hole + 2.0 wall each side (ruthex wants >= 1.6)
+// INSERT_D/H and BOSS_D/H come from deck.scad, which assert()s that the seat
+// is deep enough for the insert and that a 4.5 tile is not.
 
 // A blind insert seat, drilled up from z=0 into material above, with the boss
 // that makes the depth. Call with the part's underside at z=0.

@@ -1368,6 +1368,43 @@ Audit of 2026-09-04. Everything here is either undecided, undrawn, or unverified
    keystone only one axis is unknown: **the web left by a local rebate**. One ladder,
    0.8 → 2.4, in `coupons.scad` as `rocker`.
 
+11. ✅ **RESOLVED 2026-09-05 — the plinth was 4 mm too tall, and a checker that
+   looks at one part at a time could never have said so.** `PLINTH_H` was 30.5,
+   from `75 − 44 − 0.5`. That arithmetic puts the plinth on the case *floor*. It
+   stands on the **4 mm tray** — which is the entire reason it exists, to bridge
+   the seam between the two tray halves. Real stack: `4 + 30.5 + 44 = 78.5`
+   against a 75 mm shelf. The module would have stood **3.5 mm proud**, lifting
+   the plate off all twelve ribs onto the module alone — precisely the failure
+   the deliberate 0.5 mm undersize was introduced to prevent. **Now 26.5.**
+
+   Two more of the same shape, found by looking for them:
+
+   - **Plinth/tray bolts never matched.** Plinth drilled `(0, ±37.5)` local; the
+     tray drilled `(±20, …)`. Nothing compared the two patterns. Worse, the
+     plinth's pair at x = 0 sat exactly on the tray seam and would have bolted
+     into the gap, holding neither half.
+   - **The battery height was measured from the floor.** The pack stands on the
+     cradle floor on top of the tray, so its top is `4 + 4 + 90 = 98`, not 90.
+     It projects **17 mm** above the 81 mm plate, not the 9 this doc claims in
+     §13 #0 — with 2 mm to the rim. See §13 #12.
+
+   **The common cause, and the fix.** `check-stl.py` checks a part *in
+   isolation*: bounding box, bed fit, z = 0, solid count. Every error it has
+   caught was that kind. Every error it has **missed** was a *relationship
+   between two parts* — a stack-up, a bolt pattern, a mating thickness. Those
+   are sums that nobody added up, and no amount of re-reading catches a sum you
+   did not know to take.
+
+   So the shared numbers now live once, in **`docs/design/deck.scad`**, with the
+   agreements written as `assert()`. An assertion failure stops OpenSCAD dead
+   and **no STL is written** — a wrong part becomes unprintable rather than
+   printed and then noticed. Verified by regression: restoring `PLINTH_H = 30.5`
+   fails `"module stack does not reach the rib shelf"` and produces no file.
+
+   **`docs/design/build.sh`** now builds every part and checks it, so no STL can
+   go stale against the source. It immediately found one: `frame_full.stl` had
+   been sitting at 304.0 since the source moved to 304.5.
+
 10. ✅ **RESOLVED 2026-09-05 — the insert holes were 1.7 mm too shallow, and the fit
    test would never have caught it.** The operator's inserts are **ruthex RX-M3×5.7**
    (GE-M3X57-001), and the bag publishes the hole:
