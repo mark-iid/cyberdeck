@@ -1370,6 +1370,30 @@ Audit of 2026-09-04. Everything here is either undecided, undrawn, or unverified
    keystone only one axis is unknown: **the web left by a local rebate**. One ladder,
    0.8 → 2.4, in `coupons.scad` as `rocker`.
 
+14. ✅ **RESOLVED 2026-09-05 — the Powerpole hole was not a hole.** It was written
+   as `cube([16.2, 8.5, TILE_T+2], center=true)` translated to z = 0. Centring in
+   x and y is what was wanted; the same call also centres in **z**, so the cut
+   spanned −3.25 … +3.25 in a 4.5 mm tile and **left 1.25 mm of material across
+   the top**. Found by rebuilding the rails from a table and differencing the old
+   mesh against the new: the volumes disagreed by **172.125 mm³**, which is
+   16.2 × 8.5 × 1.25 exactly.
+
+   Nothing could have caught it. `check-stl.py` sees a bounding box; the rail
+   assertions check *where* cutouts sit, not whether they go through. A blind
+   pocket and a through hole are the same shape from above.
+
+   Every through-cut now goes through one `through()` module, so a cut cannot be
+   accidentally blind. **Both rails are now drawn from their feature table** —
+   `LEFT_FEATURES` and `RIGHT_FEATURES` — rather than the table sitting beside
+   hard-coded geometry and agreeing only with itself, which is what the previous
+   revision did and is the same fault as the plinth and the cradle.
+
+   `build.sh` also now treats OpenSCAD's *"Ignoring unknown module"* as a
+   **failure**. It is normally a warning, and it means geometry silently vanished
+   while the STL still wrote and still looked plausible — it caught a deleted
+   `rebated()` module during this very change, which would have printed rails
+   with no rebates for the rocker and the USB.
+
 12. ✅ **RESOLVED 2026-09-05 — the battery cradle did not fit, and did not need
    to.** Writing ten cross-part assertions (§13 #11) turned up four faults, all
    on the battery, all invisible to a per-part check:

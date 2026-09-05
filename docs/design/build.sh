@@ -28,7 +28,14 @@ build() {   # build <part> <srcfile>
         rc=1
         return
     fi
-    echo "$log" | grep -iE "warning" | sed "s/^/  warn $1: /"
+    # "Ignoring unknown module/function" means geometry silently went MISSING -
+    # the STL still writes, and looks plausible. Treat it as a failure.
+    if echo "$log" | grep -qiE "ignoring unknown"; then
+        echo "FAILED  $1 (dropped geometry)"
+        echo "$log" | grep -iE "ignoring unknown" | sed 's/^/        /'
+        rc=1
+    fi
+    echo "$log" | grep -iE "warning" | grep -viE "ignoring unknown" | sed "s/^/  warn $1: /"
 }
 
 rm -f "$OUT"/*.stl

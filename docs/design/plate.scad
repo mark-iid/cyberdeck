@@ -180,50 +180,26 @@ PP_W = 16.2; PP_H = 8.5;
 REBATE = 3;                       // relief margin around a snapped-in part
 // SMA_D and AUDIO_D live in deck.scad with the rest of the connector openings.
 
-// Everything the left rail carries, as [name, centre y, length along the rail,
-// width across it]. Written as a table so the assertion below can check that no
-// two of them overlap - which is the only way to see it, since each cutout is
-// drawn in a different place in left_rail() and none of them mentions another.
-LEFT_FEATURES = [
-    ["SMA",       -50, SMA_D,          SMA_D],
-    ["audio",       0, AUDIO_D,        AUDIO_D],
-    ["Powerpole", -20, PP_H,           PP_W],
-    ["rocker",     30, RK_L + 2*REBATE, RK_W + 2*REBATE],
-];
-for (f = LEFT_FEATURES)
-    assert(f[3] <= RAIL_W, str(f[0], " is wider than the rail tile"));
-for (i = [0 : len(LEFT_FEATURES)-2], j = [i+1 : len(LEFT_FEATURES)-1])
-    assert(abs(LEFT_FEATURES[i][1] - LEFT_FEATURES[j][1])
-             >= (LEFT_FEATURES[i][2] + LEFT_FEATURES[j][2])/2,
-           str(LEFT_FEATURES[i][0], " overlaps ", LEFT_FEATURES[j][0],
-               " on the left rail"));
-for (f = LEFT_FEATURES)
-    assert(abs(f[1]) + f[2]/2 <= RAIL_D/2, str(f[0], " runs off the end of the rail"));
-
 module rebated(cx, cy, w, l, web, margin=REBATE) {
     translate([cx - w/2 - margin, cy - l/2 - margin, web])
         cube([w + 2*margin, l + 2*margin, TILE_T]);
     translate([cx - w/2, cy - l/2, -1]) cube([w, l, TILE_T + 2]);
 }
 
-module left_rail() {
-    outb = RAIL_W - 12;           // 27: outboard band the keyboard does not cover
-    difference() {
-        translate([-RAIL_W/2, -RAIL_D/2, 0]) cube([RAIL_W, RAIL_D, TILE_T]);
-        rebated(0, 30, RK_W, RK_L, RK_WEB);                 // rocker, centred across
-        translate([RAIL_W/2 - outb/2 - 6, -20, 0])
-            cube([PP_W, PP_H, TILE_T + 2], center=true);    // Powerpole retainer
-        translate([RAIL_W/2 - outb/2 - 6, -50, -1])
-            cylinder(d=SMA_D, h=TILE_T + 2);                 // SMA
-        // Headphone / powered-speaker jack, in the 32 mm gap between the
-        // Powerpole and the rocker. Its source is the module's own AUDIO socket,
-        // which is on the module's LEFT edge - the same side as this rail, so
-        // the run is short. Added 2026-09-05 because the battery ended up
-        // 2.75 mm from the module's speakers and muffles them (S13 #13); this
-        // gives the sound somewhere to go instead.
-        translate([0, 0, -1]) cylinder(d=AUDIO_D, h=TILE_T + 2);
-    }
-}
+// Everything a rail carries, as [name, centre y, kind, across, along, extra].
+// All cutouts are centred across the rail, so position is one number.
+//
+// The table is the ONLY description - rail_tile() draws from it. An earlier
+// revision had the table sitting BESIDE hard-coded cutouts, checking itself
+// while the geometry went its own way: the same two-descriptions-of-one-thing
+// that produced the plinth and the cradle. A collision check that cannot see
+// the geometry it guards is decoration.
+LEFT_FEATURES = [
+    ["SMA",       -50, "round",  SMA_D,   SMA_D],
+    ["audio",       0, "round",  AUDIO_D, AUDIO_D],
+    ["Powerpole", -20, "rect",   PP_W,    PP_H],
+    ["rocker",     30, "rebate", RK_W,    RK_L,   RK_WEB],
+];
 
 // Right rail tile — data. Two panel-mount extensions, both fitted from behind
 // so the front stays flush under the keyboard:
@@ -245,18 +221,64 @@ RJ_CLEAR = 3.6;                   // M3 clearance, drawn 0.2 over (holes print
                                   // undersize) AND for slop across two ears
 RJ_CSK_D = 6.4;                   // M3 90 deg countersunk head, same 0.2
 
-module right_rail() {
-    difference() {
-        translate([-RAIL_W/2, -RAIL_D/2, 0]) cube([RAIL_W, RAIL_D, TILE_T]);
-        rebated(0, 34, USB_W, USB_L, USB_WEB);
-        translate([-RJ_W/2, -20 - RJ_L/2, -1]) cube([RJ_W, RJ_L, TILE_T + 2]);
-        for (y = [-20 - RJ_EAR/2, -20 + RJ_EAR/2]) {
+RIGHT_FEATURES = [
+    ["RJ45",     -20, "rj45",   RJ_W,  RJ_L],
+    ["dual USB",  34, "rebate", USB_W, USB_L, USB_WEB],
+];
+
+// The space a cutout really occupies, which is not always the hole. A rebate
+// needs REBATE of relief all round; the RJ45's footprint is set by its screw
+// ears and their heads, not by the aperture between them.
+function f_across(f) =
+    f[2] == "rebate" ? f[3] + 2*REBATE :
+    f[2] == "rj45"   ? max(f[3], RJ_CSK_D) : f[3];
+function f_along(f) =
+    f[2] == "rebate" ? f[4] + 2*REBATE :
+    f[2] == "rj45"   ? RJ_EAR + RJ_CSK_D : f[4];
+
+// Both rails, checked by the same three rules.
+RAILS = [["left", LEFT_FEATURES], ["right", RIGHT_FEATURES]];
+for (r = RAILS) for (f = r[1]) {
+    assert(f_across(f) <= RAIL_W, str(f[0], " is wider than the ", r[0], " rail"));
+    assert(abs(f[1]) + f_along(f)/2 <= RAIL_D/2,
+           str(f[0], " runs off the end of the ", r[0], " rail"));
+}
+for (r = RAILS) for (i = [0 : len(r[1])-2], j = [i+1 : len(r[1])-1])
+    assert(abs(r[1][i][1] - r[1][j][1]) >= (f_along(r[1][i]) + f_along(r[1][j]))/2,
+           str(r[1][i][0], " overlaps ", r[1][j][0], " on the ", r[0], " rail"));
+
+// Every through-cut goes through this, so none can be accidentally blind.
+// The old Powerpole pocket was written as cube(..., center=true) translated to
+// z=0, which spans -3.25..+3.25 in a 4.5 mm tile: it left 1.25 mm of material
+// across the top and was never a hole at all. Centring in x and y is wanted;
+// centring in z is a bug, and the two look identical in one call.
+module through(cy, w, l) {
+    translate([0, cy, TILE_T/2]) cube([w, l, TILE_T + 2], center=true);
+}
+
+module feature(f) {
+    if      (f[2] == "round")  translate([0, f[1], -1]) cylinder(d=f[3], h=TILE_T + 2);
+    else if (f[2] == "rect")   through(f[1], f[3], f[4]);
+    else if (f[2] == "rebate") rebated(0, f[1], f[3], f[4], f[5]);
+    else if (f[2] == "rj45") {
+        through(f[1], f[3], f[4]);
+        for (y = [f[1] - RJ_EAR/2, f[1] + RJ_EAR/2]) {
             translate([0, y, -1]) cylinder(d=RJ_CLEAR, h=TILE_T + 2);
             translate([0, y, TILE_T - (RJ_CSK_D - RJ_CLEAR)/2])
                 cylinder(d1=RJ_CLEAR, d2=RJ_CSK_D, h=(RJ_CSK_D - RJ_CLEAR)/2 + 0.01);
         }
     }
+    else assert(false, str(f[0], " has an unknown cutout kind"));
 }
+
+module rail_tile(features) {
+    difference() {
+        translate([-RAIL_W/2, -RAIL_D/2, 0]) cube([RAIL_W, RAIL_D, TILE_T]);
+        for (f = features) feature(f);
+    }
+}
+module left_rail()  { rail_tile(LEFT_FEATURES); }
+module right_rail() { rail_tile(RIGHT_FEATURES); }
 
 // One joint: two SEPARATE bars plus the splice, laid out flat on the bed.
 // An earlier revision drew the bars meeting at x=0, so OpenSCAD unioned them
