@@ -1735,8 +1735,11 @@ Knock-on: the battery well is off-centre by 20 mm rather than 6, so `back_left` 
 `back_right` are **69.25 and 89.25**. The tray's back-channel window moved from x 66 to
 **84**, because the shroud bolts at 77.5 and the old window left no material under it.
 
-⚠️ **8 contradicts the earlier "extends to 106", which implies 6.** Taking the larger:
-it is a clearance dimension, and being wrong costs a collision rather than a gap.
+✅ **SETTLED at 8** (operator, 2026-09-05). The apparent conflict with the earlier
+"extends to 106" was not a conflict: **the posts stand 8 mm free and flex down to 6.**
+So 6 is what they measure with something already pressing on them — which is exactly
+the state the clearance exists to prevent, and therefore the wrong number to build
+from. 8 is the resting height, and the only one that guarantees nothing touches them.
 
 **4 — The foam tape is 2 mm, not 0.5.** §12 quotes 0.5 as the gap the tape on the
 module's top face closes. That is the **frame**-to-module figure. What the module

@@ -55,11 +55,13 @@ BATT_W = 106; BATT_D = 70; BATT_H = 90;
 //     front-to-back, so both posts sit toward the deck's front. The wire exit
 //     follows them there.
 //
-// ⚠️ 8 here contradicts the earlier "extends to 106" (which implies 6). Taking
-// the LARGER, because it is a clearance dimension and the cost of being wrong
-// is a collision rather than a gap.
+// 8 vs the earlier "extends to 106" (which implies 6): SETTLED at 8,
+// 2026-09-05. Both readings were right - the posts stand 8 free and flex down
+// to 6. So 6 is what they measure when something is already pressing on them,
+// which is not a number to build clearance from. 8 is the resting height and
+// the only one that guarantees nothing touches them.
 BATT_BODY_W = 100;
-BATT_TERM_W = 8;                 // bare posts, measured
+BATT_TERM_W = 8;                 // posts at rest; they flex to 6 under load
 // Posts alone are not the envelope. S11 already budgets "~15-20 mm for the
 // posts + Powerpole lugs + cable bend"; the shroud has to contain all of it.
 BATT_WIRE_W = 20;
