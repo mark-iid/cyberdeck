@@ -6,7 +6,7 @@ For the next enclosure. Written to be shopped and printed against, not admired.
 1280×800 IPS 5-point touch unit (Amazon B0DX26BXPX) whose **backboard enclosure
 houses the Raspberry Pi 5 itself** — plus, now, the NVMe SSD and heatsink. It
 takes **DC 12 V** in, exposes HDMI / USB / power on the case, mounts via **VESA
-75/100**, and carries **its own active cooling fan**. So the 200 × 137.5 × 51 mm
+75/100**, and carries **its own active cooling fan**. So the 200 × 137.5 × 44 mm
 brick is the whole computer, not a screen bolted to a separate Pi.
 
 That collapses the build to three essentials — the JUNEBOX module, a keyboard,
@@ -198,7 +198,7 @@ The split delivers what §3 asked for independently: the USB and keystone carrie
 wanted to be separate thin parts anyway, and now every connector sits on a piece small
 enough to reprint alone when a cutout comes out wrong.
 
-**Under the plate: 75 mm.** The module stands 24 mm off the floor on its plinth (§12); the battery on its 70 mm side clears the underside with 5 mm.
+**Under the plate: 75 mm.** The module stands **31 mm** off the floor on its plinth (§12); the battery on its 70 mm side clears the underside with 5 mm.
 Anything resting on the floor is bounded by the flat **270 × 200** inside the fillet,
 not by 305 × 230.
 
@@ -645,8 +645,8 @@ Pelican publishes the 1400's depth split as lid 1.18 in (30 mm), bottom 4.00 in
 faceplate does not sit at the rim. It rides the rib shelf at **75 mm** (§4, §6), which
 re-cuts every number in this section:
 
-- **Under the plate: 75 mm**, not ~97. The module hangs 51 mm below it, so Zone B is
-  **~24 mm** of air, not 45.
+- **Under the plate: 75 mm**, not ~97. The module is **44 mm** thick (measured
+  2026-09-04, against 51 from spec), so Zone B is **~31 mm** of air, not 45.
 - **The battery must lie on its 90 × 100 face, 70 mm tall** — not the 90 mm-tall
   orientation assumed above, which no longer clears the underside of the plate. At
   70 mm it has 5 mm of headroom. Terminals point sideways in this orientation, so the
@@ -662,7 +662,7 @@ re-cuts every number in this section:
 | Zone | Space | Holds |
 |---|---|---|
 | **A — back channel** | ~180 × 88 × 90 mm beside the battery | SDR dongle, coax coil, **antenna cylinder** |
-| **B — under the module** | ~24 mm of air below the module, 200 × 137.5 footprint | flat, non-fragile items — adapters, spare coax, parts tray |
+| **B — under the module** | ~31 mm of air below the module, 200 × 137.5 footprint | flat, non-fragile items — adapters, spare coax, parts tray |
 | **C — over the faceplate** | thin, full width, under the closed lid | the keyboard itself, notes, cheat sheets |
 
 **Zone B has one rule: do not pack it solid.** The module's fan lives on its back
@@ -689,7 +689,7 @@ computer in a case and an actual go-kit.
 
 ## §8 — Open, needs the operator's measurements before CAD
 
-KNOWN: JUNEBOX outer **200 × 137.5** measured 2026-09-04 (× 51 still from spec — confirm), VESA 75/100, 12V, own
+KNOWN: JUNEBOX outer **200 × 137.5 × 44**, all measured 2026-09-04 (spec said 51), VESA 75/100 M4 centred, 12V, own
 fan, Pi+SSD inside · Perixx keyboard 230×160×**17** (vendor drawing 2026-09-04) · SMA antenna · Powerpole power.
 
 DONE:
@@ -1027,9 +1027,16 @@ that nobody had said.
 
 ### The inversion: heavy things sit on the floor
 
-§7 used to call for a "VESA bracket to hang the module from the plate." That puts
-~1.5 kg cantilevered on 4.5 mm printed tiles resting on 1 mm of rib bearing, and in a
-dropped case it is the first thing to fail. **Turn it over.**
+§7 used to call for a "VESA bracket to hang the module from the plate."
+
+**The module weighs 417 g** (14.7 oz, measured 2026-09-04) — not the ~1.5 kg this
+section assumed when it argued for the inversion. So the structural case was
+**overstated by 3.6×**, and hanging it from the plate would probably not have failed.
+The inversion still stands, for the reasons that survive the correction: a plinth sets
+the module's height *exactly* (which a bracket has to be shimmed to do), it lets the
+plate bear on the module rather than the reverse, and the tray has to exist anyway to
+locate the battery — which at ~1 kg is the heaviest thing in the case and is on the
+floor regardless.
 
 **A printed floor tray** sits in the flat **270 × 200** floor. The ~17 mm fillet all
 round means a tray cut to ~265 × 195 **cannot slide** — trapped on four sides, no
@@ -1038,8 +1045,11 @@ the ribs. Printed in sections for the 215 × 215 bed.
 
 The tray carries:
 
-- **A module plinth, 24 mm tall**, bolted to the module's **VESA 75 × 75**. 24 + 51 =
-  **75**, so the module's top face lands exactly at the rib shelf.
+- **A module plinth, 31 mm tall**, bolted to the module's **VESA 75 × 75** (M4).
+  31 + 44 = **75**, so the module's top face lands exactly at the rib shelf. *A plinth
+  here is simply a printed pedestal: the module cannot sit on the floor, because its
+  screen has to finish level with the rib shelf, so it stands on a block that lifts it
+  to exactly that height and bolts down through the VESA holes.*
 - **The battery cradle** — pack on its 90 × 100 face, 70 mm tall, terminals sideways,
   clamped rather than resting loose.
 - **Back-channel bays** for the SDR, coax coil and antenna, so they are not three loose
@@ -1048,9 +1058,11 @@ The tray carries:
 **The plinth must be a pillar, not a pad.** The module's two vents — a heat-dissipation
 port and an air inlet — are on its **back face**, which points *down* in this design
 (§8). A solid pad under it suffocates the module. The VESA pattern is central and the
-vents sit either side of it, so a central pillar clears both by construction. The 24 mm
-gap beneath becomes a **plenum**, and the tray must keep a path from it to the back
-channel rather than walling it off with the battery cradle.
+vents sit either side of it, so a central pillar clears both by construction — and the
+operator has cut **additional vents into the module's own back cover** (2026-09-04; the
+shell is untouched, §1 intact), which makes the pillar-not-pad rule matter more, not
+less. The **31 mm** gap beneath becomes a **plenum**, and the tray must keep a path from
+it to the back channel rather than walling it off with the battery cradle.
 
 ### The plate then bears on two things
 
@@ -1161,10 +1173,9 @@ Audit of 2026-09-04. Everything here is either undecided, undrawn, or unverified
 
 ### Needs a measurement, not a decision
 
-3. ✅ **Module outline — measured 2026-09-04: 200 × 137.5.** Neither the vendor's
-   200 × 136 nor this doc's 203 × 136.5. Rails go to ~51 mm each. **Thickness is still
-   unconfirmed at 51** from spec, and it sets the plinth directly (plinth = 75 −
-   thickness), so it is not a detail.
+3. ✅ **Module measured 2026-09-04: 200 × 137.5 × 44.** Neither the vendor's
+   200 × 136 nor this doc's 203 × 136.5, and the thickness was **44, not the 51 spec
+   claimed** — 7 mm, straight into the plinth, which is now **31 mm** tall.
 3b. ✅ **Both the active area and the VESA square are perfectly centred** in the
    200 × 137.5 face (operator, 2026-09-04). So the geometry is arithmetic, not
    measurement:
@@ -1184,11 +1195,19 @@ Audit of 2026-09-04. Everything here is either undecided, undrawn, or unverified
    size, and vent positions relative to the pattern.
 5. ✅ **Top face is flat** (operator, 2026-09-04) and **VESA is M4**. §12's "plate bears
    on the module at its centre" stands — no relief pocket over the glass needed.
-6. **Module weight**, for the plinth and tray.
-7. **Which edge carries the OSD cluster and speakers.** They can be buried (§8), but
-   the tray and cradle should not press on a speaker grille.
-8. **Keyboard cable length** — decides whether slack coils in the back channel or lies
-   beside the keyboard.
+6. ✅ **Module weight: 417 g** (14.7 oz). Light — see §12, where it corrects an
+   assumption by 3.6×.
+7. ✅ **OSD cluster and speakers are on the module's TOP edge** (operator,
+   2026-09-04) — which, laid flat screen-up with ports left, is the **back** edge,
+   facing the back channel. Two consequences: the tray's back-channel bays must stay
+   ~10 mm clear of that edge rather than packing against it, and the speakers end up
+   firing **up into the open channel** with the lid open, which is the best place they
+   could have been.
+8. ✅ **Keyboard cable is 5 ft (~1520 mm)** (operator, 2026-09-04). Far longer than the
+   ~300 mm the deployed position needs, so **~1.2 m is permanent slack**. It gets a
+   dedicated coil bay in the back channel on the floor tray, not an afterthought — and
+   the cable must reach that bay *without* passing under the keyboard, which has only
+   2 mm of headroom (§4).
 
 ### Resolved today, recorded for the trail
 
