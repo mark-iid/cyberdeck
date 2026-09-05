@@ -701,11 +701,11 @@ re-cuts every number in this section:
   orientation assumed above, which no longer clears the underside of the plate. At
   70 mm it has 5 mm of headroom. Terminals point sideways in this orientation, so the
   cradle's clear pocket moves from above the posts to beside them.
-- **Above the plate there is 20.5 mm of recess** (100 base − 75 shelf − 4.5 plate) and
-  the keyboard is **17 mm**, so it stows entirely inside the base with 3.5 mm spare.
-  **Zone C is on the plate, in the base**, and the lid is genuinely freed for the SDR
-  kit, coax and antenna. The eggcrate foam stays — it is what preloads the whole stack
-  against lifting (§4).
+- **Above the plate there is 20.5 mm of recess**, but **the battery takes the back of
+  it** — the pack stands 9 mm proud through an open well (§13 #0), leaving ~140 mm of
+  clear plate against a 160 mm keyboard. **Zone C is back in the lid**, reversing an
+  earlier move made before the battery packing was worked out. The eggcrate foam stays;
+  it preloads the stack against lifting (§4) and now retains the keyboard too.
 
 ### Zones
 
@@ -1255,8 +1255,8 @@ Audit of 2026-09-04. Everything here is either undecided, undrawn, or unverified
 
 ### Blocking
 
-0. ⛔ **THE BATTERY DOES NOT FIT BEHIND THE MODULE.** Found 2026-09-04 while setting up
-   the floor tray. The arithmetic, in centred plan coordinates:
+0. ✅ **RESOLVED 2026-09-04 — module shifted forward, battery stands in an open well.**
+   Resolution at the end of this item. The problem as found:
 
    | | |
    |---|---|
@@ -1292,8 +1292,38 @@ Audit of 2026-09-04. Everything here is either undecided, undrawn, or unverified
    3. **Battery outside the case**, which is where it is today and what §6 set out to
       fix.
 
-   Nothing else on the floor tray can be drawn until this resolves — the cradle, the
-   bays, the cable coil and the plenum path all key off where the pack sits.
+   **RESOLUTION — narrow the front frame member, shift the module forward, stand the
+   pack.** The blocker was not the frame's width but its **ledge**: 12 mm of section
+   plus a 10 mm ledge means usable tile starts 22 mm in, and the window cannot sit over
+   a ledge. So the **front member alone** goes to 8 mm with a 5 mm ledge; sides and back
+   stay 12 and keep the section the operator hand-verified as stiff enough.
+
+   | | |
+   |---|---|
+   | Opening front edge | −106.5 |
+   | Front ledge inner edge | −101.5 |
+   | Window front, 1 mm margin | −100.5 |
+   | Module front edge | **−110.25** |
+   | Module back edge | **+27.25** |
+   | **Floor behind it** | **72.75 mm** |
+
+   **The pack is 90 × 70 × 106**, terminals on the 100 axis adding 6 mm (measured
+   2026-09-04 — §8's 15–20 mm estimate was pessimistic). Standing **90 tall on a
+   70 × 106 base** it needs **70 mm** of depth: fits with **2.75 mm** to spare. The wire
+   bend projects along the 106 axis, which runs across 270 mm of width. It tops out at
+   90 against a plate top of 81, so it stands **9 mm proud** through an open well — 10 mm
+   below the rim.
+
+   **Consequence: the keyboard returns to the lid.** With the pack proud, the clear span
+   in front of it is ~140 mm against a 160 mm keyboard. §11's move to the base, made
+   this morning on a 20.5 mm recess, is reversed. Not all loss — it **deletes the 2 mm
+   keep-out entirely**, so the SMA, rocker and USB may sit anywhere on the rails, and the
+   keyboard locating lip and cable channel stop being parts.
+
+   The only orientation that would have kept the keyboard on the plate needs a pack under
+   70 mm tall, and nothing in this capacity class is — the dominant form factor is the
+   SLA replacement at 151 × 65 × 95, whose terminals are on the large top face and which
+   therefore does not fit this case in any orientation at all.
 
 1. ✅ **Ethernet — closed by replacing the part** (§8 #8). A screw-mount RJ45 panel
    extension: no snap, no panel-thickness dependency, and it deletes the internal patch

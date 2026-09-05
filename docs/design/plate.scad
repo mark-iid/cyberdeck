@@ -30,23 +30,37 @@ PLATE_W = 304.5;
 PLATE_D = 229;
 CORNER_R = 18;
 
-FRAME_W = 12;     // section width, inward from the outer edge
+FRAME_W  = 12;    // section width on the sides and back
+FRAME_WF = 8;     // FRONT member, narrowed to buy the battery its depth (S13 #0)
 FRAME_H = 6;      // full height of the rim
-LEDGE_W = 10;     // ledge reaching further inward, under the tiles
+LEDGE_W  = 10;    // ledge reaching further inward, under the tiles
+LEDGE_WF = 5;     // and narrowed at the front for the same reason
 LEDGE_H = 1.5;    // so a 4.5 tile sits flush with the 6 mm rim (S12)
 TILE_T  = 4.5;
 
 MOD_W = 200; MOD_D = 137.5;      // measured 2026-09-04
+// Module shifted FORWARD, front edge at -110.25, so its back edge lands at
+// +27.25 and leaves 72.75 mm of floor behind it for the battery standing on
+// its 70 x 106 base (S13 #0). Only the 173 x 118 active area must stay inside
+// the opening; the module's front bezel tucks under the narrowed front member.
+MOD_FRONT = -110.25;
+MOD_CY    = MOD_FRONT + MOD_D/2;   // -41.5
+BATT_W = 106; BATT_D = 70;         // 90 x 70 x 106 incl. terminals, standing 90 tall
+BATT_FRONT = 30; BATT_BACK = 100;
 WIN_W = 173; WIN_D = 118;        // active area, centred
 TILE_GAP = 1;                    // clearance of screen tile around the module
 
 RIB_X = [-74.5, 0, 74.5];
 $fn = 64;
 
-OPEN_W = PLATE_W - 2*FRAME_W;    // 280
-OPEN_D = PLATE_D - 2*FRAME_W;    // 205
-LEDGE_IW = OPEN_W - 2*LEDGE_W;   // 260
-LEDGE_ID = OPEN_D - 2*LEDGE_W;   // 185
+OPEN_W = PLATE_W - 2*FRAME_W;              // 280.5
+OPEN_D = PLATE_D - FRAME_W - FRAME_WF;     // 209
+OPEN_CY = (FRAME_WF - FRAME_W)/2;          // -2, opening sits forward
+LEDGE_IW = OPEN_W - 2*LEDGE_W;             // 260.5
+LEDGE_ID = OPEN_D - LEDGE_W - LEDGE_WF;    // 194
+LEDGE_CY = OPEN_CY + (LEDGE_W - LEDGE_WF)/2;
+OPEN_FRONT = -PLATE_D/2 + FRAME_WF;        // -106.5
+OPEN_BACK  =  PLATE_D/2 - FRAME_W;         // +102.5
 
 module rr(w, d, r, h) {
     linear_extrude(h) offset(r=r) square([w - 2*r, d - 2*r], center=true);
@@ -60,8 +74,14 @@ module ring(ow, od, orad, iw, id, irad, h) {
 
 // Full frame, for visualisation and for measuring against. Never printed whole.
 module frame_full() {
-    ring(PLATE_W, PLATE_D, CORNER_R, OPEN_W, OPEN_D, CORNER_R - FRAME_W, FRAME_H);
-    ring(OPEN_W, OPEN_D, CORNER_R - FRAME_W, LEDGE_IW, LEDGE_ID, 1, LEDGE_H);
+    difference() {
+        rr(PLATE_W, PLATE_D, CORNER_R, FRAME_H);
+        translate([0, OPEN_CY, -1]) rr(OPEN_W, OPEN_D, CORNER_R - FRAME_W, FRAME_H + 2);
+    }
+    difference() {
+        translate([0, OPEN_CY, 0]) rr(OPEN_W, OPEN_D, CORNER_R - FRAME_W, LEDGE_H);
+        translate([0, LEDGE_CY, -1]) rr(LEDGE_IW, LEDGE_ID, 1, LEDGE_H + 2);
+    }
 }
 
 // One of four L-shaped members, each carrying a corner, butt-jointed at the
@@ -87,21 +107,37 @@ module splice() {
 }
 
 // Screen tile - the module face plus 1 mm all round, window centred.
+// Spans the opening front back to just past the module, with the window over
+// the active area - which is centred on the module, not on the plate.
+TILE_BACK = MOD_FRONT + MOD_D + TILE_GAP;   // +28.25
 module screen_tile() {
-    w = MOD_W + 2*TILE_GAP; d = MOD_D + 2*TILE_GAP;
+    w = MOD_W + 2*TILE_GAP;
     difference() {
-        translate([-w/2, -d/2, 0]) cube([w, d, TILE_T]);
-        translate([-WIN_W/2, -WIN_D/2, -1]) cube([WIN_W, WIN_D, TILE_T + 2]);
+        translate([-w/2, OPEN_FRONT, 0]) cube([w, TILE_BACK - OPEN_FRONT, TILE_T]);
+        translate([-WIN_W/2, MOD_CY - WIN_D/2, -1]) cube([WIN_W, WIN_D, TILE_T + 2]);
     }
+}
+
+// Back channel tile, with the well the battery stands proud through. The pack
+// tops out at 90 against a plate top of 81, so it projects ~9 mm - which is why
+// the keyboard cannot lie here and returns to the lid (S11).
+// Two fillers with the battery well open between them. One full-width tile
+// would be 280.5 mm and will not print - check-stl.py caught it. Splitting
+// around the well also means the well needs no bridging.
+WELL_W = BATT_W + 2;
+module back_tile(side) {
+    x0 = side > 0 ? WELL_W/2 : -OPEN_W/2;
+    translate([x0, TILE_BACK, 0])
+        cube([OPEN_W/2 - WELL_W/2, OPEN_BACK - TILE_BACK, TILE_T]);
 }
 
 // Rail tile blank. Connector cutouts are NOT here yet - the keystone is
 // unresolved (S8 #8) and the A/B selector is not bought, so two of the four
 // have no dimensions. This exists to pin the usable width.
-RAIL_W = (OPEN_W - (MOD_W + 2*TILE_GAP)) / 2;   // 39
+RAIL_W = (OPEN_W - (MOD_W + 2*TILE_GAP)) / 2;   // 39.25
+RAIL_D = TILE_BACK - OPEN_FRONT;                // matches the screen tile
 module rail_blank() {
-    translate([-RAIL_W/2, -(MOD_D + 2*TILE_GAP)/2, 0])
-        cube([RAIL_W, MOD_D + 2*TILE_GAP, TILE_T]);
+    translate([-RAIL_W/2, -RAIL_D/2, 0]) cube([RAIL_W, RAIL_D, TILE_T]);
 }
 
 // Left rail tile — power/RF. One switch now does master AND source select
@@ -112,7 +148,6 @@ module rail_blank() {
 // The keyboard covers the inboard 14 mm of this tile, so the SMA at 9.7 mm
 // proud is placed OUTBOARD. The rocker at 2.0 mm proud sits on the keep-out
 // line; its 35 x 25.3 bezel is broad enough to bear a keyboard without harm.
-RAIL_D   = MOD_D + 2*TILE_GAP;    // 139.5
 RK_W = 28.7; RK_L = 21.2;
 RK_WEB = 1.2;                     // PROVISIONAL - the `rocker` coupon settles it
 PP_W = 16.2; PP_H = 8.5;
@@ -186,6 +221,8 @@ if      (PART == "member")     member();
 else if (PART == "splice")     splice();
 else if (PART == "screen_tile") screen_tile();
 else if (PART == "rail_blank") rail_blank();
+else if (PART == "back_left")  back_tile(-1);
+else if (PART == "back_right") back_tile(1);
 else if (PART == "left_rail")  left_rail();
 else if (PART == "right_rail") right_rail();
 else if (PART == "joint_test") joint_test();
