@@ -1340,11 +1340,22 @@ Audit of 2026-09-04. Everything here is either undecided, undrawn, or unverified
    | `rail_blank` | 39 × 139.5 × 4.5 | ×2, cutouts still pending |
    | `joint_test` | 80 × 12 × 10.2 | print this first |
 
-   Still prose: the floor tray, plinth, battery cradle, Powerpole retainer, keyboard
-   lip and tilt foot. **`docs/design/faceplate.svg` is superseded and still wrong** —
-   300 × 225 with 48 mm rails and the module at x=48. Delete or regenerate it.
-   The rail cutouts cannot be finished until §8 #8 (keystone) closes and the A/B
-   selector is bought and measured.
+   `docs/design/chassis.scad` carries the floor side:
+
+   | Part | Size | Note |
+   |---|---|---|
+   | `plinth` | 85 × 85 × 30.5 | skeleton, four VESA bosses on a rib ring |
+   | `tray` | 132.5 × 195 × 4 | ×2 halves, split at x=0, bridged by the plinth |
+   | `cradle` | 129 × 77 × 20 | locates the pack's base; the plate's well catches its top |
+   | `back_left` / `back_right` | 86.25 × 74.25 × 4.5 | fillers either side of the battery well |
+
+   **Still undrawn: the Powerpole retainer** — it needs the roll-pin position off a
+   housing, because a plain pocket cannot resist an unplugging pull and the pin is the
+   only feature on a PP15-45 that can. Also undrawn: the tilt foot. The **keyboard lip
+   and cable channel are deleted**, not pending — the keyboard is back in the lid.
+
+   **`docs/design/faceplate.svg` is superseded and still wrong** — 300 × 225 with 48 mm
+   rails and the module at x=48. Delete or regenerate it.
 
 ### New, and the same shape as two earlier misses
 

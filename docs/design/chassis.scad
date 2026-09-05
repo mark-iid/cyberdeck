@@ -52,3 +52,79 @@ module plinth() {
 }
 
 if (PART == "plinth") plinth();
+
+// ---------------------------------------------------------------------------
+// Floor tray. Sits in the flat 270 x 200 floor; the ~17 mm fillet traps it on
+// all four sides, so nothing fastens to the shell (CASE.md S1, S12).
+//
+// Two halves split at x=0, each 132.5 x 195 - inside the 215 bed. They are not
+// joined to each other: the PLINTH bridges the seam and bolts into both, and
+// the fillet stops either sliding.
+//
+// Skeletal rather than solid. Under the module the tray is mostly window: the
+// module's vents face down into a 30.5 mm plenum and the tray must not wall it
+// off. It also saves most of the plastic and most of the print time.
+// ---------------------------------------------------------------------------
+TRAY_W = 132.5;    // per half
+TRAY_D = 195;
+TRAY_T = 4;
+RIB    = 12;
+
+// Plinth bolts, in case coordinates. Module centre is at y = -41.5 (S13 #0),
+// plinth ribs run at +-37.5 from it, holes offset +-20 in x so that NONE lands
+// on the x=0 tray seam.
+PLINTH_BOLT_Y = [-79, -4];
+PLINTH_BOLT_X = 20;
+// Battery cradle bolts. Pack stands at y +30..+100, x -53..+53.
+CRADLE_BOLT = [[40, 38], [40, 92]];
+
+module tray_window(x0, y0, x1, y1) {
+    translate([x0, y0, -1]) cube([x1 - x0, y1 - y0, TRAY_T + 2]);
+}
+
+module tray_half() {
+    difference() {
+        translate([0, -TRAY_D/2, 0]) cube([TRAY_W, TRAY_D, TRAY_T]);
+        // under the module - the plenum must stay open
+        tray_window(RIB, -TRAY_D/2 + RIB, TRAY_W - RIB, -60);
+        tray_window(RIB, -48, TRAY_W - RIB, 10);
+        // back channel, beside the battery
+        tray_window(66, 24, TRAY_W - RIB, TRAY_D/2 - RIB);
+        for (y = PLINTH_BOLT_Y)
+            translate([PLINTH_BOLT_X, y, -1]) cylinder(d=M3_CLEAR, h=TRAY_T + 2);
+        for (p = CRADLE_BOLT)
+            translate([p[0], p[1], -1]) cylinder(d=M3_CLEAR, h=TRAY_T + 2);
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Battery cradle. The pack stands 90 tall on its 70 x 106 base with the
+// terminals and wire bend projecting along the 106 axis. This locates the base;
+// the plate's own back well (S13 #0) catches it again at 75-81 mm, so the two
+// together stop it moving without needing a strap over the top.
+// ---------------------------------------------------------------------------
+BATT_W = 106; BATT_D = 70;
+CR_WALL = 3; CR_H = 20; CR_FLANGE = 8;
+
+module cradle() {
+    ow = BATT_W + 1 + 2*CR_WALL;      // 1 mm of slip fit
+    od = BATT_D + 1 + 2*CR_WALL;
+    difference() {
+        union() {
+            translate([-ow/2, -od/2, 0]) cube([ow, od, CR_H]);
+            translate([-ow/2 - CR_FLANGE, -od/2, 0])
+                cube([ow + 2*CR_FLANGE, od, TRAY_T]);
+        }
+        translate([-(BATT_W + 1)/2, -(BATT_D + 1)/2, TRAY_T])
+            cube([BATT_W + 1, BATT_D + 1, CR_H]);
+        // wire exit, one end of the 106 axis
+        translate([(BATT_W + 1)/2 - 1, -12, TRAY_T + 6])
+            cube([CR_WALL + 2, 24, CR_H]);
+        for (x = [-1, 1], y = [-1, 1])
+            translate([x*(ow/2 + CR_FLANGE/2), y*(od/2 - 6), -1])
+                cylinder(d=M3_CLEAR, h=TRAY_T + 2);
+    }
+}
+
+if (PART == "tray")   tray_half();
+if (PART == "cradle") cradle();
