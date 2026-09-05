@@ -13,7 +13,7 @@
 // OpenSCAD on this machine is a FLATPAK, not on PATH. From the repo root:
 //
 //   mkdir -p build/coupons
-//   for p in usb_size usb_thick rail keystone; do
+//   for p in usb_size usb_thick rail keycarrier; do
 //     flatpak run --filesystem=host org.openscad.OpenSCAD \
 //       -o "$PWD/build/coupons/$p.stl" -D "PART=\"$p\"" "$PWD/docs/design/coupons.scad"
 //   done
@@ -116,38 +116,45 @@ module rail() {
 }
 
 // ---------------------------------------------------------------------------
-// Keystone — SECOND PASS, 2026-09-04. The rail coupon's ladder missed, and not
-// in the axis it laddered: the VCE coupler ENTERS the 14.9 opening but will not
-// LATCH. Width was never the problem. A keystone hooks a fixed lip over the
-// front of the panel and snaps a sprung tab over the back, so the variable is
-// the web that tab must close over — fixed at 2.0 on the rail coupon and never
-// tested. Same miss as the USB, where usb_thick was the coupon that answered it.
+// Keystone carrier — THIRD pass, and the first built on how the part actually
+// works. A keystone jack does NOT pass through its opening. It is inserted from
+// BEHIND the panel; only its nose shows through, and the hook and spring grip
+// the panel's BACK FACE around the opening. So the panel must be thin at the
+// opening and OPEN BEHIND IT — the exact opposite of snap_hole's relief pocket.
+// That is why two ladders of that shape could never have worked, at any rung:
+// there was nowhere for a 32.6 mm-deep body to be.
 //
-// Grid: web thickness across (labelled), opening length down. Width is held at
-// the 14.9 known to admit the part.
+// Opening is the vendor sheet's 14.6 x 16.2 plus this printer's +0.2 (S3).
+// The one real unknown is the panel thickness the hook and spring clamp, so
+// that is all this ladders. Three zones on a common spine, nothing behind.
 // ---------------------------------------------------------------------------
-KEY2_W = 14.9;
-KEY2_T = [1.0, 1.4, 1.8, 2.2, 2.6];   // web the latch closes over
-KEY2_L = [16.2, 16.8];                // 16.2 = rail coupon's value; 16.8 gives
-                                      // the hook room to swing if that is it
+// DO NOT PRINT AS DRAWN. These came from the vendor sheet + the printer offset,
+// not from calipers on a real wall plate, and the keystone spec fixes the face
+// (14.5 x 16.0) while leaving plate thickness to whatever ABS plates happen to
+// be. An opening that is too LARGE also fails to latch - the cantilever gets
+// nothing to bite. Buy a 1-port plate, measure its opening and thickness, and
+// cut these to those numbers. See CASE.md S8 #8.
+KC_W = 14.8; KC_L = 16.4;
+KC_T = [2.0, 2.4, 2.8];
 
-module keystone() {
-    px = 26; py = 32; n = len(KEY2_T); m = len(KEY2_L);
-    difference() {
-        cube([px*n + 10, py*m + 14, PLATE_T]);
-        for (j = [0:m-1]) for (i = [0:n-1]) {
-            cx = 18 + px*i;
-            cy = 20 + py*j;
-            snap_hole(cx, cy, KEY2_W, KEY2_L[j], KEY2_T[i]);
-            translate([cx, cy - KEY2_L[j]/2 - 5.5, 0]) lbl(str(KEY2_T[i]), 2.8);
+module keycarrier() {
+    zw = 34; zl = 40; n = len(KC_T);
+    union() {
+        cube([zw*n, 5, 1.6]);                       // spine, clear of the openings
+        for (i = [0:n-1]) translate([zw*i, 0, 0]) difference() {
+            cube([zw, zl, KC_T[i]]);
+            translate([zw/2 - KC_W/2, 26 - KC_L/2, -1])
+                cube([KC_W, KC_L, KC_T[i] + 2]);
+            translate([zw/2, 10, KC_T[i] - ENGRAVE]) linear_extrude(ENGRAVE + 0.4)
+                text(str(KC_T[i]), size=4, halign="center", valign="center",
+                     font="DejaVu Sans:style=Bold");
         }
-        translate([px*n/2 + 5, py*m + 10, 0]) lbl("KEYSTONE 14.9 — web across, L down", 3.2);
     }
 }
 
 if      (PART == "usb_size")  usb_size();
 else if (PART == "usb_thick") usb_thick();
 else if (PART == "rail")      rail();
-else if (PART == "keystone")  keystone();
+else if (PART == "keycarrier") keycarrier();
 else { usb_size(); translate([0,55,0]) usb_thick(); translate([0,110,0]) rail();
-       translate([0,195,0]) keystone(); }
+       translate([0,195,0]) keycarrier(); }

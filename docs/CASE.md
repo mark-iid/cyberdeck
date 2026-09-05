@@ -63,7 +63,7 @@ Why it wins here:
 Clamshell only wins on stowed compactness. This is a go-box, not a pocket deck;
 footprint when open matters more than millimetres when closed.
 
-## §3 — Connector cutouts (VERIFIED dimensions, 2026-09-02)
+## §3 — Connector cutouts (test-fitted 2026-09-04 unless noted)
 
 Print test coupons before committing the faceplate — filament shrinkage and slop
 vary by printer, and RF connectors especially want a snug hole.
@@ -73,9 +73,9 @@ vary by printer, and RF connectors especially want a snug hole.
 | **SMA** bulkhead | antenna feed (RECOMMENDED) | **⌀6.7 as printed** (6.5 nominal + 0.2) | Matches the all-SMA RTL-SDR kit with no adapter. Panel jack stays mated (coax to a stand), so the mating-cycle limit is moot. Add a flat/notch for anti-rotation. |
 | **BNC** bulkhead | antenna feed (alt) | **~14 mm** round, keyed | Only if quick-swap at the panel matters; needs an SMA→BNC adapter for this kit. |
 | **USB-A ×2, dual square** | data / peripherals | **21.5 × 24.5 mm**, local web **2.0 mm** | **Test-fitted 2026-09-04**, not from a vendor sheet — the sheet never had it. One housing, one hole. Bezel 25.4 × 28.6 overhangs ~2 mm per side. The 2.0 mm web is a rebate in the 4.5 mm tile, not a thinner tile. |
-| **DC barrel 2.1 mm** | 12 V in / charge | **~8 mm** round (0.31") | Panel jack, up to 8 mm panel thickness. |
-| **Cat6A keystone coupler** | panel Ethernet | ⚠️ **UNRESOLVED — enters 14.9 × 16.2, will not latch** (test fit 2026-09-04, §8 #8) | Confirms the 14.7 × 16.2 estimate to 0.1 mm. Body **32.6 mm** deep behind the plate. It is a **coupler** — needs a short Cat6 patch cable inside, Pi → back of jack. Goes in a printed keystone frame, not straight into the plate (see the thin-panel note below §3). |
-| **Anderson Powerpole** | external 12 V IN | **⌀30.5 mm round** (1.2", vendor sheet 2026-09-04) | ⚠️ Round flip-cap weatherproof socket, **not** the flat PanelPole1 the buy list assumed and **not** a rectangle. Biggest cutout on the plate. Flange + cap diameter still unmeasured — see §8 #7, this is the one that may not fit the rail. |
+| ~~**DC barrel 2.1 mm**~~ | ~~12 V in / charge~~ | **not on the plate** | Vestigial. Power enters on Powerpole; the only barrel in the build is the module's own inlet, which already carries a Powerpole pigtail (§8 DONE). Kept as a row so it is not re-added by someone reading an old revision. |
+| **Cat6A keystone coupler** | panel Ethernet | ⚠️ **OPEN — see §8 #8** | Enters a 14.9 × 16.2 opening and will not latch. The spec face is 14.5 × 16.0 and retention is a *rotational* snap against a moulded plate, not a clip through a panel — so the opening size was never the variable. Body **32.6 mm** deep behind the plate. It is a **coupler**: needs a short Cat6 patch inside, Pi → back of jack. **Not optional** — the Pi's own RJ45 is buried under the plate. |
+| **Anderson Powerpole** | external 12 V IN | **16.2 × 8.5** printed retainer for a bonded PP15-45 pair | Measured 2026-09-04: the round socket is barrel ⌀28.7 / flange ⌀35 and is **surplus** — the sidewall inlet it was bought for is cancelled (§8 #7). The retainer is 133 mm² of hole against the socket's 730. Feeds the **A/B selector**, not the bus directly (§5). |
 | **16 mm anti-vandal button** | master power | **⌀16.2 as printed** (16.0 nominal + 0.2) | Latching, 5 A+. Hex flange **17.8 across flats = 20.6 across corners** — that, not 16, is the clearance the rail must give. Body **32 mm** deep behind the plate. Screw terminals on **8.3 mm** pitch. Between battery and the module — **there is no buck converter** (§5). |
 
 **This printer runs holes 0.2 mm undersize.** Two independent ladders on the `rail`
@@ -97,8 +97,8 @@ this for the keystone; it now applies to the USB too.
 
 **One RF connector, and make it SMA.** The operator's RTL-SDR is a Blog-V3-class
 kit — dongle, coax, and telescopic dipole all SMA. So an **SMA bulkhead on the
-panel needs no adapter anywhere**, and it is the smallest cutout (⌀6.5 mm single
-hole). SMA's only real drawback, its ~500-cycle mating limit, does not apply
+panel needs no adapter anywhere**, and it is the smallest cutout (⌀6.7 as printed,
+single hole). SMA's only real drawback, its ~500-cycle mating limit, does not apply
 here: the antenna sits on its stand on a length of coax, so the panel jack stays
 mated and you adjust at the antenna end. Route a short internal SMA jumper from
 this bulkhead to the dongle, which lives inside on a module USB port. (BNC would
@@ -140,13 +140,14 @@ short cable runs on both. Keep each rail on a **shallow raised lip** so cables e
 sideways rather than up into the screen's sightline.
 
 **Keyboard stays separate** (§9, §10). At 230 × 160 it cannot share the plate with
-a 136.5 mm-deep module inside 225 mm of depth — integrating it would require a
+a 136.5 mm-deep module inside 229 mm of depth — integrating it would require a
 1550/4800-class shell, ~2.8× the volume for one feature. It stows flat over the
 faceplate at close and is set on the surface in front during use, which is better
 ergonomics anyway: a mini keyboard with a touchpad wants to be positioned.
 
 \* The module's 12 V barrel already carries the Powerpole pigtail (see DONE
-list); the panel Powerpole IN parallels it. Faceplate USB-A jacks are panel-mount
+list). The panel Powerpole IN does **not** parallel it — it feeds the **A/B selector**
+(§5), which presents internal *or* external to the master switch, never both. Faceplate USB-A jacks are panel-mount
 extensions off the Pi's right-edge ports.
 
 ### Construction — a frame on the rib shelf, tiles in the frame
@@ -195,30 +196,40 @@ The split delivers what §3 asked for independently: the USB and keystone carrie
 wanted to be separate thin parts anyway, and now every connector sits on a piece small
 enough to reprint alone when a cutout comes out wrong.
 
-**Under the plate: 75 mm.** The module hangs 51 mm below, leaving ~20 mm of floor
-clearance for cable runs; the battery on its 70 mm side clears the underside with 5 mm.
+**Under the plate: 75 mm.** The module stands 24 mm off the floor on its plinth (§12); the battery on its 70 mm side clears the underside with 5 mm.
 Anything resting on the floor is bounded by the flat **270 × 200** inside the fillet,
 not by 305 × 230.
 
-**Above the plate: 25 mm** (75 mm shelf in a 100 mm base). The Perixx is 23 mm thick,
-so **the keyboard stows in the base recess, lying on the plate** — the lid is freed.
-Measured protrusions, parts seated in their winning coupon holes (2026-09-04):
+**Above the plate: 20.5 mm** — a 100 mm base, less the 75 mm shelf, less the plate's
+own 4.5 mm. The plate's top face sits at **79.5 mm**.
 
-| Part | Stands proud | Under a 23 mm keyboard in a 25 mm recess |
+**The keyboard is 230 × 160 × 17** (Perixx drawing, 2026-09-04). §8 said 23 and §9 said
+~12–13; both were wrong and the doc carried the contradiction for weeks. At 17 it lies
+on the plate and tops out at **96.5 mm — 3.5 mm clear of the 100 mm rim**. So it stows
+**entirely inside the base**, and the lid is genuinely free.
+
+That 3.5 mm is also the **keep-out budget** under the keyboard's footprint:
+
+| Part | Stands proud | Under the keyboard |
 |---|---|---|
-| Switch | **1.5 mm** | fits |
-| USB | **2.0 mm** | exactly at the limit — touching, zero clearance |
-| SMA | **9.7 mm** | 5× over |
+| Switch | **1.5 mm** | fine |
+| USB | **2.0 mm** | fine |
+| SMA | **9.7 mm** | no — lifts the keyboard 6 mm above the rim |
 
-**The keyboard's footprint is a 2 mm keep-out zone**, and that is the whole budget:
-75 + 23 = 98 against a 100 mm base. Centred, a 230 × 160 keyboard on a 304 × 229 plate
-covers x ∈ [37, 267] and leaves the outer **37 mm of each rail uncovered** — so the
-rail connectors are clear provided they sit outboard, which a 50 mm rail gives them
-room to do. **The SMA must be kept out of the footprint deliberately**, not by luck:
-outboard on the left rail, or back with the SDR and coax in the back channel where its
+Centred, a 230 × 160 keyboard on a 304 × 229 plate covers x ∈ [37, 267], leaving the
+outer **37 mm of each rail uncovered**, which a 50 mm rail gives connectors room to use.
+**The SMA is placed outboard deliberately** — or back with the SDR and coax, where its
 jumper wants to run anyway.
 
-Stowing in the base beats the lid on retention too — a keyboard lying on a plate under
+**The cable is the detail that bites.** It exits the keyboard's **top edge, centre**,
+and plugs into a right-rail panel jack, so stowed it has to cross the plate. A ~4 mm
+cable routed *under* a keyboard with 3.5 mm of headroom lifts it proud of the rim. The
+locating lip therefore needs a **cable channel around the keyboard, not beneath it**.
+
+The keyboard's own **two USB hub ports are on its right edge** (Perixx drawing) — worth
+knowing for where it sits on the desk relative to the case.
+
+Stowing in the base also beats the lid on retention: a keyboard lying on a plate under
 a closed lid cannot fall out when the case is opened, which a lid-mounted one can.
 
 ## §5 — Power & cooling (mostly solved by the module)
@@ -242,9 +253,16 @@ The self-contained 12 V module removes the two hardest parts of a go-box build:
   so a charger or power bank on that port would be a second source fighting the
   module's 5 V rail. **Confirmed unused** (2026-09-02) — it is free for data/OTG,
   and nothing else.
-- **USB budget, confirmed 2026-09-02.** One Pi USB-A is consumed internally by the
-  module's touch input; the rest are free. With the Perixx's two built-in hubs on
-  top, port count is not a constraint — the two panel USB-A jacks are comfortable.
+- **USB budget, corrected 2026-09-04.** The earlier note counted the Perixx's two
+  *downstream* hub ports as if they relieved pressure on the module's *upstream* ones.
+  They do not — the constraint is upstream. The real accounting: the module's right
+  edge exposes **2× USB-A**, and both are consumed by the dual panel unit's two
+  pigtails, giving two panel jacks. The keyboard takes one of those, leaving one panel
+  jack plus the keyboard's own two hub ports at the operator's hand. **The RTL-SDR
+  dongle does not compete for these** — it runs off a Pi port free inside the module
+  (operator, 2026-09-04), which is what makes the SMA bulkhead's internal jumper work.
+  No hub is needed, but the margin is exactly zero: any further internal USB device
+  needs one.
 - **One switch kills the whole deck.** The left-rail master switch sits on the 12 V
   feed *upstream* of the module, so it cuts screen, Pi, SSD and fan together. No
   partial-power states to reason about.
@@ -270,19 +288,34 @@ Powerpole IN** so the deck can run off shore power, a larger battery, or solar
 while the internal pack is present. Standardise the whole bus on Powerpole (the
 ARES/RACES convention anyway).
 
-The one real gotcha is **how the two sources coexist on a LiFePO4 bus**:
+**RESOLVED 2026-09-04 — an A/B selector switch.** The two sources never meet. A
+**DPDT** selector (or a Powerpole A/B switch) presents *internal* or *external* to the
+master switch, switching **both conductors** so an external source with its own ground
+reference cannot back-feed either. Chosen over the alternatives:
 
-- **Simplest — a selector switch.** A DPDT (or a Powerpole A/B switch) picks
-  internal *or* external. No back-feeding, no charge-control surprises. Cheapest
-  and safest; the downside is manual switchover, not seamless failover.
-- **Seamless — a power-management board.** A West Mountain Super PWRgate (or
-  equivalent ideal-diode ORing board with a LiFePO4 charge profile) runs the
-  load from external power when present, floats/charges the pack, and fails over
-  to battery with no interruption. This is the "right" go-box answer if the
-  budget allows.
-- **Do NOT dumb-parallel** a bare external supply straight onto the battery
-  Powerpole unless that supply is a proper **14.6 V-CV LiFePO4 charger** — an
-  arbitrary 12–13.8 V bench supply will fight the pack's chemistry.
+| Option | Why not chosen |
+|---|---|
+| **A/B selector** ✅ | manual switchover, and the pack does not charge while running external — accepted |
+| Ideal-diode ORing board (Super PWRgate) | seamless and charges the pack, but ~£100+ and a pack-of-cards-sized board needing a home, wiring and thermal margin on the floor tray |
+| Charger-only inlet | zero hardware, but the panel would accept *only* a 14.6 V CV LiFePO4 charger — no car socket, no bench supply, no solar controller |
+
+The selector makes back-feeding **impossible by construction rather than by
+discipline**, which is why it wins for a box that gets used tired and in the dark.
+
+**The chain, in order:**
+
+```
+battery ── fuse ──┐
+                  ├── A/B selector ── MASTER switch ── module 12 V barrel
+panel PP IN ─ fuse┘
+```
+
+Source select first, master switch second, so **the master switch kills the deck
+whichever source is selected**. Each source gets its own fuse close to its origin.
+
+**Still do NOT dumb-parallel** a bare external supply onto the battery Powerpole. The
+selector removes the temptation, but the rule stands for any future rewiring: an
+arbitrary 12–13.8 V supply fights a LiFePO4 pack's chemistry.
 
 Also required regardless of the above:
 
@@ -424,8 +457,13 @@ something if you buy new.
 
 - **Print:** the plate **frame** (six members) and its **tiles** — screen bezel with
   the 173 × 118 window, left/right connector rails, back-channel fillers (§4) — plus
-  the battery cradle (open above the terminals), a VESA-75 bracket to hang the module
-  from the plate, and a fold-out tilt foot for the front lip.
+  the **floor tray** and its **module plinth**, the **battery cradle** (clamping a pack
+  that lies on its 90 × 100 face, terminals *sideways*, so the clear pocket is beside
+  the posts rather than above them), the **keyboard locating lip with its cable
+  channel** (§4), the **Powerpole retainer**, a **keystone carrier**, and a fold-out
+  tilt foot for the case's front lip. Load path and retention are §12.
+  *(The old "VESA bracket to hang the module from the plate" is superseded — the module
+  stands on the tray and the plate bears on it, not the reverse. §12.)*
   **Printer on hand: Creality Ender 3 + Sprite Pro direct extruder, 220 × 220 × 250
   nominal, ~215 × 215 usable.** Recorded 2026-09-04 — it had never been written down,
   and it is a hard constraint on every printed part in this doc.
@@ -454,7 +492,13 @@ matters** — three of these have common traps (below).
 | several | Fuses | `ATC blade fuse 5 amp` | **5 A** — sized for the ~2.5 A total draw (§5), not the Pi alone. |
 | — | Wire | `14 AWG silicone wire red black` | Silicone stays flexible in tight bends; PVC goes stiff. |
 | — | Powerpole contacts + housings | `Anderson Powerpole 30 amp contacts housings kit` | **30 A contacts for 14 AWG** (45 A contacts are for 12 AWG). Keep the bus uniform. |
-| 1 | RJ45 keystone ✅ | `Cat6 keystone jack coupler` | **ORDERED 2026-09-04 — no longer optional.** Right rail gets a third cutout, 14.7 × 16.2 portrait, in a printed keystone frame. |
+| 1 | RJ45 keystone ✅ | `Cat6 keystone jack coupler` | **ORDERED 2026-09-04 — no longer optional**, because the Pi's own RJ45 is buried under the plate. Right rail, portrait. Mounting unresolved — §8 #8. |
+| 1 | **A/B source selector** | `DPDT rotary switch 10A panel mount` or `Powerwerx Powerpole A/B switch` | **NEW 2026-09-04 (§5).** Must switch **both** conductors and carry 5 A+. Left rail, upstream of the master switch. Without it the panel inlet dumb-parallels the pack. |
+| 1 | **LiFePO4 charger** | `12.8V LiFePO4 charger 14.6V CV` | §7 always said buy one; it was never on this list. 14.6 V CV profile — a lead-acid charger will not fully charge the pack and a bench supply will fight it. |
+| 1 | **2nd inline fuse** | `ATC ATO inline fuse holder` | One per source (§5). The external inlet needs its own, close to the panel. |
+| 1 | **Keystone wall plate** | `1-port keystone wall plate` | Reference geometry for §8 #8 — measure its opening and thickness, or cut the fragment out and bolt it into the tile. A couple of pounds either way. |
+| — | **M3 hardware** | `M3 screws assortment` + `M3 heat set inserts` | **Structural, and absent until 2026-09-04.** The frame is lap-jointed with M3s, every tile is retained with them, the plinth bolts VESA-75, and the carriers mount from behind. Heat-set inserts for anything that gets unscrewed more than once. |
+| — | **Ring/spade lugs** | `M3 ring terminal 16 AWG crimp` | §8 #6: 14 AWG will not go into the switch's 8.3 mm screw terminals. Lug it, or run a short 16 AWG pigtail to the first Powerpole. |
 
 **The three traps**
 
@@ -472,9 +516,12 @@ matters** — three of these have common traps (below).
 **Optional / drop first if space or budget is tight**
 
 - **RJ45 panel jack.** Ethernet is a home-provisioning convenience, not a field need
-  — the Pi's own port is reachable with the lid open. If wanted, a **Cat6 keystone
-  jack in a printed keystone frame** (~14.7 × 16.2 mm opening) is easier to source
-  than an RJ45 panel coupler, and standardised.
+  — ~~the Pi's own port is reachable with the lid open~~. **Wrong, and it predates the
+  faceplate.** The Pi lives *inside* the JUNEBOX and its ports are on the module's
+  right edge, which sits below the plate once the plate is on the rib shelf. Opening
+  the lid does not reach it; pulling the faceplate does. That is exactly why the panel
+  connectors exist at all (§4: the USB-A jacks are extensions off those same buried
+  ports), and why §7 marks the keystone **not optional**.
 - **The SMA run** (rows 1–2) — the deck is fully functional without the SDR.
 
 **Already sorted, do not re-buy:** the barrel→Powerpole pigtail (fitted, §5) and the
@@ -503,7 +550,8 @@ keyboard on every functional axis, and the layout should be designed around it:
 
 Faceplate consequences:
 - The keyboard well is sized for the **PERIBOARD-510H footprint** (a mini board,
-  ~12–13 mm thick with X-scissor keys), not the slim BT slab. Measure the actual
+  **17 mm** thick — vendor drawing 2026-09-04, superseding both the ~12–13 guessed here
+  and the 23 in §8), not the slim BT slab. Measure the actual
   unit before cutting the well — §8.
 - The keyboard plugs into a **right-rail panel USB-A jack**, not an internal port —
   it is lifted out and set in front during use (§10), so its cable must reach the
@@ -601,11 +649,11 @@ re-cuts every number in this section:
   orientation assumed above, which no longer clears the underside of the plate. At
   70 mm it has 5 mm of headroom. Terminals point sideways in this orientation, so the
   cradle's clear pocket moves from above the posts to beside them.
-- **Above the plate there is now 25 mm of recess**, and the keyboard takes it. Test
-  fits give switch 1.5 mm proud and USB 2.0 against a 2 mm budget, so the switch was
-  never the threat — **the SMA is, at 9.7 mm**, and it gets placed outside the
-  keyboard's footprint (§4). **Zone C moves from the lid to the base**, and the lid
-  becomes free storage for the SDR kit, coax and antenna.
+- **Above the plate there is 20.5 mm of recess** (100 base − 75 shelf − 4.5 plate) and
+  the keyboard is **17 mm**, so it stows entirely inside the base with 3.5 mm spare.
+  **Zone C is on the plate, in the base**, and the lid is genuinely freed for the SDR
+  kit, coax and antenna. The eggcrate foam stays — it is what preloads the whole stack
+  against lifting (§4).
 
 ### Zones
 
@@ -640,7 +688,7 @@ computer in a case and an actual go-kit.
 ## §8 — Open, needs the operator's measurements before CAD
 
 KNOWN (do not re-measure): JUNEBOX outer 203×136.5×51, VESA 75/100, 12V, own
-fan, Pi+SSD inside · Perixx keyboard 230×160×23 · SMA antenna · Powerpole power.
+fan, Pi+SSD inside · Perixx keyboard 230×160×**17** (vendor drawing 2026-09-04) · SMA antenna · Powerpole power.
 
 DONE:
 
@@ -656,10 +704,20 @@ DONE:
     and `DC 12V` — a **barrel jack**.
   - *RIGHT edge (Pi):* **2× USB-A** (USB-3 blue stack), **Gigabit Ethernet** (RJ45),
     the Pi's USB-C, and the NVMe/fan.
+  - *Also on the module, and missing from this list until 2026-09-04:* an **OSD control
+    cluster (Exit / Down / Up / Menu / Power) and speakers**, plus **two vents on the
+    BACK face** either side of the VESA pattern — a heat-dissipation port and an air
+    inlet (vendor port diagram).
+  - **The control cluster can be buried.** Confirmed by the operator 2026-09-04: the
+    12 V input brings up both screen and Pi, so the display's own Power button is not
+    needed to wake it and no cutout has to reach it. This was the one failure mode that
+    would have made the master switch look dead.
   - **Power path is already solved and already on Powerpole.** The 12 V inlet is the
     barrel, but a screw-terminal→barrel adapter (green Phoenix block) with a
     **Powerpole pigtail** is already fitted. No barrel→PP pigtail to build. The
-    faceplate's external Powerpole IN just parallels this same feed onto the bus.
+    faceplate's external Powerpole IN feeds the **A/B selector** (§5) rather than
+    joining this feed directly — an earlier revision said "parallels ... onto the bus",
+    which is the one thing §5 says never to do to a LiFePO4 pack.
   - Faceplate USB-A jacks extend from the Pi's 2× USB-A. The module's AUDIO/HDMI/
     USB-C stay at the module edge for occasional use; they need not reach the plate.
 
@@ -819,9 +877,54 @@ coupler, web laddered **1.0 / 1.4 / 1.8 / 2.2 / 2.6**, against opening lengths *
 and 16.8** — the second row in case the hook needs room to swing rather than a thinner
 web. Ten cells, one print, 140 × 78 × 4.5, render-verified manifold.
 
-If a cell latches, its web is the number and the keystone tile is cut to it. If none
-does, the part wants something outside 1.0–2.6 mm and the next move is calipers on the
-lip-to-tab distance, not a third ladder.
+**ABANDONED before that print finished.** With the jack in hand: *none* of the openings
+comes close to accommodating the sprung latch arm. The arm is not a tab that clears a
+2 mm web, it is a spring designed to sit **behind an injection-moulded wall plate**,
+outboard of a precise opening in ~2.4 mm of ABS. A printed rectangle in a 4.5 mm plate
+with a 4 mm relief pocket cannot reproduce that, and a third ladder would only prove it
+again. Two coupons were spent learning that the part was never a snap-into-plate part —
+which is what §3 said in the first place: *"goes in a printed keystone frame, not
+straight into the plate."* The coupons went the other way and should not have.
+
+**The requirement, once the part is understood, is simple and printable:**
+
+- panel **2.0–2.8 mm** thick at the opening (the clamped thickness — the one unknown),
+- a plain **14.6 × 16.2** opening plus this printer's +0.2, so **14.8 × 16.4**,
+- and **nothing behind it** — ~35 mm of clear air for the body, with the back face flat
+  and unobstructed for ~5 mm around the opening for the hook and spring to grip.
+
+Both numbers were already in §3 from the vendor sheet. Nothing new needed measuring;
+what needed fixing was the model of how the part retains.
+
+**The retention mechanism, from the spec rather than from the photo.** The
+[keystone module](https://en.wikipedia.org/wiki/Keystone_module) standard gives a face
+of **14.5 × 16.0 mm**, retained by *a diagonally inclined mounting flange on one side
+plus a ramp and cantilever latch on the other*. Installation is asymmetric and
+**rotational**: one end enters the opening until the ramp meets the plate's mounting
+surface, then the jack rotates until the cantilever latch deflects and snaps. It is not
+a symmetric clamp gripping a panel thickness, which is what an earlier revision of this
+section assumed.
+
+Two consequences that matter:
+
+- **Too large an opening also prevents latching.** The 14.9 rung printed ~14.7 with the
+  +0.2 offset and admitted the jack loosely — consistent with the latch having nothing
+  to bite on. The failure was never simply "too small".
+- **The standard does not specify plate thickness.** It fixes the face and the opening
+  and leaves the rest to whatever ABS wall plates happen to be. So a printed carrier is
+  guessing at the one number that matters, in a part whose insertion also needs
+  rotational clearance.
+
+**RESOLUTION — buy the reference geometry.** A 1-port keystone wall plate costs a couple
+of pounds and settles all of it: it proves the mechanism, it yields measured numbers for
+the opening and the thickness by calipers, and the rectangle containing its opening can
+simply be **cut out and bolted into the right-rail tile** with two M3s. That is §7's own
+rule applied consistently — buy the injection-moulded geometry, print the brackets.
+
+`coupons.scad` carries a `keycarrier` part (three thicknesses, plain openings, open
+behind) but **it should not be printed as drawn**: its openings were derived from the
+vendor sheet plus a printer offset rather than measured off a real plate. If a printed
+carrier is still wanted after the wall plate arrives, cut it to *those* numbers.
 
 Nothing else is blocked by this. The keystone is one tile on the right rail, and tiles
 are independently reprintable (§4); the rest of the plate can be cut while it is
@@ -875,11 +978,11 @@ go either. The printed retainer's 16 × 8.3 takes none of it.
 wasted either way: the internal bus is Powerpole and the sidewall inlet will want
 contacts too.
 
-**Intake 2026-09-04 — the housings did not arrive.** Only the round ⌀30.5 socket did.
-The buy list carries "Powerpole contacts + housings" on the assumption a Powerpole user
-already has them in the shack; that assumption is wrong here, so **PP15-45 housings,
-30 A contacts and 3/32" roll pins are an outstanding buy**, and the faceplate's power
-inlet is blocked on them — the one item on the plate that is.
+**Intake 2026-09-04 — housings are in the shack after all.** The buy list's assumption
+that a Powerpole user already owns contacts and housings was right; only the round
+socket was *ordered*, which briefly read as the housings being absent. **Nothing is
+blocked.** The retainer can be drawn as soon as the `rail` coupon's PP ladder gives the
+panel opening and a housing gives up its roll-pin position.
 
 This also reopens the round socket as a fallback rather than a reject. §8 #7 rejected
 it against a 41–48 mm rail; the rails measured **50 mm**, so a ⌀30.5 hole now leaves
@@ -902,8 +1005,8 @@ INTAKE — the day the boxes land, in this order:
 | 5 | ✅ USB unit | `usb_thick` | *done* — web **2.0 mm** |
 | 5 | USB unit | calipers on the buckle | *optional now* — the web ladder answered it empirically |
 | 6 | ✅ switch, SMA | `rail` | *done* — **16.2** and **6.7** (+0.2 offset) |
-| 8 | RJ45 keystone | `keystone` coupon | ⚠️ enters 14.9, will not latch — web ladder |
-| 7 | ⛔ PP15-45 housings | *not in hand 2026-09-04* | blocked — only the round socket arrived; housings/contacts/pins must be bought |
+| 8 | RJ45 keystone | **buy a 1-port wall plate** | reference opening + thickness; the fragment bolts into the tile |
+| 7 | PP15-45 housings | `rail` coupon PP ladder + calipers | panel opening for a bonded pair, and the roll-pin position for the retainer |
 | 7 | Powerpole socket | calipers on flange + flip-cap | sidewall hole only — no longer gates the plate |
 
 #4 is done, and it set the rail width the coupon results are judged against — 50 mm,
@@ -912,3 +1015,116 @@ Write the winners into §3 and cut faceplate.svg to them.
 
 Do **not** drill the shell sidewall for the external Powerpole inlet on intake day —
 that stays last, after the deck is working (§8 #7).
+
+## §12 — Mechanical scheme: what carries what, and what stops it moving
+
+Added 2026-09-04. The doc had a dimensional scheme and no load path; every part's
+position was specified and nothing said what held it there. This section exists because
+the operator asked how it fits together and stays together, and the honest answer was
+that nobody had said.
+
+### The inversion: heavy things sit on the floor
+
+§7 used to call for a "VESA bracket to hang the module from the plate." That puts
+~1.5 kg cantilevered on 4.5 mm printed tiles resting on 1 mm of rib bearing, and in a
+dropped case it is the first thing to fail. **Turn it over.**
+
+**A printed floor tray** sits in the flat **270 × 200** floor. The ~17 mm fillet all
+round means a tray cut to ~265 × 195 **cannot slide** — trapped on four sides, no
+fastener, nothing bonded to a shell §1 says is never cut. Same trick as the plate on
+the ribs. Printed in sections for the 215 × 215 bed.
+
+The tray carries:
+
+- **A module plinth, 24 mm tall**, bolted to the module's **VESA 75 × 75**. 24 + 51 =
+  **75**, so the module's top face lands exactly at the rib shelf.
+- **The battery cradle** — pack on its 90 × 100 face, 70 mm tall, terminals sideways,
+  clamped rather than resting loose.
+- **Back-channel bays** for the SDR, coax coil and antenna, so they are not three loose
+  objects in a box.
+
+**The plinth must be a pillar, not a pad.** The module's two vents — a heat-dissipation
+port and an air inlet — are on its **back face**, which points *down* in this design
+(§8). A solid pad under it suffocates the module. The VESA pattern is central and the
+vents sit either side of it, so a central pillar clears both by construction. The 24 mm
+gap beneath becomes a **plenum**, and the tray must keep a path from it to the back
+channel rather than walling it off with the battery cradle.
+
+### The plate then bears on two things
+
+With the module's top face at exactly 75, the plate rests on **the twelve ribs at its
+perimeter and the module's top face at its centre**. Far stiffer than a perimeter-only
+shelf, and the plate now carries only itself and the keyboard.
+
+### What holds it down
+
+Nothing, until the lid closes. The plate is trapped sideways by the walls with 1 mm of
+clearance, but invert the case and the whole assembly lifts off its ribs.
+
+**The foam is the retention.** Keyboard on the plate, the lid's eggcrate foam above it,
+lid compresses the stack. 20.5 mm of base recess above the plate, 17 mm of keyboard,
+3.5 mm clear to the rim, then ~30 mm of lid. That preload is what makes four parts into
+one mass. **The lid foam stays** — it is structural here, not packaging.
+
+| Item | Held against sliding by | Held against lifting by |
+|---|---|---|
+| Floor tray | the floor fillet, four sides | the module and battery bolted to it |
+| Module | VESA bolts into the plinth | same |
+| Battery | cradle walls + clamp | cradle, and the plate above |
+| Plate | case walls, 1 mm clearance | foam preload through the lid |
+| Keyboard | locating lip in the tiles | foam preload |
+
+### Service loops — the detail that ruins an afternoon
+
+**Every panel connector's cable runs from the plate down to the module below it**: two
+USB extensions, the Ethernet patch, the SMA jumper, and the 12 V run to the selector
+and master switch. Lift the plate and you pull on all of them.
+
+So each needs a **service loop** long enough to lift the plate clear of the rim and set
+it beside the case — call it **+150 mm** over the direct run — with somewhere for the
+slack to sit when closed. That is a design input for the tray's cable channels, and it
+is the kind of thing discovered at assembly if it is not drawn in.
+
+### Keyboard cable
+
+It exits the keyboard's **top edge, centre**, and reaches a right-rail jack. Stowed, it
+crosses the plate. A ~4 mm cable routed *under* a keyboard with 3.5 mm of headroom
+lifts it proud of the rim, so the locating lip carries a **channel around the keyboard,
+never beneath it**.
+
+## §13 — Open items
+
+Audit of 2026-09-04. Everything here is either undecided, undrawn, or unverified.
+
+### Blocking
+
+1. **Keystone mounting (§8 #8).** No working scheme. Not optional — the Pi's RJ45 is
+   buried. Next step is a wall plate for reference geometry.
+2. **Nothing is drawn.** The frame, tiles, floor tray, plinth, cradle, retainer,
+   keyboard lip and tilt foot all exist as prose. `docs/design/faceplate.svg` is still
+   **300 × 225 with 48 mm rails and the module at x=48** — every cutout position in it
+   is wrong. This is the bulk of the remaining work.
+
+### Needs a measurement, not a decision
+
+3. **Module outline.** Vendor says **200 × 136**; this doc uses **203 × 136.5**. A 3 mm
+   width difference feeds straight into the 50 mm rails.
+4. **VESA hole positions relative to the module outline**, for the plinth.
+5. **Whether the module's top face is flat enough to bear the plate**, or whether its
+   bezel stands proud.
+6. **Module weight**, for the plinth and tray.
+7. **Which edge carries the OSD cluster and speakers.** They can be buried (§8), but
+   the tray and cradle should not press on a speaker grille.
+8. **Keyboard cable length** — decides whether slack coils in the back channel or lies
+   beside the keyboard.
+
+### Resolved today, recorded for the trail
+
+- §1 and §2 still describe a faceplate that "carries the screen, keyboard and
+  connectors". **It does not** — the keyboard has been separate since §6, and those two
+  sections were never revisited. Left as-is deliberately: they are the founding
+  argument, and §4/§9/§10 are the current design. Read them in that order.
+- Keyboard thickness was stated as 23 in §8 and ~12–13 in §9. It is **17**.
+- The USB budget claim in §5 was wrong; corrected there.
+- The power topology contradicted itself between §4 and §5; resolved to an A/B
+  selector in §5.
