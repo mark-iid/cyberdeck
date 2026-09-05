@@ -424,11 +424,16 @@ module joint_bar() {
     }
 }
 
-// Bars are lifted by BOSS_H so the bosses hang inside the part rather than
-// below the bed. Print boss-side UP: the visible face goes on the glass.
+// Exported ALREADY THE RIGHT WAY UP: bars flipped so their flat visible face is
+// on the bed and the insert bosses point at the ceiling. Bosses-down would ask
+// the slicer to bridge a 40 x 12 bar across two 8 mm circles, and "remember to
+// flip it" is not a build instruction, it is a future mistake.
+module bar_for_bed() {
+    translate([0, FRAME_W, FRAME_H]) rotate([180, 0, 0]) joint_bar();
+}
 module joint_test() {
-    translate([0, 0, BOSS_H]) joint_bar();
-    translate([0, FRAME_W + 6, BOSS_H]) joint_bar();
+    bar_for_bed();
+    translate([0, FRAME_W + 6, 0]) bar_for_bed();
     translate([20, 2*(FRAME_W + 6) + 10, 0]) splice();
 }
 
@@ -460,10 +465,13 @@ for (side = [-1, 1]) {
                str("vent grille runs over the tile screw at ", t));
 }
 
-// Members carry bosses below z=0; lift them so the STL sits on the bed. Print
-// top face DOWN, bosses up.
-if      (PART == "member")       translate([0,0,TILE_BOSS_H]) member(false);
-else if (PART == "member_front") translate([0,0,TILE_BOSS_H]) member(true);
+// Members carry bosses below z=0. Exported FLIPPED, for the same reason as the
+// joint coupon: visible face on the bed, every boss pointing up.
+module member_for_bed(front) {
+    translate([0, 0, FRAME_H]) rotate([180, 0, 0]) member(front);
+}
+if      (PART == "member")       member_for_bed(false);
+else if (PART == "member_front") member_for_bed(true);
 else if (PART == "splice")     splice();
 else if (PART == "screen_tile") screen_tile();
 else if (PART == "rail_blank") rail_blank();

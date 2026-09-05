@@ -1815,6 +1815,47 @@ The insert-wall assertion was checking `FRAME_W` (12) when the binding case is t
 2.0 mm of wall against ruthex's 1.6 — but it was passing for the wrong reason, and
 `BOSS_D` is 8 against a front member of 8, so there is no margin left to spend there.
 
+### How to use `joint_test`
+
+**It is one joint, in three pieces.** Two bars are two frame members meeting end to end;
+the long bar is the splice that ties them from underneath.
+
+```
+        bar A          bar B          <- two members, butted
+   ====[==o===o==][==o===o==]====        o = heat-set insert, blind from below
+        |  |   |    |   |  |
+        +--+---+----+---+--+          <- splice underneath, 4 screws up into them
+```
+
+Four **M3 × 10** run up through the splice into four inserts. Insert spacing is 14 and
+26 either side of the seam; the splice is 70 long so it reaches 35 onto each bar.
+
+**Steps**
+
+1. **Melt an insert into each of the four seats.** They face up as printed. This is the
+   melt test that was deferred on 2026-09-04, now against the corrected 6.7 mm seat.
+2. Butt the two bars end to end.
+3. Splice underneath, the two ⌀8 bosses dropping into its counterbores.
+4. Four M3 × 10 up from below. They should pull the seam shut.
+
+**What it is actually proving** — five numbers, all of which appear in every member:
+
+| Check | Looking for |
+|---|---|
+| seat depth **6.7** | insert seats flush, not standing 0.7 out (the old 5.0 seat's failure) |
+| **1 mm skin** over a blind seat | *nothing shows on the flat face.* This is the plate's visible surface |
+| boss ⌀8 × 1.7 + counterbore ⌀8.6 × 2.0 | splice clamps on the flat, not perched on the bosses |
+| **M3 × 10** | pulls tight without bottoming out |
+| joint stiffness | flex it across the seam — does it stay shut? |
+
+**Then put it in the case.** The splice carries a 6 × 2.6 notch for the rib that sits
+under every joint, and **that notch is the least-verified thing here** — the splice has
+never been positioned against a rib in the model, only in a comment. Offer the assembled
+joint down onto a rib at the centre of a wall and see whether it sits flat or rocks.
+
+**Printing:** the STL is exported with the flat face down and the bosses up. Do not flip
+it. Bosses-down would ask the slicer to bridge a 40 × 12 bar across two 8 mm circles.
+
 ### §14 #10 — the rocker was drawn on its side, 2026-09-05
 
 The drawing settled `RK_WEB` at **2.0** and then caught something bigger. §3 has said
