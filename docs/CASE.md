@@ -89,7 +89,8 @@ this machine: draw 28.7, print 28.5. The operator's SMA and switch test fits are
 competing dimensions, they are the calibration that makes a drawn number and a real one
 agree. Where a vendor publishes an opening, no ladder is needed at all — only the
 offset. **The one number neither RJ45 image dimensions is the ear hole centre spacing**,
-so that alone stays provisional at 31 mm until calipers land on it.
+so that alone stayed provisional at 31 mm until calipers landed on it. **It is 26.5** —
+31 forgot the 4 mm tray the plinth stands on (§13 #11).
 
 **This printer runs holes 0.2 mm undersize.** Two independent ladders on the `rail`
 coupon landed on the same offset — SMA wanted 6.7 for a 6.5 part, the switch wanted
@@ -229,11 +230,13 @@ The split delivers what §3 asked for independently: the USB and keystone carrie
 wanted to be separate thin parts anyway, and now every connector sits on a piece small
 enough to reprint alone when a cutout comes out wrong.
 
-**Under the plate: 75 mm.** The module stands **31 mm** off the floor on its plinth (§12); the battery on its 70 mm side clears the underside with 5 mm.
+**Under the plate: 75 mm.** The module stands **26.5 mm** off the 4 mm tray on its plinth
+(§12), so its top face lands at 74.5. The battery does *not* fit under the plate at all —
+it stands 90 tall and comes up through an open well (§13 #0).
 Anything resting on the floor is bounded by the flat **270 × 200** inside the fillet,
 not by 305 × 230.
 
-**Above the plate: 20.5 mm** — a 100 mm base, less the 75 mm shelf, less the plate's
+**Above the plate: 19 mm** — a 100 mm base, less the 75 mm shelf, less the plate's
 own 4.5 mm. The plate's top face sits at **79.5 mm**.
 
 **The keyboard is 230 × 160 × 17** (Perixx drawing, 2026-09-04). §8 said 23 and §9 said
@@ -699,13 +702,14 @@ faceplate does not sit at the rim. It rides the rib shelf at **75 mm** (§4, §6
 re-cuts every number in this section:
 
 - **Under the plate: 75 mm**, not ~97. The module is **44 mm** thick (measured
-  2026-09-04, against 51 from spec), so Zone B is **~31 mm** of air, not 45.
-- **The battery must lie on its 90 × 100 face, 70 mm tall** — not the 90 mm-tall
-  orientation assumed above, which no longer clears the underside of the plate. At
-  70 mm it has 5 mm of headroom. Terminals point sideways in this orientation, so the
-  cradle's clear pocket moves from above the posts to beside them.
-- **Above the plate there is 20.5 mm of recess**, but **the battery takes the back of
-  it** — the pack stands 9 mm proud through an open well (§13 #0), leaving ~140 mm of
+  2026-09-04, against 51 from spec), so Zone B is **26.5 mm** of air, not 45.
+- ~~**The battery must lie on its 90 × 100 face, 70 mm tall.**~~ **SUPERSEDED the same
+  day by §13 #0**, which stands it **90 mm tall** on its 70 × 106 base and brings it up
+  through an open well. Lying down needs 90 mm of floor behind the module and there are
+  only 72.75. Struck rather than deleted: this doc carried both readings at once.
+- **Above the plate there is 19 mm of recess**, but **the battery takes the back of
+  it** — the pack stands **13 mm** above the plate through an open well (§13 #0), and its
+  top is 94, six under the rim. That leaves ~143 mm of
   clear plate against a 160 mm keyboard. **Zone C is back in the lid**, reversing an
   earlier move made before the battery packing was worked out. The eggcrate foam stays;
   it preloads the stack against lifting (§4) and now retains the keyboard too.
@@ -715,7 +719,7 @@ re-cuts every number in this section:
 | Zone | Space | Holds |
 |---|---|---|
 | **A — back channel** | ~180 × 88 × 90 mm beside the battery | SDR dongle, coax coil, **antenna cylinder** |
-| **B — under the module** | ~31 mm of air below the module, 200 × 137.5 footprint | flat, non-fragile items — adapters, spare coax, parts tray |
+| **B — under the module** | 26.5 mm of air below the module, 200 × 137.5 footprint | flat, non-fragile items — adapters, spare coax, parts tray |
 | **C — over the faceplate** | thin, full width, under the closed lid | the keyboard itself, notes, cheat sheets |
 
 **Zone B has one rule: do not pack it solid.** The module's fan lives on its back
@@ -931,7 +935,7 @@ is also a panel-mount extension.
 **Two numbers to confirm when it lands:**
 
 - **Ear hole centre spacing** — the aperture and screw positions in the tile depend on
-  it. Drawn provisionally at 31 mm.
+  it. **Drawn at 26.5 mm** — see §13 #11 for why it is not 31.
 - **Cable length.** It must reach the module's right edge *and* carry §12's service
   loop — **+150 mm** over the direct run, or the plate cannot be lifted clear without
   unplugging at the Pi.
@@ -1146,7 +1150,7 @@ the ribs. Printed in sections for the 215 × 215 bed.
 
 The tray carries:
 
-- **A module plinth, 30.5 mm tall**, bolted to the module's **VESA 75 × 75** (M4).
+- **A module plinth, 26.5 mm tall**, bolted to the module's **VESA 75 × 75** (M4).
   Nominally 31 (75 − 44), drawn **0.5 short on purpose** — not to compensate for the
   printer, which measures accurate in Z, but against **over-constraint**. The plate is
   meant to land on twelve ribs *and* on the module, and those two supports must agree to
@@ -1157,8 +1161,9 @@ The tray carries:
   here is simply a printed pedestal: the module cannot sit on the floor, because its
   screen has to finish level with the rib shelf, so it stands on a block that lifts it
   to exactly that height and bolts down through the VESA holes.*
-- **The battery cradle** — pack on its 90 × 100 face, 70 mm tall, terminals sideways,
-  clamped rather than resting loose.
+- **The battery retention** — pack standing **90 mm tall**, gripped on its 100 mm axis
+  by two printed blocks, one of which is a full-height shroud over the terminals
+  (§14 #3). Not a four-walled cradle: that needed 77 mm of floor and there are 72.75.
 - **Back-channel bays** for the SDR, coax coil and antenna, so they are not three loose
   objects in a box.
 
@@ -1168,7 +1173,7 @@ port and an air inlet — are on its **back face**, which points *down* in this 
 vents sit either side of it, so a central pillar clears both by construction — and the
 operator has cut **additional vents into the module's own back cover** (2026-09-04; the
 shell is untouched, §1 intact), which makes the pillar-not-pad rule matter more, not
-less. The **31 mm** gap beneath becomes a **plenum**, and the tray must keep a path from
+less. The **26.5 mm** gap beneath becomes a **plenum**, and the tray must keep a path from
 it to the back channel rather than walling it off with the battery cradle.
 
 ### The plate then bears on two things
@@ -1201,38 +1206,67 @@ only appears when geometry is drawn rather than described.
 
 The frame must be *taller* than the tiles, because a tile needs a ledge to land on and
 that ledge cannot hang below the frame — the module's top face is right there at 75.
-Frame height therefore trades directly against keyboard clearance:
+Frame height therefore trades directly against what can ride above the plate:
 
-| Frame | Ledge | Tile | Plate top | Keyboard top | Clear of the 100 rim |
-|---|---|---|---|---|---|
-| 4.5 | — | 4.5 | 79.5 | 96.5 | 3.5 — but no ledge is possible |
-| **6.0** ✅ | **1.5** | **4.5** | **81.0** | **98.0** | **2.0** |
-| 8.0 | 3.5 | 4.5 | 83.0 | 100.0 | 0 — keyboard sits at the rim |
+| Frame | Ledge | Tile | Plate top | Recess left above it |
+|---|---|---|---|---|
+| 4.5 | — | 4.5 | 79.5 | 20.5 — but no ledge is possible |
+| **6.0** ✅ | **1.5** | **4.5** | **81.0** | **19.0** |
+| 8.0 | 3.5 | 4.5 | 83.0 | 17.0 |
 
 **Chosen: 6 / 1.5 / 4.5, tiles flush with the frame top.** The ledge only carries a tile
-*edge*; the module carries the middle, which is why 1.5 mm is enough.
+*edge*; the module carries the middle through **2 mm of foam tape** — not the 0.5 this
+section used to quote, which was the frame-to-module gap, not the tile-to-module one
+(§14 #4).
 
-**The cost:** the keep-out under the keyboard's footprint drops from 3.5 mm to **2.0**,
-putting the USB at 2.0 mm exactly on the limit. It goes outboard into the 37 mm strip the
-keyboard does not cover, alongside the SMA, which was going there anyway.
+*This table used to be scored on "keyboard top" and "clear of the rim", from when the
+keyboard lay on the plate. It does not any more — §11 moved it to the lid, and §14 #4 is
+the consequence.*
 
 ### What holds it down
 
-Nothing, until the lid closes. The plate is trapped sideways by the walls with 1 mm of
-clearance, but invert the case and the whole assembly lifts off its ribs.
+⚠️ **UNRESOLVED — this is the open question of §14 #4, and it is the last structural
+hole in the plan.** The answer below was written when the keyboard lay on the plate.
 
-**The foam is the retention.** Keyboard on the plate, the lid's eggcrate foam above it,
-lid compresses the stack. 20.5 mm of base recess above the plate, 17 mm of keyboard,
-3.5 mm clear to the rim, then ~30 mm of lid. That preload is what makes four parts into
-one mass. **The lid foam stays** — it is structural here, not packaging.
+Nothing holds the plate until the lid closes. It is trapped sideways by the walls with
+0.5 mm of clearance across the width and 0.9 down the depth, but invert the case and the
+whole assembly lifts off its ribs.
+
+**The foam was the retention** — *and it worked because the keyboard was the spacer.*
+Keyboard on the plate at 81 + 17 = 98, two under the rim, lid foam bearing on it, load
+straight down into the plate and onto the ribs. One preloaded stack.
+
+**Taking the keyboard off the plate removed the middle of that argument.** What is left:
+
+| | Height | Below the 100 rim |
+|---|---|---|
+| plate top | 81 | **19 mm** |
+| battery top | 94 | 6 mm |
+
+The lid foam now meets **the battery** first, 13 mm before it reaches the plate. Foam
+will deform around it, but foam has shear stiffness as well as compressive — it bridges a
+19 mm step rather than conforming to it. So the plate gets *some* preload near the front,
+far from the battery, and little near the back. **Partial, and unquantified.**
+
+The pack is also now the part taking the lid-closing load, which nothing chose.
+
+**§11 argues against its own answer.** It says the base beats the lid on retention —
+"a keyboard lying on a plate under a closed lid cannot fall out when the case is opened,
+which a lid-mounted one can" — and then puts the keyboard in the lid anyway, because the
+battery leaves ~143 mm of clear plate against a 160 mm keyboard. Both statements stand;
+nothing reconciles them.
+
+**Putting it back is not available.** The clear plate runs from the front edge to the
+battery well: 143.5 mm. The keyboard needs 160 either way round, since 230 is longer
+still. It is short by 16.5 mm and no orientation fixes that.
 
 | Item | Held against sliding by | Held against lifting by |
 |---|---|---|
 | Floor tray | the floor fillet, four sides | the module and battery bolted to it |
 | Module | VESA bolts into the plinth | same |
-| Battery | cradle walls + clamp | cradle, and the plate above |
-| Plate | case walls, 1 mm clearance | foam preload through the lid |
-| Keyboard | locating lip in the tiles | foam preload |
+| Battery | two blocks on its 100 mm axis, bolted to the tray | the blocks, and the plate around its well |
+| Plate | case walls, 0.5–0.9 mm clearance | ⚠️ **partial foam preload — see above** |
+| Keyboard | ⚠️ **in the lid, retention unspecified** | ⚠️ same |
 
 ### Service loops — the detail that ruins an afternoon
 
@@ -1274,7 +1308,7 @@ Audit of 2026-09-04. Everything here is either undecided, undrawn, or unverified
    - **lying, 70 tall** → footprint 90 × 100. Needs **90 mm**. Short by 26.
    - **standing, 90 tall** → footprint 70 × 100. Needs **70 mm**. Short by 6, *and* 90
      is taller than the 75 mm shelf, so it only works in an **open** back well where it
-     projects ~15 mm into the plate's 20.5 mm recess.
+     projects into the plate's 19 mm recess.
 
    **What broke it was the frame.** §4's original layout computed the back channel as
    225 − 136.5 ≈ 88 mm and the battery fitted. The frame's 12 mm section at each edge
@@ -1314,12 +1348,12 @@ Audit of 2026-09-04. Everything here is either undecided, undrawn, or unverified
    2026-09-04 — §8's 15–20 mm estimate was pessimistic). Standing **90 tall on a
    70 × 106 base** it needs **70 mm** of depth: fits with **2.75 mm** to spare. The wire
    bend projects along the 106 axis, which runs across 270 mm of width. It tops out at
-   90 against a plate top of 81, so it stands **9 mm proud** through an open well — 10 mm
+   94 against a plate top of 81, so it stands **13 mm above the plate** through an open well — 6 mm
    below the rim.
 
    **Consequence: the keyboard returns to the lid.** With the pack proud, the clear span
    in front of it is ~140 mm against a 160 mm keyboard. §11's move to the base, made
-   this morning on a 20.5 mm recess, is reversed. Not all loss — it **deletes the 2 mm
+   this morning on a 19 mm recess, is reversed. Not all loss — it **deletes the 2 mm
    keep-out entirely**, so the SMA, rocker and USB may sit anywhere on the rails, and the
    keyboard locating lip and cable channel stop being parts.
 
@@ -1517,7 +1551,7 @@ Audit of 2026-09-04. Everything here is either undecided, undrawn, or unverified
 
 3. ✅ **Module measured 2026-09-04: 200 × 137.5 × 44.** Neither the vendor's
    200 × 136 nor this doc's 203 × 136.5, and the thickness was **44, not the 51 spec
-   claimed** — 7 mm, straight into the plinth, which is now **31 mm** tall.
+   claimed** — 7 mm, straight into the plinth, which is now **26.5 mm** tall (§13 #11).
 3b. ✅ **Both the active area and the VESA square are perfectly centred** in the
    200 × 137.5 face (operator, 2026-09-04). So the geometry is arithmetic, not
    measurement:
