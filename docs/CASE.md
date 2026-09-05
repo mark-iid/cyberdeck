@@ -1225,8 +1225,8 @@ the consequence.*
 
 ### What holds it down
 
-⚠️ **UNRESOLVED — this is the open question of §14 #4, and it is the last structural
-hole in the plan.** The answer below was written when the keyboard lay on the plate.
+✅ **RESOLVED 2026-09-05 — a TPU preload strip replaces the keyboard as the spacer.**
+The diagnosis below stands; the fix is at the end of this section.
 
 Nothing holds the plate until the lid closes. It is trapped sideways by the walls with
 0.5 mm of clearance across the width and 0.9 down the depth, but invert the case and the
@@ -1265,8 +1265,35 @@ still. It is short by 16.5 mm and no orientation fixes that.
 | Floor tray | the floor fillet, four sides | the module and battery bolted to it |
 | Module | VESA bolts into the plinth | same |
 | Battery | two blocks on its 100 mm axis, bolted to the tray | the blocks, and the plate around its well |
-| Plate | case walls, 0.5–0.9 mm clearance | ⚠️ **partial foam preload — see above** |
+| Plate | case walls, 0.5–0.9 mm clearance | **two TPU preload strips**, below |
 | Keyboard | ⚠️ **in the lid, retention unspecified** | ⚠️ same |
+
+### The fix: two TPU strips, on the side frame members
+
+**Printed, not cut foam.** The height is repeatable, and the stiffness is a slicer
+setting rather than a shopping trip — the operator stocks TPU.
+
+**12 × 190 × 20, print two.** Each sits on a *side frame member*, whose 12 mm band runs
+from the opening edge out to the plate edge. That band is clear of every connector,
+because those are all on the rail tiles inboard of it — the strips need no cutouts and
+foul nothing.
+
+**Where the load goes is the whole point.** The strips sit **directly over the three side
+ribs** at y = 0 and ±74.5. The plate is carried at its perimeter, so preload belongs
+there; a pad in the middle would only press on the module, which is already bolted down
+and needs no help. 190 mm long so it clears the R18 corners, which begin at ±97.25.
+
+**Drawn solid on purpose.** Print in TPU at ~10 % gyroid, two perimeters — it behaves
+like firm foam. Modelling a lattice would freeze the stiffness into the geometry, where
+it cannot be tuned; in the slicer it is one number.
+
+**20 mm against a 19 mm recess**, so the lid squeezes it 1 mm. If the latches will not
+close, reprint at 19 or 18. It is a ten-minute part, which is the other argument for
+printing it rather than cutting it.
+
+**Still open:** how the keyboard is retained *in the lid*. §11's objection — that a
+lid-mounted item can fall out when the case is opened — is unanswered, and a cut pocket
+in the lid's foam or a strap is the likely answer.
 
 ### Service loops — the detail that ruins an afternoon
 

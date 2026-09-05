@@ -85,6 +85,7 @@ MOD_BACK   = MOD_FRONT + MOD_D;      // 27.25
 // guaranteed bearing is 1.1 mm and clearance 0.9. Sand if tight (S6).
 PLATE_W = 304.5; PLATE_D = 230.5;
 FRAME_W = 12; FRAME_WF = 8;          // front member narrowed for the battery
+CORNER_R = 18;                       // matches the shell's interior corner
 FRAME_H = 6; LEDGE_H = 1.5; TILE_T = 4.5;
 PLATE_TOP = SHELF_H + FRAME_H;        // 81
 OPEN_W  = PLATE_W - 2*FRAME_W;                // 280.5
@@ -109,6 +110,19 @@ PLINTH_H    = SHELF_H - MOD_T - TRAY_T - PLINTH_BIAS;   // 26.5
 // carries, and they sit LEDGE_H higher than the frame's underside, so the real
 // gap is 2.0. Buy 2 mm tape, not 0.5.
 FOAM_T      = LEDGE_H + PLINTH_BIAS;                    // 2.0
+
+// --- Plate preload, S14 #4 ---------------------------------------------------
+// The keyboard used to be the spacer that let the lid foam press the plate onto
+// its ribs. It moved to the lid, so something has to take its place. TPU, not
+// cut foam: the height is repeatable and the stiffness is a slicer setting.
+//
+// Strips sit on the SIDE frame members, directly over the six side ribs, so the
+// load goes into the plate where the plate is actually supported - not into the
+// middle, which would just push on the module.
+SPACER_H = BASE_H - PLATE_TOP + 1;   // 20: one mm of deliberate squeeze
+SPACER_L = 190;                      // clear of the R18 corners at +-97.25
+assert(SPACER_H >= BASE_H - PLATE_TOP, "preload strip is shorter than the recess");
+assert(SPACER_L/2 <= PLATE_D/2 - CORNER_R - 2, "preload strip runs into the corner radius");
 
 // --- Panel connectors. Vendor-published openings where they exist (S3) ------
 SMA_D    = 6.7;      // test-fitted 2026-09-04

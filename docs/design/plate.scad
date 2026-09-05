@@ -28,9 +28,8 @@ PART = "all";
 // (bearing = P - 303) with no way to add material back. At 304.5 the nominal
 // bearing is 1.5mm and clearance into the 305.0 opening is still 0.5mm.
 // Check the first printed member against the case before committing the rest.
-// PLATE_W/PLATE_D and FRAME_W/FRAME_WF are in deck.scad, where the bearing
-// they produce on the rib shelf is assert()ed against the case interior.
-CORNER_R = 18;
+// PLATE_W/PLATE_D, FRAME_W/FRAME_WF and CORNER_R are in deck.scad, where the
+// bearing they produce on the rib shelf is assert()ed against the case interior.
 
 // LEDGE_W/LEDGE_WF are in deck.scad with the tile-screw pattern.
 // FRAME_H, LEDGE_H and TILE_T come from deck.scad, which assert()s that a
@@ -355,6 +354,25 @@ module rail_tile(features, side) {
 module left_rail()  { rail_tile(LEFT_FEATURES, -1); }
 module right_rail() { rail_tile(RIGHT_FEATURES,  1); }
 
+// Plate preload strip - print TWO, in TPU (S14 #4).
+//
+// It replaces the keyboard as the thing the lid foam presses on. Sits on a SIDE
+// frame member, whose 12 mm band runs from the opening edge out to the plate
+// edge and is clear of every connector - those are all on the rail tiles,
+// inboard of it. Directly over the three side ribs, so the load lands where the
+// plate is carried rather than in the middle, where it would only push on the
+// module.
+//
+// Drawn SOLID on purpose. The compliance is a slicer setting - print in TPU at
+// about 10% gyroid with two perimeters, which behaves like firm foam. Modelling
+// a lattice would fix the stiffness in the geometry, where it cannot be tuned.
+//
+// 20 mm against a 19 mm recess, so it is squeezed 1 mm when the lid shuts. If
+// the latches will not close, reprint at 19 or 18 - it is a ten minute part.
+module preload_strip() {
+    cube([FRAME_W, SPACER_L, SPACER_H]);
+}
+
 // One joint: two SEPARATE bars plus the splice, laid out flat on the bed.
 // An earlier revision drew the bars meeting at x=0, so OpenSCAD unioned them
 // into one continuous 80 mm bar - it printed as a single piece and tested
@@ -419,6 +437,7 @@ else if (PART == "screen_tile") screen_tile();
 else if (PART == "rail_blank") rail_blank();
 else if (PART == "back_left")  back_tile(-1);
 else if (PART == "back_right") back_tile(1);
+else if (PART == "preload")    preload_strip();
 else if (PART == "left_rail")  left_rail();
 else if (PART == "right_rail") right_rail();
 else if (PART == "joint_test") joint_test();
