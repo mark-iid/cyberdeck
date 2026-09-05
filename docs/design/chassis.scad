@@ -13,12 +13,16 @@
 
 PART = "plinth";
 
-// 30.5, not 31. The calibration bar printed 6.18 for a drawn 6.00 - about
-// +0.18 in Z from first-layer squish. A plinth drawn at 31 would print ~31.2
-// and push the module's top face ABOVE the 75 rib shelf, lifting the plate off
-// its ribs so it bore on the module alone and rocked. Drawn deliberately short:
-// the module lands ~0.3 low and a strip of foam tape on its top face closes the
-// gap. Ribs carry the perimeter, module supports the middle, nothing fights.
+// 30.5, not 31 - drawn deliberately short.
+//
+// Not printer compensation: the calibration bar remeasured at 6.05 for a drawn
+// 6.00, so Z is accurate. The bias is against OVER-CONSTRAINT. The plate is
+// meant to land on twelve ribs at its perimeter AND on the module at its
+// centre, and those two supports have to agree to within a fraction of a
+// millimetre or the plate rocks. Any positive error here lifts the plate off
+// its ribs and leaves it bearing on the module alone. Drawn 0.5 short, the
+// module always lands slightly low and a strip of foam tape on its top face
+// takes up the gap - a compliant support instead of a rigid one that competes.
 PLINTH_H = 30.5;    // 75 shelf - 44 module - 0.5 deliberate
 VESA     = 75;      // M4, centred on the 200 x 137.5 face
 BOSS_D   = 10;      // kept small: contact only around the VESA bosses
