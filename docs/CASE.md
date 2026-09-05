@@ -74,7 +74,7 @@ vary by printer, and RF connectors especially want a snug hole.
 | **BNC** bulkhead | antenna feed (alt) | **~14 mm** round, keyed | Only if quick-swap at the panel matters; needs an SMA→BNC adapter for this kit. |
 | **USB-A ×2, dual square** | data / peripherals | **21.5 × 24.5 mm**, local web **2.0 mm** | **Test-fitted 2026-09-04**, not from a vendor sheet — the sheet never had it. One housing, one hole. Bezel 25.4 × 28.6 overhangs ~2 mm per side. The 2.0 mm web is a rebate in the 4.5 mm tile, not a thinner tile. |
 | ~~**DC barrel 2.1 mm**~~ | ~~12 V in / charge~~ | **not on the plate** | Vestigial. Power enters on Powerpole; the only barrel in the build is the module's own inlet, which already carries a Powerpole pigtail (§8 DONE). Kept as a row so it is not re-added by someone reading an old revision. |
-| **RJ45 panel extension, screw-mount** | panel Ethernet | **~16.6 × 13.6** aperture + 2 × M3 | **Replaces the keystone, 2026-09-04.** Screwed through two mounting ears — **no snap, so plate thickness is irrelevant** and §8 #8 evaporates. Jack face 16 × 13, body ~21–27 wide, **37 mm ear-to-ear**, ⌀3 mounting holes. Mount **ears along the rail length**: 37 across a 39 mm tile would leave 1 mm. Mounts from *behind* into heat-set inserts so the front stays flush. |
+| **RJ45 panel extension, screw-mount** | panel Ethernet | **~16.6 × 13.6** aperture + 2 × M3 | **Replaces the keystone, 2026-09-04.** Screwed through two mounting ears — **no snap, so plate thickness is irrelevant** and §8 #8 evaporates. Jack face 16 × 13, body ~21–27 wide, **37 mm ear-to-ear**, ⌀3 mounting holes. Mount **ears along the rail length**: 37 across a 39 mm tile would leave 1 mm. Mounts from *behind*, on **countersunk M3s through the tile** — not inserts, which need 6.7 mm of depth and the tile is 4.5 (§13 #3). Heads finish flush on the front. |
 | ~~**Cat6A keystone coupler**~~ | ~~panel Ethernet~~ | ~~14.5 × 16.0~~ | **Superseded 2026-09-04.** Enters a 14.9 opening and will not latch: retention is a *rotational* snap against a moulded ~2.4 mm wall plate, so opening size was never the variable and two coupons were spent finding that out. Keep the part for a wall plate elsewhere. |
 | **Anderson Powerpole** | external 12 V IN | **16.2 × 8.5** printed retainer for a bonded PP15-45 pair | Measured 2026-09-04: the round socket is barrel ⌀28.7 / flange ⌀35 and is **surplus** — the sidewall inlet it was bought for is cancelled (§8 #7). The retainer is 133 mm² of hole against the socket's 730. Feeds the **A/B selector**, not the bus directly (§5). |
 | **DPDT ON-OFF-ON rocker** | master power **and** source select | **28.7 × 21.2** opening (28.5 × 21 vendor + 0.2), web ⚠️ **untested** | **Replaces the ⌀16 anti-vandal button, 2026-09-04** — one control does both jobs (§5). Bezel **35 × 25.3**, stands **2 mm** proud, body **27.5 mm** deep. **6.3 mm spade terminals**, which take a 14 AWG crimp directly and delete §8 #6's problem. Mount with the **21 mm across the rail** (9 mm of tile each side); 28.5 across would leave 5.25 and is too thin. |
@@ -170,7 +170,8 @@ extensions off the Pi's right-edge ports.
 and protrusion. **Verified against the real case 2026-09-04** — an 80 mm calibration bar
 bridges two adjacent ribs. The positions are good; only the rib section was wrong.
 The 12 × 6 frame section was hand-flexed at 80 mm and judged stiff enough, and ⌀4.2
-takes an M3 heat-set insert.)*
+takes an M3 heat-set insert — **the diameter only.** See §13 #3: the same coupon's holes
+were 1.7 mm too shallow, and "the insert fits" did not reveal it.)*
 
 **2 mm of ledge is enough, but only because the plate is trapped.** The rib inner
 edges sit at 2 and 303, so the shelf opening is 301. A plate of width P has 305 − P
@@ -549,7 +550,7 @@ matters** — three of these have common traps (below).
 | ~~1~~ | ~~RJ45 keystone~~ ✅ | ~~`Cat6 keystone jack coupler`~~ | **Superseded 2026-09-04.** Will not latch into a printed plate; see §8 #8. Keep for a real wall plate. |
 | 1 | **LiFePO4 charger** | `12.8V LiFePO4 charger 14.6V CV` | §7 always said buy one; it was never on this list. 14.6 V CV profile — a lead-acid charger will not fully charge the pack and a bench supply will fight it. |
 | 1 | **2nd inline fuse** | `ATC ATO inline fuse holder` | One per source (§5). The external inlet needs its own, close to the panel. |
-| — | **M3 hardware** | `M3 screws assortment` + `M3 heat set inserts` | **Structural, and absent until 2026-09-04.** The frame is lap-jointed with M3s, every tile is retained with them, the plinth bolts VESA-75, and the carriers mount from behind. Heat-set inserts for anything that gets unscrewed more than once. |
+| — | **M3 hardware** | `M3 screws assortment` + `M3 heat set inserts` | **Structural, and absent until 2026-09-04.** The frame is lap-jointed with M3s, every tile is retained with them, the plinth bolts VESA-75, and the carriers mount from behind. Inserts **in hand**: ruthex RX-M3×5.7 (GE-M3X57-001) — 5.7 long, ⌀4.6 knurl, published hole **⌀4.0 × 6.7 deep min, 1.6 mm wall**. Frame joints want **M3 × 10** (M3 × 8 acceptable); tile and RJ45 screws want **countersunk** heads. |
 | — | **6.3 mm spade crimps** | `6.3mm female spade connector 14 AWG insulated` | For the rocker's six terminals. Replaces the ring-lug workaround §8 #6 needed for the deleted anti-vandal switch. |
 
 **The three traps**
@@ -1366,6 +1367,41 @@ Audit of 2026-09-04. Everything here is either undecided, undrawn, or unverified
    (still open), and now this. The opening is *published* (28.5 × 21), so unlike the
    keystone only one axis is unknown: **the web left by a local rebate**. One ladder,
    0.8 → 2.4, in `coupons.scad` as `rocker`.
+
+10. ✅ **RESOLVED 2026-09-05 — the insert holes were 1.7 mm too shallow, and the fit
+   test would never have caught it.** The operator's inserts are **ruthex RX-M3×5.7**
+   (GE-M3X57-001), and the bag publishes the hole:
+
+   | | Published | Was drawn | Now |
+   |---|---|---|---|
+   | Insert length | 5.7 | — | — |
+   | Knurl OD | 4.6 | — | — |
+   | **Hole ⌀** | **4.0** | 4.2 → prints 4.0 | unchanged ✅ |
+   | **Hole depth** | **6.7 min** | **5.0** ❌ | **6.7** |
+   | Wall around | 1.6 min | 4.0 (12 mm member) | unchanged ✅ |
+
+   The diameter was right **by luck** — 4.2 drawn prints at 4.0 on this machine (§6
+   offset), which lands exactly on ruthex's number. The depth was not. A 5.7 mm insert
+   pressed into a 5.0 mm hole either stands 0.7 proud or goes home by splitting the
+   1 mm skin on the *visible* face.
+
+   **This is the same shape as the keystone.** The operator reported "they fit", which
+   is true and was the wrong question: the hole accepted the insert. Whether the insert
+   was seated in enough material is a different fact, and only the vendor drawing has
+   it. §7's rule — *no coupon where the vendor publishes the number* — applies to
+   fasteners too, and this doc read the fit instead of the bag.
+
+   **Fix, without moving the plate.** 6.7 of hole plus 1 mm of skin wants 7.7 mm of
+   material; the member is 6, and thickening the frame costs the headroom §11 has only
+   3.5 mm of. So each hole gets a **local ⌀8 × 1.7 boss on the underside**, where there
+   is 75 mm of nothing. The splice grew to **12 × 5** with a **⌀8.6 × 2.0 counterbore**
+   that swallows the boss and still clamps on the flat around it. Screws: **M3 × 10**.
+
+   **Second casualty: the RJ45 ears.** 6.7 mm of depth cannot exist in a 4.5 mm tile at
+   all, and a boss under the tile would hold the ear off the face it clamps against. So
+   the ears are now **plain through-holes, countersunk on the front** — flush heads, and
+   it works whether the ears arrive threaded or plain-with-a-nut. This also removes a
+   dependency: the mounting no longer needs a number the part has not delivered yet.
 
 ### Needs a measurement, not a decision
 

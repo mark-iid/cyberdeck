@@ -94,15 +94,54 @@ module member() {
     }
 }
 
+// Inserts are ruthex RX-M3x5.7 (ITEM GE-M3X57-001), and the bag publishes the
+// hole: 5.7 long, knurl OD 4.6, install into a *4.0* hole *6.7 deep minimum*,
+// with at least 1.6 mm of wall around it.
+//
+// Drawn 4.2 prints at 4.0 on this machine (S6 offset), so the diameter was
+// right by luck. The DEPTH was not: 5 mm of hole for a 5.7 mm insert leaves it
+// standing 0.7 proud, or pressed home by splitting the 1 mm skin on the
+// visible face. "It fits" is the hole accepting the insert, which is not the
+// same as the insert being seated in enough material.
+//
+// 6.7 of blind hole plus 1 mm of skin needs 7.7 mm of material and the member
+// is 6. Rather than thicken the whole frame - which costs plate height, and
+// S11 has only 3.5 mm of headroom under the rim - each hole gets a local boss
+// on the UNDERSIDE, where there is 75 mm of nothing. The splice is
+// counterbored to swallow the boss and still clamp flat.
+INSERT_D = 4.2;    // -> 4.0 as printed = ruthex's number
+INSERT_H = 6.7;    // ruthex minimum. Was 5 - too shallow for a 5.7 insert.
+BOSS_H   = 1.7;    // 6 member + 1.7 = 7.7 = 6.7 hole + 1.0 skin
+BOSS_D   = 8;      // 4.0 hole + 2.0 wall each side (ruthex wants >= 1.6)
+
+// A blind insert seat, drilled up from z=0 into material above, with the boss
+// that makes the depth. Call with the part's underside at z=0.
+module insert_seat() {
+    translate([0, 0, -BOSS_H]) cylinder(d=BOSS_D, h=BOSS_H);
+}
+module insert_bore() {
+    translate([0, 0, -BOSS_H]) cylinder(d=INSERT_D, h=INSERT_H);
+}
+
 // Splice bar, screwed up into the rim's underside either side of a joint.
 // Notched to clear the 4 x 2 mm rib that sits directly under that joint.
-SPL_L = 70; SPL_W = 10; SPL_T = 4;
+// Widened 10 -> 12 to match the member: it now has to carry a counterbore that
+// swallows the member's ⌀8 insert boss, and 8 in 10 left 1 mm of wall.
+// Thickened 4 -> 5 as well: the counterbore eats 2 mm, and 2 mm of web left
+// under an M3 head is not enough to clamp a joint with.
+SPL_L = 70; SPL_W = 12; SPL_T = 5;
+SPL_CB_D = BOSS_D + 0.6;          // boss clearance
+SPL_CB_H = BOSS_H + 0.3;          // so the splice clamps on the flat, not the boss
+// Screw: 3.3 mm of splice web below the boss, then 5.7 of insert -> M3 x 10.
+// M3 x 8 also works (4.7 mm of engagement); anything longer bottoms out.
 module splice() {
     difference() {
         translate([-SPL_L/2, -SPL_W/2, 0]) cube([SPL_L, SPL_W, SPL_T]);
         translate([-3, -SPL_W/2 - 1, SPL_T - 2.6]) cube([6, SPL_W + 2, 3]);   // rib relief
-        for (x = [-26, -14, 14, 26])
+        for (x = [-26, -14, 14, 26]) {
             translate([x, 0, -1]) cylinder(d=3.4, h=SPL_T + 2);
+            translate([x, 0, SPL_T - SPL_CB_H]) cylinder(d=SPL_CB_D, h=SPL_CB_H + 1);
+        }
     }
 }
 
@@ -172,24 +211,36 @@ module left_rail() {
     }
 }
 
-// Right rail tile — data. Two panel-mount extensions, both screwed or
-// clipped from behind so the front stays flush under the keyboard:
+// Right rail tile — data. Two panel-mount extensions, both fitted from behind
+// so the front stays flush under the keyboard:
 //   dual USB   21.5 x 24.5, web 2.0 (test-fitted 2026-09-04)
 //   RJ45       16.6 x 13.6 aperture + 2 x M3, ears ALONG the rail
 // The RJ45 is 37 mm ear-to-ear; across a 39 mm tile that would leave 1 mm,
 // so it runs lengthwise. Ear spacing PROVISIONAL until the part lands.
+//
+// The ears are NOT taken by heat-set inserts. An insert needs 5 mm of depth
+// plus a skin, and the tile is 4.5 mm; a boss added under the tile to make up
+// the difference would hold the ear off the surface it is meant to clamp
+// against. So: plain through-holes, countersunk on the FRONT face. The head
+// finishes flush under the keyboard, and it works whether the ears turn out
+// threaded or plain-with-a-nut - which is still unknown until the part lands.
 USB_W = 21.5; USB_L = 24.5; USB_WEB = 2.0;
 RJ_W = 16.6; RJ_L = 13.6;
 RJ_EAR = 31;                      // PROVISIONAL - confirm on arrival (S8 #8)
-M3_INSERT = 4.2;
+RJ_CLEAR = 3.6;                   // M3 clearance, drawn 0.2 over (holes print
+                                  // undersize) AND for slop across two ears
+RJ_CSK_D = 6.4;                   // M3 90 deg countersunk head, same 0.2
 
 module right_rail() {
     difference() {
         translate([-RAIL_W/2, -RAIL_D/2, 0]) cube([RAIL_W, RAIL_D, TILE_T]);
         rebated(0, 34, USB_W, USB_L, USB_WEB);
         translate([-RJ_W/2, -20 - RJ_L/2, -1]) cube([RJ_W, RJ_L, TILE_T + 2]);
-        for (y = [-20 - RJ_EAR/2, -20 + RJ_EAR/2])
-            translate([0, y, TILE_T - 4.0]) cylinder(d=M3_INSERT, h=5);
+        for (y = [-20 - RJ_EAR/2, -20 + RJ_EAR/2]) {
+            translate([0, y, -1]) cylinder(d=RJ_CLEAR, h=TILE_T + 2);
+            translate([0, y, TILE_T - (RJ_CSK_D - RJ_CLEAR)/2])
+                cylinder(d1=RJ_CLEAR, d2=RJ_CSK_D, h=(RJ_CSK_D - RJ_CLEAR)/2 + 0.01);
+        }
     }
 }
 
@@ -200,20 +251,23 @@ module right_rail() {
 //
 // Insert holes are blind FROM BELOW, leaving 1 mm of material on top, so
 // nothing shows on the finished plate. That is how the real members will be.
-INSERT_D = 4.2;    // M3 heat-set. Confirm against the operator's inserts -
-INSERT_H = 5;      // this number propagates to every printed part in the build.
+//
 
 module joint_bar() {
     difference() {
-        cube([40, FRAME_W, FRAME_H]);
-        for (x = [14, 26])
-            translate([x, FRAME_W/2, -1]) cylinder(d=INSERT_D, h=INSERT_H + 1);
+        union() {
+            cube([40, FRAME_W, FRAME_H]);
+            for (x = [14, 26]) translate([x, FRAME_W/2, 0]) insert_seat();
+        }
+        for (x = [14, 26]) translate([x, FRAME_W/2, 0]) insert_bore();
     }
 }
 
+// Bars are lifted by BOSS_H so the bosses hang inside the part rather than
+// below the bed. Print boss-side UP: the visible face goes on the glass.
 module joint_test() {
-    joint_bar();
-    translate([0, FRAME_W + 6, 0]) joint_bar();
+    translate([0, 0, BOSS_H]) joint_bar();
+    translate([0, FRAME_W + 6, BOSS_H]) joint_bar();
     translate([20, 2*(FRAME_W + 6) + 10, 0]) splice();
 }
 
