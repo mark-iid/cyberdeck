@@ -1561,3 +1561,114 @@ Audit of 2026-09-04. Everything here is either undecided, undrawn, or unverified
 - The USB budget claim in §5 was wrong; corrected there.
 - The power topology contradicted itself between §4 and §5; resolved to an A/B
   selector in §5.
+
+
+## §14 — Adversarial audit, 2026-09-05
+
+Written by attacking the plan rather than restating it. Findings are ordered by what
+they cost if ignored, not by how hard they were to find. **Nothing here is a fix** —
+several of these are decisions, and they are the operator's.
+
+### A. Load-bearing gaps — things drawn as if solved that are not drawn at all
+
+1. 🔴 **No tile has any fastening. None.** `screen_tile`, both rails and both back
+   tiles are plain plates sitting in a **1.5 mm** ledge. The buy list says "every tile
+   is retained with [M3s]"; the geometry has not one hole.
+
+   This is not cosmetic. **The RJ45 and the USB unit are screwed to the rail tile**, so
+   every gram of force from plugging and unplugging a cable goes into a tile that
+   nothing holds down. Pull an Ethernet lead and the tile comes up out of its ledge with
+   the connector still attached. Same for the Powerpole, which is the one thing on the
+   plate that gets a deliberate hard pull.
+
+2. 🔴 **The frame has no joint fasteners drawn either.** `member()` is
+   `intersection(frame_full, cube)` and nothing else — no insert seats, no bolt holes.
+   The four L pieces meet at the centre of each side and are supposed to be tied by a
+   notched `splice` underneath, but only the *coupon* (`joint_bar`) has ever had the
+   seats. **As drawn, the frame does not join.** The splice exists; the thing it bolts
+   into does not.
+
+3. 🟠 **The battery terminal cover was deleted by my own cradle redesign.** §11 names
+   loose antenna elements beside bare LiFePO4 terminals as "a fire, not an
+   inconvenience", and specifies "the battery cradle gets a **printed cover over the
+   terminals**". The cradle is now two end blocks with a wire notch. **The cover is
+   gone and nothing recorded that it went.** §11's Zone A still stores the antenna in
+   the same channel as the terminals.
+
+### B. Contradictions the document is still carrying
+
+4. 🟠 **The doc cannot decide where the keyboard lives, and the plate's retention
+   depends on the answer.** §11 says "Zone C is back in the lid". §12's table says
+   "Keyboard on the plate", lists "Keyboard — held against sliding by *locating lip in
+   the tiles*" (no such lip is drawn), and the frame-thickness table is scored on
+   "Keyboard top 98.0, clear of the 100 rim 2.0".
+
+   **The consequence is structural, not editorial.** §12 answers "what holds the plate
+   down?" with *"the foam is the retention — keyboard on the plate, lid foam above it,
+   lid compresses the stack."* Take the keyboard off the plate and that argument has no
+   middle. The plate top is at 81 and the rim at 100, so the lid foam must reach **19 mm
+   down** to touch the plate at all — and it will meet **the battery at 94** first, six
+   millimetres under the rim. As drawn, the pack takes the lid preload and the plate may
+   take none.
+
+5. 🟡 **§11 still specifies the battery in an orientation §13 #0 overturned** —
+   "must lie on its 90 × 100 face, 70 mm tall" — three bullets above the note that
+   stands it 90 tall. Both are in the same section.
+
+6. 🟡 **Stale arithmetic, all downstream of the plate top moving to 81 and the tray
+   appearing under everything:**
+
+   | Says | Is |
+   |---|---|
+   | recess above the plate 20.5 | **19** |
+   | battery stands 9 above the plate | **13** |
+   | Zone B, air under the module, ~31 | **26.5** |
+   | plate depth 229 | **230.5** |
+
+### C. Assumptions never tested
+
+7. 🟠 **"Thermal is a non-issue" rests on a premise the faceplate invalidated.** §5
+   argues the case "only has to not block the module's vents", and §1 backs it with
+   "never runs sealed — open lid = open air". **Both predate a plate that covers the
+   entire opening.**
+
+   The module's vents face **down** into the plenum. Trace the air out of it: the front
+   is closed by the screen tile, both sides by the rail tiles, the top by the module
+   itself. What is left is the ring around the battery in the back well — **1 mm each
+   side, 1.75 front, 2.5 back** — and whatever creeps out of the 0.25 mm gap between the
+   plate edge and the wall, between ribs.
+
+   I have not measured this and cannot say it overheats. What I can say is that
+   **nothing in the plan was designed to vent it**, the sentence that dismissed the
+   problem was written about a different geometry, and the operator has *cut extra vents
+   into the module's back cover* — which increases flow into a space that may have
+   nowhere to send it. Deliberate slots in the tiles would be nearly free to add now and
+   impossible to add after the plate is printed.
+
+8. 🟡 **The module's input voltage range is recorded nowhere.** It is a "DC 12 V"
+   barrel. A LiFePO4 pack sits at ~13.3–13.6 V straight off charge, and a 14.6 V CV
+   charger on the pigtail will hold the bus at **14.6 V** — which the module sees
+   directly if the rocker is left on INT while charging. Nothing in §5 prevents that,
+   and no label warns against it. **One number from the vendor closes this.**
+
+9. 🟡 **Nothing fuses the charge pigtail.** §5 puts an inline fuse "on the battery
+   positive, close to the terminal", and then taps a charge pigtail off the battery. If
+   that tap is upstream of the fuse, the pigtail is an unfused conductor running into
+   the back channel — the same channel §11 flags for loose metal.
+
+### D. Known-open, restated so they are not lost
+
+10. Powerpole retainer — undrawn, still needs the roll-pin position.
+11. Rocker web thickness — `RK_WEB = 1.2` is a guess; the coupon was never printed.
+12. RJ45 ear spacing — `RJ_EAR = 31`, provisional.
+13. Audio jack diameter — `AUDIO_D = 6.2`, a placeholder, not a measurement.
+14. Tilt foot — §10 wants 15–20°, §1 forbids attaching to the shell, nothing is drawn.
+15. `docs/design/faceplate.svg` — superseded, still wrong (300 × 225, 48 mm rails).
+
+### What the audit changed
+
+Only one thing, because the rest are decisions: the insert-wall assertion was checking
+`FRAME_W` (12) when the binding case is the **front** member at `FRAME_WF` (8). It now
+checks the narrowest member. It still passes — 2.0 mm of wall against ruthex's 1.6 — but
+it was passing for the wrong reason, and `BOSS_D` is 8 against a front member of 8, so
+there is no margin left to spend there.

@@ -182,5 +182,8 @@ assert(21.5 + 2*3 <= RAIL_W, "USB rebate is wider than the rail tile");
 assert(28.7 + 2*3 <= RAIL_W, "rocker rebate is wider than the rail tile");
 
 // --- 12. An insert seat needs vendor wall, and the splice must swallow it ---
-assert(BOSS_D <= FRAME_W, "insert boss is wider than the frame member");
-assert((FRAME_W - (INSERT_D - 0.2))/2 >= 1.6, "insert has less than 1.6 mm of wall");
+// Against the NARROWEST member, which is the front one at FRAME_WF. Checking
+// FRAME_W passes trivially and would not notice a boss outgrowing the front.
+assert(BOSS_D <= FRAME_WF, "insert boss is wider than the front frame member");
+assert((FRAME_WF - (INSERT_D - 0.2))/2 >= 1.6,
+       "insert has less than 1.6 mm of wall in the front frame member");
