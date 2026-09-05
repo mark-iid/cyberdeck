@@ -1704,9 +1704,39 @@ case. Blocks now close on the body at ±50.5, and the back tile's battery well f
 off-centre envelope (−51 … +57) instead of a centred 108, which is why `back_left` and
 `back_right` are now **89.25 and 83.25**, not twins.
 
-**Two numbers are still missing and both are one caliper reading:** *which end* the
-terminals are on (assumed +x) and *how high* up the end face they sit. The shroud is
-full-height because of the second one and can be cut down once it is known.
+**5 — CORRECTED, same day: the terminal geometry was already on record and this doc
+had it wrong.** The operator's description — posts on the **top** face in the pack's
+natural upright orientation, toward the **front**, one **left and one right**, standing
+**8 mm** up — resolves everything the shroud needed, and each clause flips when the pack
+is laid on its side:
+
+| Upright | Laid down, 90 vertical |
+|---|---|
+| posts on the TOP face | on a **vertical end face** |
+| stand 8 mm up | stick out 8 mm **sideways**, along x |
+| "left and right" across the 90 | **at different heights**, spread over the 90 |
+| "toward the front" across the 70 | still toward the deck's front |
+
+**The middle row is the one that matters.** The two posts are not clustered — they sit
+near opposite ends of the pack's 90 mm dimension, which is now vertical. *There is no
+short cover that covers both.* The full-height shroud was drawn out of ignorance and
+turns out to be the only thing that works.
+
+**8 mm is not the envelope either.** §11 already budgets "~15–20 mm for the posts +
+Powerpole lugs + cable bend", and the shroud has to contain the lugs and the bend, not
+just the posts. Cavity is **20 mm** (`BATT_WIRE_W`), sourced from §11 rather than
+invented, which puts the shroud at 31 × 70 × 74.5.
+
+**The terminals go on the LEFT.** The left rail carries the rocker and the Powerpole
+inlet, so that is the short side for the power run. The pack turns freely about its
+vertical axis, so this is a build decision, not a measurement — now recorded as one.
+
+Knock-on: the battery well is off-centre by 20 mm rather than 6, so `back_left` and
+`back_right` are **69.25 and 89.25**. The tray's back-channel window moved from x 66 to
+**84**, because the shroud bolts at 77.5 and the old window left no material under it.
+
+⚠️ **8 contradicts the earlier "extends to 106", which implies 6.** Taking the larger:
+it is a clearance dimension, and being wrong costs a collision rather than a gap.
 
 **4 — The foam tape is 2 mm, not 0.5.** §12 quotes 0.5 as the gap the tape on the
 module's top face closes. That is the **frame**-to-module figure. What the module

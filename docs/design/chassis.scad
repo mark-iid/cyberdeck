@@ -91,7 +91,8 @@ module tray_half() {
         tray_window(RIB, -TRAY_D/2 + RIB, TRAY_W - RIB, -60);
         tray_window(RIB, -48, TRAY_W - RIB, 10);
         // back channel, beside the battery
-        tray_window(66, 24, TRAY_W - RIB, TRAY_D/2 - RIB);
+        tray_window(84, 24, TRAY_W - RIB, TRAY_D/2 - RIB);   // 84 not 66: the
+        // shroud bolts at 77.5 and needs material under it
         // Only the holes falling on THIS half (x >= 0); the mirror gets the rest.
         for (b = concat(PLINTH_BOLT, CRADLE_BOLT)) if (b[0] >= 0)
             translate([b[0], b[1], -1]) cylinder(d=M3_CLEAR, h=TRAY_T + 2);
@@ -125,71 +126,64 @@ module tray_half() {
 // with the tray's on both axes and nothing compared them.
 CR_LEN = BATT_D;                       // block runs the pack's full depth
 
+// Both drawn in PLATE coordinates - the terminal end is whichever side
+// BATT_TERM_SIDE says - and moved to the origin only for printing.
 module cradle_block() {
-    cy = (BATT_FRONT + BATT_BACK)/2;
+    x0 = CR_BLOCK_SIDE > 0 ? CR_BLOCK_X : -CR_BLOCK_X - CR_WALL;
+    fx = CR_BLOCK_SIDE > 0 ? CR_BLOCK_X : -CR_BLOCK_X - CR_WALL - CR_FLANGE;
     difference() {
         union() {
-            translate([CR_BLOCK_X, cy - CR_LEN/2, 0]) cube([CR_WALL, CR_LEN, CR_H]);
-            translate([CR_BLOCK_X, cy - CR_LEN/2, 0])
+            translate([x0, CR_CY - CR_LEN/2, 0]) cube([CR_WALL, CR_LEN, CR_H]);
+            translate([fx, CR_CY - CR_LEN/2, 0])
                 cube([CR_WALL + CR_FLANGE, CR_LEN, TRAY_T]);
         }
-        for (b = CRADLE_BOLT) if (b[0] > 0)
+        for (b = BLOCK_BOLT)
             translate([b[0], b[1], -1]) cylinder(d=M3_CLEAR, h=TRAY_T + 2);
     }
 }
 
-// Terminal shroud - the OTHER end block, grown into a closed box.
+// Terminal shroud - the other end block, grown into a closed box.
 //
 // RESTORED 2026-09-05. S11 specifies "a printed cover over the terminals" and
 // names loose antenna elements beside bare LiFePO4 posts as a fire risk. The
 // four-walled cradle carried that cover; replacing it with two open blocks
 // dropped it silently, and nothing recorded that it had gone.
 //
-// It grips the pack BODY on its inboard face and encloses the 6 mm of terminal
-// outboard of it: closed on the outboard face, the two ends and the top, open
-// towards the pack, with the wire leaving through a notch at the bottom.
+// It must run the full height of Zone A, and that is not caution - the operator
+// reports the posts on what is the pack's TOP face upright, "on the right and
+// left", and laid on its side that dimension becomes the VERTICAL one. The two
+// posts are at different heights, spread over most of the 90 mm. There is no
+// short cover that covers both.
 //
-// TWO NUMBERS ARE STILL MISSING and both are one caliper reading:
-//   - WHICH end the terminals are on (assumed +x)
-//   - how high up the end face they sit. The shroud runs the full height of
-//     Zone A because that is the only height that is safe without knowing.
-//     It can be cut down once the terminals are measured.
+// Closed outboard, both ends and top; open toward the pack; wire out through a
+// notch at the FRONT bottom, following the posts, which sit toward the front.
 module shroud() {
-    cy = (BATT_FRONT + BATT_BACK)/2;
-    x0 = CR_BLOCK_X;                      // inboard face, against the body
-    x1 = CR_SHROUD_X + CR_WALL;           // outboard face
+    xi = BATT_TERM_SIDE > 0 ?  CR_BLOCK_X   : -CR_BLOCK_X;         // inboard
+    xo = BATT_TERM_SIDE > 0 ?  CR_SHROUD_X  : -CR_SHROUD_X;        // outboard
+    x0 = min(xi, xo + (BATT_TERM_SIDE > 0 ? 0 : -CR_WALL));
+    x1 = max(xi, xo + (BATT_TERM_SIDE > 0 ? CR_WALL : 0));
+    fx = BATT_TERM_SIDE > 0 ? x0 : x0 - CR_FLANGE;
     difference() {
         union() {
-            // outboard wall, full height
-            translate([CR_SHROUD_X, cy - CR_LEN/2, 0])
-                cube([CR_WALL, CR_LEN, CR_SHROUD_H]);
-            // end walls, INSIDE the pack's own depth - there is no floor to
-            // spare beyond it (deck.scad asserts the battery zone)
-            for (y = [cy - CR_LEN/2, cy + CR_LEN/2 - CR_WALL])
+            translate([BATT_TERM_SIDE > 0 ? xo : xo - CR_WALL, CR_CY - CR_LEN/2, 0])
+                cube([CR_WALL, CR_LEN, CR_SHROUD_H]);                    // outboard
+            for (y = [CR_CY - CR_LEN/2, CR_CY + CR_LEN/2 - CR_WALL])
                 translate([x0, y, 0]) cube([x1 - x0, CR_WALL, CR_SHROUD_H]);
-            // lid
-            translate([x0, cy - CR_LEN/2, CR_SHROUD_H - CR_WALL])
-                cube([x1 - x0, CR_LEN, CR_WALL]);
-            // bolt flange
-            translate([x0, cy - CR_LEN/2, 0])
-                cube([x1 - x0 + CR_FLANGE, CR_LEN, TRAY_T]);
+            translate([x0, CR_CY - CR_LEN/2, CR_SHROUD_H - CR_WALL])
+                cube([x1 - x0, CR_LEN, CR_WALL]);                        // lid
+            translate([fx, CR_CY - CR_LEN/2, 0])
+                cube([x1 - x0 + CR_FLANGE, CR_LEN, TRAY_T]);             // flange
         }
-        // wire exit, low in the outboard wall
-        translate([CR_SHROUD_X - 1, cy - 12, TRAY_T + 4])
-            cube([CR_WALL + 2, 24, 14]);
-        for (b = CRADLE_BOLT) if (b[0] > 0)
+        // wire exit, low and toward the FRONT, where the posts are
+        translate([x0 - 1, CR_CY - CR_LEN/2 + 6, TRAY_T + 4])
+            cube([x1 - x0 + 2, 26, 16]);
+        for (b = SHROUD_BOLT)
             translate([b[0], b[1], -1]) cylinder(d=M3_CLEAR, h=TRAY_T + 2);
     }
 }
 
-// Printed at the origin. cradle = the plain end, shroud = the terminal end.
-module cradle() {
-    translate([-CR_BLOCK_X, -(BATT_FRONT + BATT_BACK)/2 + CR_LEN/2, 0])
-        cradle_block();
-}
-module shroud_part() {
-    translate([-CR_BLOCK_X, -(BATT_FRONT + BATT_BACK)/2 + CR_LEN/2, 0]) shroud();
-}
+module cradle() { translate([-CR_BLOCK_SIDE*CR_BLOCK_X, -CR_CY + CR_LEN/2, 0]) cradle_block(); }
+module shroud_part() { translate([-BATT_TERM_SIDE*CR_SHROUD_X, -CR_CY + CR_LEN/2, 0]) shroud(); }
 
 if (PART == "tray")   tray_half();
 if (PART == "cradle") cradle();

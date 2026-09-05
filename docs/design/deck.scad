@@ -38,16 +38,36 @@ MOD_CY    = MOD_FRONT + MOD_D/2;      // -41.5
 VESA      = 75;                       // M4, centred (S13 #3b)
 
 // --- The battery. Vendor + operator, 90 x 70 x 106 incl. terminals ----------
-// 106 is the ENVELOPE: a 100 mm body with terminals adding 6 on ONE end
-// (operator, 2026-09-05). The cradle must grip the BODY - a block closing on
-// 53 would be squeezing the terminals, not the case.
 BATT_W = 106; BATT_D = 70; BATT_H = 90;
+
+// Terminals, from the operator: on what is the TOP face in the pack's natural
+// upright orientation, set toward the FRONT, one left and one right, standing
+// 8 mm up from that face.
+//
+// The deck lays the pack on its side - 90 vertical, 70 front-to-back - so that
+// top face becomes a VERTICAL END FACE, and the consequences flip:
+//   - the 8 mm sticks out SIDEWAYS, along x, past the 100 mm body
+//   - "left and right" was across the 90 mm dimension, which is now the
+//     VERTICAL one. The two posts are therefore at DIFFERENT HEIGHTS, spread
+//     over most of the pack's 90 mm - not clustered. A short cover cannot work;
+//     the shroud has to run the height of Zone A, which is what it does.
+//   - "toward the front" is across the 70 mm dimension, which stays
+//     front-to-back, so both posts sit toward the deck's front. The wire exit
+//     follows them there.
+//
+// ⚠️ 8 here contradicts the earlier "extends to 106" (which implies 6). Taking
+// the LARGER, because it is a clearance dimension and the cost of being wrong
+// is a collision rather than a gap.
 BATT_BODY_W = 100;
-BATT_TERM_W = BATT_W - BATT_BODY_W;    // 6
-BATT_TERM_SIDE = 1;   // ⚠️ WHICH END - assumed +x. Not measured. Mirror if wrong.
-// Body centred on x=0, so the envelope runs -50 .. +56 for BATT_TERM_SIDE = 1.
-BATT_X0 = -BATT_BODY_W/2;
-BATT_X1 =  BATT_BODY_W/2 + BATT_TERM_W;
+BATT_TERM_W = 8;                 // bare posts, measured
+// Posts alone are not the envelope. S11 already budgets "~15-20 mm for the
+// posts + Powerpole lugs + cable bend"; the shroud has to contain all of it.
+BATT_WIRE_W = 20;
+// Terminals to the LEFT: the left rail carries the rocker and the Powerpole
+// inlet (S8), so this is the short side for the power run.
+BATT_TERM_SIDE = -1;
+BATT_X0 = -BATT_BODY_W/2 - BATT_WIRE_W;      // -70, terminal side
+BATT_X1 =  BATT_BODY_W/2;                    // +50
 // It stands at the back of the flat floor, behind the module.
 BATT_BACK  = FLOOR_D/2;              // 100 - hard against where the fillet starts
 BATT_FRONT = BATT_BACK - BATT_D;     // 30
@@ -123,7 +143,7 @@ TILE_SCREW = concat(
     // rails and back tiles, along the side ledges
     [for (sx = [-1, 1], y = [-95, -39.5, 15, 45, 85]) [sx*LEDGE_SIDE_X, y]],
     // back tiles again, along the back ledge
-    [for (sx = [-1, 1], x = [70, 110]) [sx*x, LEDGE_BACK_Y]]);
+    [for (sx = [-1, 1], x = [80, 115]) [sx*x, LEDGE_BACK_Y]]);
 
 // Frame joints. Members butt at the centre of every side, four screws per joint,
 // pulled up from below by a splice. 14 and 26 from the joint, as the coupon.
@@ -146,12 +166,14 @@ PLINTH_BOLT = [[-20, MOD_CY - VESA/2], [20, MOD_CY - VESA/2],
 CR_BLOCK_X  = BATT_BODY_W/2 + CR_SLIP/2;      // 50.5, against the BODY
 // The terminal end carries a shroud, which is wider than a plain block, so the
 // two ends do not have the same bolt line.
-CR_SHROUD_X = CR_BLOCK_X + BATT_TERM_W;       // outboard of the terminals
-CRADLE_BOLT = [for (y = [-1, 1])
-    each [[-(CR_BLOCK_X  + CR_WALL + CR_FLANGE/2),
-           (BATT_FRONT + BATT_BACK)/2 + y*(BATT_D/2 - 10)],
-          [ (CR_SHROUD_X + CR_WALL + CR_FLANGE/2),
-           (BATT_FRONT + BATT_BACK)/2 + y*(BATT_D/2 - 10)]]];
+CR_SHROUD_X = CR_BLOCK_X + BATT_WIRE_W;       // outboard of posts AND lugs
+CR_BLOCK_SIDE = -BATT_TERM_SIDE;
+CR_CY = (BATT_FRONT + BATT_BACK)/2;
+BLOCK_BOLT  = [for (y = [-1, 1])
+    [CR_BLOCK_SIDE*(CR_BLOCK_X + CR_WALL + CR_FLANGE/2), CR_CY + y*(BATT_D/2 - 10)]];
+SHROUD_BOLT = [for (y = [-1, 1])
+    [BATT_TERM_SIDE*(CR_SHROUD_X + CR_WALL + CR_FLANGE/2), CR_CY + y*(BATT_D/2 - 10)]];
+CRADLE_BOLT = concat(BLOCK_BOLT, SHROUD_BOLT);
 // Zone A is everything outboard of the pack, and S11 calls loose metal beside
 // bare terminals "a fire, not an inconvenience". The shroud closes the terminal
 // end up to the underside of the back tile - above that the pack is in the lid
