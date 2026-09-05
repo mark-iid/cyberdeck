@@ -166,6 +166,12 @@ extensions off the Pi's right-edge ports.
 
 ### Construction — a frame on the rib shelf, tiles in the frame
 
+*(Rib spacing of 0 and ±74.5 came from Pelican's CAD, which was wrong about rib height
+and protrusion. **Verified against the real case 2026-09-04** — an 80 mm calibration bar
+bridges two adjacent ribs. The positions are good; only the rib section was wrong.
+The 12 × 6 frame section was hand-flexed at 80 mm and judged stiff enough, and ⌀4.2
+takes an M3 heat-set insert.)*
+
 **2 mm of ledge is enough, but only because the plate is trapped.** The rib inner
 edges sit at 2 and 303, so the shelf opening is 301. A plate of width P has 305 − P
 of lateral freedom, so if it slides fully to one side the thin side retains exactly
@@ -1247,6 +1253,46 @@ never beneath it**.
 Audit of 2026-09-04. Everything here is either undecided, undrawn, or unverified.
 
 ### Blocking
+
+0. ⛔ **THE BATTERY DOES NOT FIT BEHIND THE MODULE.** Found 2026-09-04 while setting up
+   the floor tray. The arithmetic, in centred plan coordinates:
+
+   | | |
+   |---|---|
+   | Flat floor | 270 × 200 → y −100 … +100 |
+   | Frame opening | 205 deep → y −102.5 … +102.5 |
+   | Screen tile at the front of it | y −102.5 … **+37** |
+   | Module beneath | y −101.5 … **+36** |
+   | **Floor left behind the module** | **64 mm deep** |
+
+   The Miady is 90 × 70 × 100 and only two orientations clear the 75 mm shelf:
+
+   - **lying, 70 tall** → footprint 90 × 100. Needs **90 mm**. Short by 26.
+   - **standing, 90 tall** → footprint 70 × 100. Needs **70 mm**. Short by 6, *and* 90
+     is taller than the 75 mm shelf, so it only works in an **open** back well where it
+     projects ~15 mm into the plate's 20.5 mm recess.
+
+   **What broke it was the frame.** §4's original layout computed the back channel as
+   225 − 136.5 ≈ 88 mm and the battery fitted. The frame's 12 mm section at each edge
+   took 24 mm of depth that the earlier arithmetic never had, and the channel fell to
+   65.5. This doc has carried "battery on its 90 × 100 face, terminals sideways" since
+   this morning; it is not achievable.
+
+   Options, none free:
+
+   1. **Stand the battery and shift the module forward.** The module may sit under the
+      *front frame* — only its 173 × 118 active area must stay inside the opening, and
+      there is 9.75 mm of bezel to spend. That buys ~10 mm, giving ~74 mm against the
+      70 needed. It requires the back well to be open (no tile) with the pack standing
+      proud of the plate, which collides with the keyboard unless the keyboard sits
+      forward of it.
+   2. **A different pack.** ~102 Wh in a 60 × 250 × 70 envelope is not a hard ask, and
+      the back channel is 270 mm wide and almost entirely empty.
+   3. **Battery outside the case**, which is where it is today and what §6 set out to
+      fix.
+
+   Nothing else on the floor tray can be drawn until this resolves — the cradle, the
+   bays, the cable coil and the plenum path all key off where the pack sits.
 
 1. ✅ **Ethernet — closed by replacing the part** (§8 #8). A screw-mount RJ45 panel
    extension: no snap, no panel-thickness dependency, and it deletes the internal patch
