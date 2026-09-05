@@ -74,6 +74,11 @@ CR_SLIP     = 1;       // total clearance across a captured dimension
 PLINTH_BIAS = 0.5;   // drawn short on purpose, see chassis.scad
 PLINTH_H    = SHELF_H - MOD_T - TRAY_T - PLINTH_BIAS;   // 26.5
 
+// --- Panel connectors. Vendor-published openings where they exist (S3) ------
+SMA_D    = 6.7;      // test-fitted 2026-09-04
+AUDIO_D  = 6.2;      // 3.5 mm headphone jack, PROVISIONAL - see S3. Not bought
+                     // yet, so this is a placeholder for the barrel thread, not
+                     // a measurement. Confirm before the left rail is printed.
 // --- Fasteners. ruthex RX-M3x5.7, hole published on the bag (S13 #10) -------
 INSERT_LEN = 5.7;
 INSERT_D   = 4.2;    // -> 4.0 as printed on this machine (S6 offset)

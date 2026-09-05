@@ -177,8 +177,28 @@ module rail_blank() {
 RK_W = 28.7; RK_L = 21.2;
 RK_WEB = 1.2;                     // PROVISIONAL - the `rocker` coupon settles it
 PP_W = 16.2; PP_H = 8.5;
-SMA_D = 6.7;
 REBATE = 3;                       // relief margin around a snapped-in part
+// SMA_D and AUDIO_D live in deck.scad with the rest of the connector openings.
+
+// Everything the left rail carries, as [name, centre y, length along the rail,
+// width across it]. Written as a table so the assertion below can check that no
+// two of them overlap - which is the only way to see it, since each cutout is
+// drawn in a different place in left_rail() and none of them mentions another.
+LEFT_FEATURES = [
+    ["SMA",       -50, SMA_D,          SMA_D],
+    ["audio",       0, AUDIO_D,        AUDIO_D],
+    ["Powerpole", -20, PP_H,           PP_W],
+    ["rocker",     30, RK_L + 2*REBATE, RK_W + 2*REBATE],
+];
+for (f = LEFT_FEATURES)
+    assert(f[3] <= RAIL_W, str(f[0], " is wider than the rail tile"));
+for (i = [0 : len(LEFT_FEATURES)-2], j = [i+1 : len(LEFT_FEATURES)-1])
+    assert(abs(LEFT_FEATURES[i][1] - LEFT_FEATURES[j][1])
+             >= (LEFT_FEATURES[i][2] + LEFT_FEATURES[j][2])/2,
+           str(LEFT_FEATURES[i][0], " overlaps ", LEFT_FEATURES[j][0],
+               " on the left rail"));
+for (f = LEFT_FEATURES)
+    assert(abs(f[1]) + f[2]/2 <= RAIL_D/2, str(f[0], " runs off the end of the rail"));
 
 module rebated(cx, cy, w, l, web, margin=REBATE) {
     translate([cx - w/2 - margin, cy - l/2 - margin, web])
@@ -194,7 +214,14 @@ module left_rail() {
         translate([RAIL_W/2 - outb/2 - 6, -20, 0])
             cube([PP_W, PP_H, TILE_T + 2], center=true);    // Powerpole retainer
         translate([RAIL_W/2 - outb/2 - 6, -50, -1])
-            cylinder(d=SMA_D, h=TILE_T + 2);                 // SMA, outboard
+            cylinder(d=SMA_D, h=TILE_T + 2);                 // SMA
+        // Headphone / powered-speaker jack, in the 32 mm gap between the
+        // Powerpole and the rocker. Its source is the module's own AUDIO socket,
+        // which is on the module's LEFT edge - the same side as this rail, so
+        // the run is short. Added 2026-09-05 because the battery ended up
+        // 2.75 mm from the module's speakers and muffles them (S13 #13); this
+        // gives the sound somewhere to go instead.
+        translate([0, 0, -1]) cylinder(d=AUDIO_D, h=TILE_T + 2);
     }
 }
 
