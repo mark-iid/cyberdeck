@@ -174,8 +174,19 @@ of lateral freedom, so if it slides fully to one side the thin side retains exac
 | Plate width | Guaranteed bearing per side | Verdict |
 |---|---|---|
 | 303 | 0 | can lose the shelf entirely — no |
-| **304** | **1.0 mm** | drop-in, 1 mm total clearance |
-| 304.5 | 1.5 mm | sand to fit |
+| 304 | 1.0 mm | drop-in, 1 mm total clearance |
+| **304.5** ✅ | **1.5 mm** | chosen — 0.5 mm clearance, sand if tight |
+
+**Biased oversize on purpose (2026-09-04).** A calibration bar printed 79.95 for a drawn
+80.00, which is *inside caliper noise on a printed edge* — so the XY scale error is
+**unknown, not measured**, and an 80 mm sample could not resolve 0.2 % over 304 mm
+regardless. The bias is chosen for asymmetry of consequence: **too wide sands down in
+minutes; too narrow loses bearing with no way to add material back.** Measure the first
+printed member against the case before committing the other three.
+
+The same bar printed **6.18 for a drawn 6.00** — +0.18 in Z, first-layer squish, well
+outside caliper noise. Harmless in the frame, but see §12: it is why the plinth is drawn
+short.
 
 Load was never the concern — 1 mm across twelve ribs carries a 2 kg module and plate
 without noticing. The concern was the plate walking off its shelf in transport, and it
@@ -1126,8 +1137,13 @@ the ribs. Printed in sections for the 215 × 215 bed.
 
 The tray carries:
 
-- **A module plinth, 31 mm tall**, bolted to the module's **VESA 75 × 75** (M4).
-  31 + 44 = **75**, so the module's top face lands exactly at the rib shelf. *A plinth
+- **A module plinth, 30.5 mm tall**, bolted to the module's **VESA 75 × 75** (M4).
+  Nominally 31 (75 − 44), drawn **0.5 short on purpose**: the calibration bar printed
+  +0.18 in Z, so a plinth drawn at 31 would come off the bed at ~31.2 and push the
+  module's top face *above* the 75 rib shelf — lifting the plate off its ribs so it
+  bore on the module alone and rocked on it. Drawn short, the module lands ~0.3 low and
+  **a strip of foam tape on its top face closes the gap**. Ribs carry the perimeter, the
+  module supports the middle, and nothing fights for the same 0.2 mm. *A plinth
   here is simply a printed pedestal: the module cannot sit on the floor, because its
   screen has to finish level with the rib shelf, so it stands on a block that lifts it
   to exactly that height and bolts down through the VESA holes.*

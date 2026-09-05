@@ -15,7 +15,18 @@
 
 PART = "all";
 
-PLATE_W = 304;    // 1 mm clearance in a 305.0 opening; bearing = P - 303 (S4)
+// 304.5, not 304 - biased deliberately oversize.
+//
+// The calibration bar measured 79.95 for a drawn 80, but that is inside caliper
+// noise on a printed edge, so XY scale error is UNKNOWN, not measured. An 80mm
+// sample could not resolve 0.2% over 304mm in any case.
+//
+// The bias is chosen because the error is correctable in one direction only.
+// Too wide and it sands down in minutes. Too narrow and bearing is lost
+// (bearing = P - 303) with no way to add material back. At 304.5 the nominal
+// bearing is 1.5mm and clearance into the 305.0 opening is still 0.5mm.
+// Check the first printed member against the case before committing the rest.
+PLATE_W = 304.5;
 PLATE_D = 229;
 CORNER_R = 18;
 
