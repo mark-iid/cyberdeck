@@ -126,6 +126,27 @@ module left_rail() {
     }
 }
 
+// Right rail tile — data. Two panel-mount extensions, both screwed or
+// clipped from behind so the front stays flush under the keyboard:
+//   dual USB   21.5 x 24.5, web 2.0 (test-fitted 2026-09-04)
+//   RJ45       16.6 x 13.6 aperture + 2 x M3, ears ALONG the rail
+// The RJ45 is 37 mm ear-to-ear; across a 39 mm tile that would leave 1 mm,
+// so it runs lengthwise. Ear spacing PROVISIONAL until the part lands.
+USB_W = 21.5; USB_L = 24.5; USB_WEB = 2.0;
+RJ_W = 16.6; RJ_L = 13.6;
+RJ_EAR = 31;                      // PROVISIONAL - confirm on arrival (S8 #8)
+M3_INSERT = 4.2;
+
+module right_rail() {
+    difference() {
+        translate([-RAIL_W/2, -RAIL_D/2, 0]) cube([RAIL_W, RAIL_D, TILE_T]);
+        rebated(0, 34, USB_W, USB_L, USB_WEB);
+        translate([-RJ_W/2, -20 - RJ_L/2, -1]) cube([RJ_W, RJ_L, TILE_T + 2]);
+        for (y = [-20 - RJ_EAR/2, -20 + RJ_EAR/2])
+            translate([0, y, TILE_T - 4.0]) cylinder(d=M3_INSERT, h=5);
+    }
+}
+
 // One joint, both halves plus the splice - a small print to prove the butt
 // joint and the M3 pattern before committing to four large members.
 module joint_test() {
@@ -142,6 +163,7 @@ else if (PART == "splice")     splice();
 else if (PART == "screen_tile") screen_tile();
 else if (PART == "rail_blank") rail_blank();
 else if (PART == "left_rail")  left_rail();
+else if (PART == "right_rail") right_rail();
 else if (PART == "joint_test") joint_test();
 else if (PART == "frame_full") frame_full();
 else { frame_full(); translate([0,0,20]) screen_tile(); }

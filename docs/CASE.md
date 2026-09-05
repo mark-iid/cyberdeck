@@ -74,7 +74,8 @@ vary by printer, and RF connectors especially want a snug hole.
 | **BNC** bulkhead | antenna feed (alt) | **~14 mm** round, keyed | Only if quick-swap at the panel matters; needs an SMA→BNC adapter for this kit. |
 | **USB-A ×2, dual square** | data / peripherals | **21.5 × 24.5 mm**, local web **2.0 mm** | **Test-fitted 2026-09-04**, not from a vendor sheet — the sheet never had it. One housing, one hole. Bezel 25.4 × 28.6 overhangs ~2 mm per side. The 2.0 mm web is a rebate in the 4.5 mm tile, not a thinner tile. |
 | ~~**DC barrel 2.1 mm**~~ | ~~12 V in / charge~~ | **not on the plate** | Vestigial. Power enters on Powerpole; the only barrel in the build is the module's own inlet, which already carries a Powerpole pigtail (§8 DONE). Kept as a row so it is not re-added by someone reading an old revision. |
-| **Cat6A keystone coupler** | panel Ethernet | ⚠️ **OPEN — see §8 #8** | Enters a 14.9 × 16.2 opening and will not latch. The spec face is 14.5 × 16.0 and retention is a *rotational* snap against a moulded plate, not a clip through a panel — so the opening size was never the variable. Body **32.6 mm** deep behind the plate. It is a **coupler**: needs a short Cat6 patch inside, Pi → back of jack. **Not optional** — the Pi's own RJ45 is buried under the plate. |
+| **RJ45 panel extension, screw-mount** | panel Ethernet | **~16.6 × 13.6** aperture + 2 × M3 | **Replaces the keystone, 2026-09-04.** Screwed through two mounting ears — **no snap, so plate thickness is irrelevant** and §8 #8 evaporates. Jack face 16 × 13, body ~21–27 wide, **37 mm ear-to-ear**, ⌀3 mounting holes. Mount **ears along the rail length**: 37 across a 39 mm tile would leave 1 mm. Mounts from *behind* into heat-set inserts so the front stays flush. |
+| ~~**Cat6A keystone coupler**~~ | ~~panel Ethernet~~ | ~~14.5 × 16.0~~ | **Superseded 2026-09-04.** Enters a 14.9 opening and will not latch: retention is a *rotational* snap against a moulded ~2.4 mm wall plate, so opening size was never the variable and two coupons were spent finding that out. Keep the part for a wall plate elsewhere. |
 | **Anderson Powerpole** | external 12 V IN | **16.2 × 8.5** printed retainer for a bonded PP15-45 pair | Measured 2026-09-04: the round socket is barrel ⌀28.7 / flange ⌀35 and is **surplus** — the sidewall inlet it was bought for is cancelled (§8 #7). The retainer is 133 mm² of hole against the socket's 730. Feeds the **A/B selector**, not the bus directly (§5). |
 | **DPDT ON-OFF-ON rocker** | master power **and** source select | **28.7 × 21.2** opening (28.5 × 21 vendor + 0.2), web ⚠️ **untested** | **Replaces the ⌀16 anti-vandal button, 2026-09-04** — one control does both jobs (§5). Bezel **35 × 25.3**, stands **2 mm** proud, body **27.5 mm** deep. **6.3 mm spade terminals**, which take a 14 AWG crimp directly and delete §8 #6's problem. Mount with the **21 mm across the rail** (9 mm of tile each side); 28.5 across would leave 5.25 and is too thin. |
 | ~~**16 mm anti-vandal button**~~ | ~~master power~~ | ~~⌀16.2~~ | **Deleted 2026-09-04**, superseded by the rocker above. Test fit gave ⌀16.2 (16.0 + 0.2) and that is what established this printer's offset, so the measurement survives its part. |
@@ -517,10 +518,10 @@ matters** — three of these have common traps (below).
 | several | Fuses | `ATC blade fuse 5 amp` | **5 A** — sized for the ~2.5 A total draw (§5), not the Pi alone. |
 | — | Wire | `14 AWG silicone wire red black` | Silicone stays flexible in tight bends; PVC goes stiff. |
 | — | Powerpole contacts + housings | `Anderson Powerpole 30 amp contacts housings kit` | **30 A contacts for 14 AWG** (45 A contacts are for 12 AWG). Keep the bus uniform. |
-| 1 | RJ45 keystone ✅ | `Cat6 keystone jack coupler` | **ORDERED 2026-09-04 — no longer optional**, because the Pi's own RJ45 is buried under the plate. Right rail, portrait. Mounting unresolved — §8 #8. |
+| 1 | **RJ45 panel extension** | `RJ45 panel mount extension cable screw mount female to male` | **NEW 2026-09-04**, replaces the keystone (§8 #8). Screw ears, not a snap. Verify it is a **female-to-male extension**, not a female-to-female coupler — the male end plugs straight into the Pi and deletes the internal patch cable. |
+| ~~1~~ | ~~RJ45 keystone~~ ✅ | ~~`Cat6 keystone jack coupler`~~ | **Superseded 2026-09-04.** Will not latch into a printed plate; see §8 #8. Keep for a real wall plate. |
 | 1 | **LiFePO4 charger** | `12.8V LiFePO4 charger 14.6V CV` | §7 always said buy one; it was never on this list. 14.6 V CV profile — a lead-acid charger will not fully charge the pack and a bench supply will fight it. |
 | 1 | **2nd inline fuse** | `ATC ATO inline fuse holder` | One per source (§5). The external inlet needs its own, close to the panel. |
-| 1 | **Keystone wall plate** | `1-port keystone wall plate` | Reference geometry for §8 #8 — measure its opening and thickness, or cut the fragment out and bolt it into the tile. A couple of pounds either way. |
 | — | **M3 hardware** | `M3 screws assortment` + `M3 heat set inserts` | **Structural, and absent until 2026-09-04.** The frame is lap-jointed with M3s, every tile is retained with them, the plinth bolts VESA-75, and the carriers mount from behind. Heat-set inserts for anything that gets unscrewed more than once. |
 | — | **6.3 mm spade crimps** | `6.3mm female spade connector 14 AWG insulated` | For the rocker's six terminals. Replaces the ring-lug workaround §8 #6 needed for the deleted anti-vandal switch. |
 
@@ -886,7 +887,29 @@ docs/design/faceplate.svg can be cut now. What is still open is the **rail coupo
 (SMA, switch, keystone) and the **retainer fit** — those set this printer's offset per
 hole, not whether the design works.
 
-### 8. ⚠️ NEW — the keystone enters but will not latch
+### 8. ✅ CLOSED 2026-09-04 — replaced, not solved
+
+**A screw-mount RJ45 panel extension retires the whole problem.** Two ears, two M3
+screws, no snap anywhere — so panel thickness stops mattering and a 4.5 mm printed tile
+is as good as a 2.4 mm moulded one. No coupon, no ladder, no third guess.
+
+It deletes a second thing too: the part is an **extension cable, not a coupler**, so its
+male plug goes straight into the Pi's RJ45. The "short Cat6 patch cable inside, Pi →
+back of jack" that §3 called for is no longer a part. Same pattern as the USB unit, which
+is also a panel-mount extension.
+
+**Two numbers to confirm when it lands:**
+
+- **Ear hole centre spacing** — the aperture and screw positions in the tile depend on
+  it. Drawn provisionally at 31 mm.
+- **Cable length.** It must reach the module's right edge *and* carry §12's service
+  loop — **+150 mm** over the direct run, or the plate cannot be lifted clear without
+  unplugging at the Pi.
+
+The history below is kept because the lesson generalises: **the fix for a part that will
+not mount is sometimes a different part, not a better coupon.**
+
+### 8a. ⚠️ SUPERSEDED — the keystone enters but will not latch
 
 The VCE Cat6A coupler **fits the 14.9 opening and will not click into it**. Width was
 never the problem, so the width ladder could not have answered this however far it ran.
@@ -1031,7 +1054,7 @@ INTAKE — the day the boxes land, in this order:
 | 5 | ✅ USB unit | `usb_thick` | *done* — web **2.0 mm** |
 | 5 | USB unit | calipers on the buckle | *optional now* — the web ladder answered it empirically |
 | 6 | ✅ switch, SMA | `rail` | *done* — **16.2** and **6.7** (+0.2 offset) |
-| 8 | RJ45 keystone | **buy a 1-port wall plate** | reference opening + thickness; the fragment bolts into the tile |
+| 8 | ✅ RJ45 | *replaced with a screw-mount panel extension* | no snap, no coupon — §8 #8 |
 | 7 | PP15-45 housings | `rail` coupon PP ladder + calipers | panel opening for a bonded pair, and the roll-pin position for the retainer |
 | 7 | Powerpole socket | calipers on flange + flip-cap | sidewall hole only — no longer gates the plate |
 
@@ -1175,8 +1198,9 @@ Audit of 2026-09-04. Everything here is either undecided, undrawn, or unverified
 
 ### Blocking
 
-1. **Keystone mounting (§8 #8).** No working scheme. Not optional — the Pi's RJ45 is
-   buried. Next step is a wall plate for reference geometry.
+1. ✅ **Ethernet — closed by replacing the part** (§8 #8). A screw-mount RJ45 panel
+   extension: no snap, no panel-thickness dependency, and it deletes the internal patch
+   cable too. Confirm ear spacing and cable length on arrival.
 2. **Partly drawn as of 2026-09-04.** `docs/design/plate.scad` now carries the frame,
    the splice, the screen tile, a rail blank and a joint coupon — all render-verified
    manifold and all inside the Ender's 215 × 215:
