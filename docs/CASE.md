@@ -1815,6 +1815,38 @@ The insert-wall assertion was checking `FRAME_W` (12) when the binding case is t
 2.0 mm of wall against ruthex's 1.6 — but it was passing for the wrong reason, and
 `BOSS_D` is 8 against a front member of 8, so there is no margin left to spend there.
 
+### ✅ `joint_test` PASSED 2026-09-05 — the joint is settled
+
+Printed and assembled by the operator, all checks good. That closes five numbers that
+appear in every one of the four frame members, and they stop being provisional:
+
+| | Confirmed |
+|---|---|
+| insert seat **⌀4.2 × 6.7** | ruthex RX-M3×5.7 seats flush |
+| **1 mm skin** over a blind seat | nothing shows through on the visible face |
+| boss **⌀8 × 1.7** + counterbore **⌀8.6 × 2.0** | splice clamps on the flat |
+| **M3 × 10** | pulls the seam shut without bottoming |
+| 12 × 6 section, spliced | stiff across the joint |
+
+**The heat-set melt test is done with it too** — deferred since 2026-09-04, and the
+reason the seat depth error mattered. The frame members are now clear to print.
+
+⚠️ **One check from this coupon is still outstanding and needs the case, not the bench:**
+the splice's 6 × 2.6 rib notch. The splice has never been positioned against a rib in the
+model, only in a comment. Offer the assembled joint down onto the rib at the centre of a
+wall and see whether it sits flat.
+
+### M3 clearance holes widened to 3.6, 2026-09-05
+
+Drawn 3.4 prints ~3.2 here, and an M3 is 3.0 — 0.1 mm of radial clearance. Fine for one
+part; **not fine for two separately printed parts whose hole patterns have to meet.** The
+plinth bolts into the tray, the cradle and shroud bolt into the tray, every tile bolts
+into the frame. The same reasoning already put the RJ45 ears at 3.6; the chassis had been
+left behind. M4 went 4.5 → 4.7 for the same reason.
+
+*If a plinth is already on the bed, let it run — four holes open up with a 3.5 mm bit in
+seconds.*
+
 ### How to use `joint_test`
 
 **It is one joint, in three pieces.** Two bars are two frame members meeting end to end;

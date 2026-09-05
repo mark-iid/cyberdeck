@@ -154,8 +154,13 @@ INSERT_H   = 6.7;    // vendor minimum blind depth
 INSERT_SKIN = 1.0;   // material left over a blind seat, so nothing shows
 BOSS_H     = 1.7;    // local thickening that buys the depth
 BOSS_D     = 8;
-M3_CLEAR   = 3.4;
-M4_CLEAR   = 4.5;
+// 3.6, not 3.4. Drawn 3.4 prints ~3.2 on this machine and an M3 is 3.0 max, so
+// 0.1 mm of radial clearance - which is fine for one part and not fine for two
+// separately printed parts whose hole patterns have to line up. The plinth
+// bolts into the tray, the cradle and shroud bolt into the tray, and every
+// tile bolts into the frame. Same reasoning that put the RJ45 ears at 3.6.
+M3_CLEAR   = 3.6;
+M4_CLEAR   = 4.7;    // -> 4.5 printed, against a 4.0 screw
 
 // --- Tile and frame joint fastenings, in PLATE coordinates ------------------
 // Both sides of every joint read these lists: the FRAME puts an insert seat at
