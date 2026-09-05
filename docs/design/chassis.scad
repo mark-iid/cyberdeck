@@ -99,34 +99,53 @@ module tray_half() {
 }
 
 // ---------------------------------------------------------------------------
-// Battery cradle. The pack stands 90 tall on its 70 x 106 base with the
-// terminals and wire bend projecting along the 106 axis. This locates the base;
-// the plate's own back well (S13 #0) catches it again at 75-81 mm, so the two
-// together stop it moving without needing a strap over the top.
+// Battery retention - TWO END BLOCKS, not a tray.
+//
+// REDRAWN 2026-09-05. The first version was a four-walled tray with a floor,
+// and it did not fit and was not needed:
+//
+//   Depth. Behind the module's back edge (+27.25) the flat floor runs to +100,
+//   so the battery zone is 72.75 mm. The pack is 70. A cradle with front and
+//   back walls needs 70 + 1 slip + 2x3 wall = 77. It overran by 4.25 and its
+//   back edge climbed 3.5 mm up the fillet, so it could not have sat flat.
+//   deck.scad now assert()s this.
+//
+//   Need. Fore-aft the pack is already trapped between the module in front and
+//   the fillet behind, with 2.75 mm of play. Front and back walls were buying
+//   a constraint the case supplies for free, at 7 mm of depth it did not have.
+//
+//   Height. The floor added 4 mm under the pack for nothing, standing it at 98
+//   with 2 mm to the rim. On the tray alone it tops out at 94.
+//
+// So: two blocks capturing the 106 mm axis, where nothing else constrains it.
+// The plate's back well catches the pack again at 81-94 mm (S13 #0).
 // ---------------------------------------------------------------------------
-// BATT_W/BATT_D come from deck.scad. CR_FLOOR too - the pack stands on the
-// cradle floor on top of the tray, not on the case floor, and deck.scad
-// assert()s the resulting height against the rim.
-CR_WALL = 3; CR_H = 20; CR_FLANGE = 8;
+// Everything dimensional comes from deck.scad, including CRADLE_BOLT, which is
+// DERIVED from these blocks rather than typed - the previous pattern disagreed
+// with the tray's on both axes and nothing compared them.
+CR_LEN = BATT_D;                       // block runs the pack's full depth
 
-module cradle() {
-    ow = BATT_W + 1 + 2*CR_WALL;      // 1 mm of slip fit
-    od = BATT_D + 1 + 2*CR_WALL;
+module cradle_block() {
+    cy = (BATT_FRONT + BATT_BACK)/2;
     difference() {
         union() {
-            translate([-ow/2, -od/2, 0]) cube([ow, od, CR_H]);
-            translate([-ow/2 - CR_FLANGE, -od/2, 0])
-                cube([ow + 2*CR_FLANGE, od, CR_FLOOR]);
+            translate([CR_BLOCK_X, cy - CR_LEN/2, 0]) cube([CR_WALL, CR_LEN, CR_H]);
+            translate([CR_BLOCK_X, cy - CR_LEN/2, 0])
+                cube([CR_WALL + CR_FLANGE, CR_LEN, TRAY_T]);
         }
-        translate([-(BATT_W + 1)/2, -(BATT_D + 1)/2, CR_FLOOR])
-            cube([BATT_W + 1, BATT_D + 1, CR_H]);
-        // wire exit, one end of the 106 axis
-        translate([(BATT_W + 1)/2 - 1, -12, CR_FLOOR + 6])
-            cube([CR_WALL + 2, 24, CR_H]);
-        for (x = [-1, 1], y = [-1, 1])
-            translate([x*(ow/2 + CR_FLANGE/2), y*(od/2 - 6), -1])
-                cylinder(d=M3_CLEAR, h=CR_FLOOR + 2);
+        // wire exit at the terminal end, notched down from the top
+        translate([CR_BLOCK_X - 1, cy - 12, CR_H - 12]) cube([CR_WALL + 2, 24, 13]);
+        for (b = CRADLE_BOLT) if (b[0] > 0)
+            translate([b[0] - CR_BLOCK_X, b[1] - (cy - CR_LEN/2), -1])
+                translate([CR_BLOCK_X, cy - CR_LEN/2, 0])
+                    cylinder(d=M3_CLEAR, h=TRAY_T + 2);
     }
+}
+
+// Printed at the origin, one block; print two (the second mirrored in X).
+module cradle() {
+    translate([-CR_BLOCK_X, -(BATT_FRONT + BATT_BACK)/2 + CR_LEN/2, 0])
+        cradle_block();
 }
 
 if (PART == "tray")   tray_half();

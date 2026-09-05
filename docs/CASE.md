@@ -1368,6 +1368,53 @@ Audit of 2026-09-04. Everything here is either undecided, undrawn, or unverified
    keystone only one axis is unknown: **the web left by a local rebate**. One ladder,
    0.8 → 2.4, in `coupons.scad` as `rocker`.
 
+12. ✅ **RESOLVED 2026-09-05 — the battery cradle did not fit, and did not need
+   to.** Writing ten cross-part assertions (§13 #11) turned up four faults, all
+   on the battery, all invisible to a per-part check:
+
+   | | Was | Should be |
+   |---|---|---|
+   | Cradle depth needed | 77 | fits in **72.75** |
+   | Cradle bolts, as the cradle drew them | (±60.5, 32.5/97.5) | — |
+   | Cradle bolts, as the tray drilled them | (±40, 38/92) | **one shared list** |
+   | Cradle back edge | y = 103.5 | flat floor ends at **100** |
+   | Pack top | 90 (doc) / 98 (drawn) | **94** |
+
+   **The depth.** Behind the module's back edge at +27.25 the flat floor runs to
+   +100, so the battery gets 72.75 mm. The pack is 70. A four-walled cradle
+   needs 70 + 1 of slip + two 3 mm walls = **77**. It overran by 4.25, and its
+   back edge climbed 3.5 mm up the corner curve, so it could never have sat flat.
+
+   **It was buying a constraint the case already gives away.** Front-to-back the
+   pack is trapped between the module in front and the curve behind, with 2.75 mm
+   of play. Only the 106 mm axis is unconstrained. So the cradle is now **two end
+   blocks** gripping that axis — 11 × 70 × 20 each, print two. It went from a
+   129 × 77 × 20 tub to a pair of small blocks, and the depth problem vanished.
+
+   **The height.** The old cradle put a 4 mm floor under the pack for nothing,
+   standing its top at 98 with 2 mm under the rim. Sitting on the tray it tops
+   out at **94** — 13 mm above the 81 mm plate, 6 mm under the rim. §13 #0's "9 mm
+   above the plate" was measured from the case floor and never counted the tray.
+
+   **Still open, and a real question:** the module's back edge carries the
+   on-screen-display buttons and the speakers (§13 #7), and the battery now
+   stands 2.75 mm from them. The speakers fire into a wall and the buttons cannot
+   be reached. See §13 #13.
+
+13. ⚠️ **OPEN — the battery blocks the module's buttons and speakers.** 2.75 mm
+   between the module's back edge and the pack. Options, none free:
+
+   - **Accept it.** Set the display up once and never touch the buttons; lose the
+     speakers to a muffled cavity. Costs nothing.
+   - **Move the module forward.** The active area has ~6 mm of slack before it
+     runs past the frame opening, but the module body would then reach y = −116
+     and the case wall is at about −115. Buys 4 mm at most, and tightly.
+   - **Turn the module 180°** so the buttons and speakers face the *front* channel
+     under the narrowed front frame member. Costs a re-plan of every cable run.
+
+   Needs a decision before the frame is printed, because option 2 moves the
+   opening.
+
 11. ✅ **RESOLVED 2026-09-05 — the plinth was 4 mm too tall, and a checker that
    looks at one part at a time could never have said so.** `PLINTH_H` was 30.5,
    from `75 − 44 − 0.5`. That arithmetic puts the plinth on the case *floor*. It

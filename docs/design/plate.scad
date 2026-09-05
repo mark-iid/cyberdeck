@@ -28,12 +28,10 @@ PART = "all";
 // (bearing = P - 303) with no way to add material back. At 304.5 the nominal
 // bearing is 1.5mm and clearance into the 305.0 opening is still 0.5mm.
 // Check the first printed member against the case before committing the rest.
-PLATE_W = 304.5;
-PLATE_D = 229;
+// PLATE_W/PLATE_D and FRAME_W/FRAME_WF are in deck.scad, where the bearing
+// they produce on the rib shelf is assert()ed against the case interior.
 CORNER_R = 18;
 
-FRAME_W  = 12;    // section width on the sides and back
-FRAME_WF = 8;     // FRONT member, narrowed to buy the battery its depth (S13 #0)
 LEDGE_W  = 10;    // ledge reaching further inward, under the tiles
 LEDGE_WF = 5;     // and narrowed at the front for the same reason
 // FRAME_H, LEDGE_H and TILE_T come from deck.scad, which assert()s that a
@@ -43,21 +41,15 @@ LEDGE_WF = 5;     // and narrowed at the front for the same reason
 // +27.25 and leaves 72.75 mm of floor behind it for the battery standing on
 // its 70 x 106 base (S13 #0). Only the 173 x 118 active area must stay inside
 // the opening; the module's front bezel tucks under the narrowed front member.
-// MOD_*, BATT_* from deck.scad.
-BATT_FRONT = 30; BATT_BACK = 100;
-WIN_W = 173; WIN_D = 118;        // active area, centred
-TILE_GAP = 1;                    // clearance of screen tile around the module
+// MOD_*, BATT_*, WIN_* and TILE_GAP from deck.scad.
 
 RIB_X = [-74.5, 0, 74.5];
 $fn = 64;
 
-OPEN_W = PLATE_W - 2*FRAME_W;              // 280.5
-OPEN_D = PLATE_D - FRAME_W - FRAME_WF;     // 209
-OPEN_CY = (FRAME_WF - FRAME_W)/2;          // -2, opening sits forward
+// OPEN_* are in deck.scad too - the rail width falls out of them.
 LEDGE_IW = OPEN_W - 2*LEDGE_W;             // 260.5
 LEDGE_ID = OPEN_D - LEDGE_W - LEDGE_WF;    // 194
 LEDGE_CY = OPEN_CY + (LEDGE_W - LEDGE_WF)/2;
-OPEN_FRONT = -PLATE_D/2 + FRAME_WF;        // -106.5
 OPEN_BACK  =  PLATE_D/2 - FRAME_W;         // +102.5
 
 module rr(w, d, r, h) {
@@ -169,7 +161,6 @@ module back_tile(side) {
 // Rail tile blank. Connector cutouts are NOT here yet - the keystone is
 // unresolved (S8 #8) and the A/B selector is not bought, so two of the four
 // have no dimensions. This exists to pin the usable width.
-RAIL_W = (OPEN_W - (MOD_W + 2*TILE_GAP)) / 2;   // 39.25
 RAIL_D = TILE_BACK - OPEN_FRONT;                // matches the screen tile
 module rail_blank() {
     translate([-RAIL_W/2, -RAIL_D/2, 0]) cube([RAIL_W, RAIL_D, TILE_T]);
