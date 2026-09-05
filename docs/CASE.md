@@ -80,6 +80,16 @@ vary by printer, and RF connectors especially want a snug hole.
 | **DPDT ON-OFF-ON rocker** | master power **and** source select | **28.7 × 21.2** opening (28.5 × 21 vendor + 0.2), web ⚠️ **untested** | **Replaces the ⌀16 anti-vandal button, 2026-09-04** — one control does both jobs (§5). Bezel **35 × 25.3**, stands **2 mm** proud, body **27.5 mm** deep. **6.3 mm spade terminals**, which take a 14 AWG crimp directly and delete §8 #6's problem. Mount with the **21 mm across the rail** (9 mm of tile each side); 28.5 across would leave 5.25 and is too thin. |
 | ~~**16 mm anti-vandal button**~~ | ~~master power~~ | ~~⌀16.2~~ | **Deleted 2026-09-04**, superseded by the rocker above. Test fit gave ⌀16.2 (16.0 + 0.2) and that is what established this printer's offset, so the measurement survives its part. |
 
+**Published dimensions govern; the offset is a printer correction, not a rival
+number.** The rocker and the RJ45 extension both ship with properly dimensioned panel
+data — 28.5 × 21 and 16 × 13 — and those are the openings the parts are engineered for,
+so they are what the finished plate must *have*. The +0.2 below is how you get there on
+this machine: draw 28.7, print 28.5. The operator's SMA and switch test fits are not
+competing dimensions, they are the calibration that makes a drawn number and a real one
+agree. Where a vendor publishes an opening, no ladder is needed at all — only the
+offset. **The one number neither RJ45 image dimensions is the ear hole centre spacing**,
+so that alone stays provisional at 31 mm until calipers land on it.
+
 **This printer runs holes 0.2 mm undersize.** Two independent ladders on the `rail`
 coupon landed on the same offset — SMA wanted 6.7 for a 6.5 part, the switch wanted
 16.2 for a 16.0 one. That is systematic shrinkage, so **every round hole on the plate

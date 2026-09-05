@@ -147,15 +147,28 @@ module right_rail() {
     }
 }
 
-// One joint, both halves plus the splice - a small print to prove the butt
-// joint and the M3 pattern before committing to four large members.
-module joint_test() {
-    for (s = [-1, 1]) translate([0, 0, 0]) difference() {
-        translate([s > 0 ? 0 : -40, -FRAME_W/2, 0]) cube([40, FRAME_W, FRAME_H]);
-        for (x = [14, 26]) translate([s*x, 0, FRAME_H - 4.2])
-            cylinder(d=4.2, h=5);          // M3 heat-set insert, from below
+// One joint: two SEPARATE bars plus the splice, laid out flat on the bed.
+// An earlier revision drew the bars meeting at x=0, so OpenSCAD unioned them
+// into one continuous 80 mm bar - it printed as a single piece and tested
+// nothing. They are now distinct objects with clear space between them.
+//
+// Insert holes are blind FROM BELOW, leaving 1 mm of material on top, so
+// nothing shows on the finished plate. That is how the real members will be.
+INSERT_D = 4.2;    // M3 heat-set. Confirm against the operator's inserts -
+INSERT_H = 5;      // this number propagates to every printed part in the build.
+
+module joint_bar() {
+    difference() {
+        cube([40, FRAME_W, FRAME_H]);
+        for (x = [14, 26])
+            translate([x, FRAME_W/2, -1]) cylinder(d=INSERT_D, h=INSERT_H + 1);
     }
-    translate([0, 0, -SPL_T - 0.2]) splice();
+}
+
+module joint_test() {
+    joint_bar();
+    translate([0, FRAME_W + 6, 0]) joint_bar();
+    translate([20, 2*(FRAME_W + 6) + 10, 0]) splice();
 }
 
 if      (PART == "member")     member();
