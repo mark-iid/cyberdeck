@@ -32,8 +32,7 @@ PART = "all";
 // they produce on the rib shelf is assert()ed against the case interior.
 CORNER_R = 18;
 
-LEDGE_W  = 10;    // ledge reaching further inward, under the tiles
-LEDGE_WF = 5;     // and narrowed at the front for the same reason
+// LEDGE_W/LEDGE_WF are in deck.scad with the tile-screw pattern.
 // FRAME_H, LEDGE_H and TILE_T come from deck.scad, which assert()s that a
 // tile sits flush in the frame.
 
@@ -65,22 +64,46 @@ module ring(ow, od, orad, iw, id, irad, h) {
 // Full frame, for visualisation and for measuring against. Never printed whole.
 module frame_full() {
     difference() {
-        rr(PLATE_W, PLATE_D, CORNER_R, FRAME_H);
-        translate([0, OPEN_CY, -1]) rr(OPEN_W, OPEN_D, CORNER_R - FRAME_W, FRAME_H + 2);
-    }
-    difference() {
-        translate([0, OPEN_CY, 0]) rr(OPEN_W, OPEN_D, CORNER_R - FRAME_W, LEDGE_H);
-        translate([0, LEDGE_CY, -1]) rr(LEDGE_IW, LEDGE_ID, 1, LEDGE_H + 2);
+        union() {
+            difference() {
+                rr(PLATE_W, PLATE_D, CORNER_R, FRAME_H);
+                translate([0, OPEN_CY, -1])
+                    rr(OPEN_W, OPEN_D, CORNER_R - FRAME_W, FRAME_H + 2);
+            }
+            difference() {
+                translate([0, OPEN_CY, 0])
+                    rr(OPEN_W, OPEN_D, CORNER_R - FRAME_W, LEDGE_H);
+                translate([0, LEDGE_CY, -1]) rr(LEDGE_IW, LEDGE_ID, 1, LEDGE_H + 2);
+            }
+            // bosses under the ledge, deep enough for a tile screw's insert
+            for (t = TILE_SCREW)
+                translate([t[0], t[1], -TILE_BOSS_H]) cylinder(d=BOSS_D, h=TILE_BOSS_H);
+            // bosses under the rim, for the joint screws
+            for (j = JOINT_SEAT) translate([j[0], j[1], 0]) insert_seat();
+        }
+        // tile seats: bored DOWN from the ledge top, so the insert goes in from
+        // above and the tile then covers it.
+        for (t = TILE_SCREW)
+            translate([t[0], t[1], LEDGE_H - INSERT_H]) cylinder(d=INSERT_D, h=INSERT_H);
+        // joint seats: bored UP from below, so nothing shows on the finished top
+        for (j = JOINT_SEAT) translate([j[0], j[1], 0]) insert_bore();
     }
 }
 
 // One of four L-shaped members, each carrying a corner, butt-jointed at the
 // centre of every side - which is where a rib is (0 on all four walls), so each
 // joint is directly supported and a notched splice ties it underneath.
-module member() {
+//
+// There are TWO distinct shapes, not one. The front rail is FRAME_WF (8) and
+// the other three are FRAME_W (12), so a back member is not a front member
+// turned round. Print two of each and mirror one of each in X. An earlier
+// revision drew only the +x+y quadrant, which would have produced four back
+// members and a frame that could not close.
+module member(front = false) {
     intersection() {
         frame_full();
-        translate([0, 0, -1]) cube([PLATE_W, PLATE_D, FRAME_H + 2]);
+        translate([0, front ? -PLATE_D : 0, -TILE_BOSS_H - 1])
+            cube([PLATE_W, PLATE_D, FRAME_H + TILE_BOSS_H + 2]);
     }
 }
 
@@ -151,11 +174,18 @@ module screen_tile() {
 // Two fillers with the battery well open between them. One full-width tile
 // would be 280.5 mm and will not print - check-stl.py caught it. Splitting
 // around the well also means the well needs no bridging.
-WELL_W = BATT_W + 2;
+// The well follows the pack ENVELOPE, which is off-centre: body -50..+50 plus
+// 6 mm of terminal on one end. A centred well would foul the terminals.
+WELL_X0 = BATT_X0 - 1;
+WELL_X1 = BATT_X1 + 1;
 module back_tile(side) {
-    x0 = side > 0 ? WELL_W/2 : -OPEN_W/2;
-    translate([x0, TILE_BACK, 0])
-        cube([OPEN_W/2 - WELL_W/2, OPEN_BACK - TILE_BACK, TILE_T]);
+    w  = side > 0 ? OPEN_W/2 - WELL_X1 : WELL_X0 + OPEN_W/2;
+    d  = OPEN_BACK - TILE_BACK;
+    x0 = side > 0 ? WELL_X1 : -OPEN_W/2;
+    difference() {
+        translate([x0, TILE_BACK, 0]) cube([w, d, TILE_T]);
+        tile_screws(x0 + w/2, TILE_BACK + d/2, w, d);
+    }
 }
 
 // Rail tile blank. Connector cutouts are NOT here yet - the keystone is
@@ -271,14 +301,33 @@ module feature(f) {
     else assert(false, str(f[0], " has an unknown cutout kind"));
 }
 
-module rail_tile(features) {
+// A countersunk clearance hole, head flush with the tile top.
+module tile_screw() {
+    translate([0, 0, -1]) cylinder(d=RJ_CLEAR, h=TILE_T + 2);
+    translate([0, 0, TILE_T - (RJ_CSK_D - RJ_CLEAR)/2])
+        cylinder(d1=RJ_CLEAR, d2=RJ_CSK_D, h=(RJ_CSK_D - RJ_CLEAR)/2 + 0.01);
+}
+// The screws from the shared list that fall inside this tile's footprint, with
+// the tile's own origin subtracted. Filtering rather than re-listing is what
+// stops a tile and the frame disagreeing about where a screw is.
+module tile_screws(cx, cy, w, d) {
+    for (t = TILE_SCREW)
+        if (abs(t[0] - cx) < w/2 && abs(t[1] - cy) < d/2)
+            translate([t[0] - cx, t[1] - cy, 0]) tile_screw();
+}
+
+RAIL_CX = (MOD_W/2 + TILE_GAP + OPEN_W/2)/2;    // 120.625
+RAIL_CY = (OPEN_FRONT + TILE_BACK)/2;           // -39.5
+
+module rail_tile(features, side) {
     difference() {
         translate([-RAIL_W/2, -RAIL_D/2, 0]) cube([RAIL_W, RAIL_D, TILE_T]);
         for (f = features) feature(f);
+        tile_screws(side*RAIL_CX, RAIL_CY, RAIL_W, RAIL_D);
     }
 }
-module left_rail()  { rail_tile(LEFT_FEATURES); }
-module right_rail() { rail_tile(RIGHT_FEATURES); }
+module left_rail()  { rail_tile(LEFT_FEATURES, -1); }
+module right_rail() { rail_tile(RIGHT_FEATURES,  1); }
 
 // One joint: two SEPARATE bars plus the splice, laid out flat on the bed.
 // An earlier revision drew the bars meeting at x=0, so OpenSCAD unioned them
@@ -307,7 +356,27 @@ module joint_test() {
     translate([20, 2*(FRAME_W + 6) + 10, 0]) splice();
 }
 
-if      (PART == "member")     member();
+// Every screw the frame puts a seat under must be claimed by exactly one tile.
+// Without this the frame can grow a seat that no tile has a hole for (a boss
+// holding the tile off the ledge) or a tile can be missed entirely.
+TILE_FOOTPRINT = [
+    ["left rail",  -RAIL_CX,        RAIL_CY,                   RAIL_W, RAIL_D],
+    ["right rail",  RAIL_CX,        RAIL_CY,                   RAIL_W, RAIL_D],
+    ["back left",  (-OPEN_W/2 + WELL_X0)/2, (TILE_BACK + OPEN_BACK)/2,
+                    WELL_X0 + OPEN_W/2,      OPEN_BACK - TILE_BACK],
+    ["back right",  (OPEN_W/2 + WELL_X1)/2, (TILE_BACK + OPEN_BACK)/2,
+                    OPEN_W/2 - WELL_X1,      OPEN_BACK - TILE_BACK],
+];
+function claims(t) = len([for (f = TILE_FOOTPRINT)
+    if (abs(t[0] - f[1]) < f[3]/2 && abs(t[1] - f[2]) < f[4]/2) 1]);
+for (t = TILE_SCREW)
+    assert(claims(t) == 1,
+           str("tile screw at ", t, " is claimed by ", claims(t), " tiles, not 1"));
+
+// Members carry bosses below z=0; lift them so the STL sits on the bed. Print
+// top face DOWN, bosses up.
+if      (PART == "member")       translate([0,0,TILE_BOSS_H]) member(false);
+else if (PART == "member_front") translate([0,0,TILE_BOSS_H]) member(true);
 else if (PART == "splice")     splice();
 else if (PART == "screen_tile") screen_tile();
 else if (PART == "rail_blank") rail_blank();

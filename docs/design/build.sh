@@ -15,8 +15,8 @@ OUT=$ROOT/build/plate
 mkdir -p "$OUT"
 SCAD=(flatpak run org.openscad.OpenSCAD)     # absolute paths only - no /tmp
 
-PLATE_PARTS="member splice screen_tile rail_blank left_rail right_rail back_left back_right joint_test frame_full"
-CHASSIS_PARTS="plinth tray cradle"
+PLATE_PARTS="member member_front splice screen_tile rail_blank left_rail right_rail back_left back_right joint_test frame_full"
+CHASSIS_PARTS="plinth tray cradle shroud"
 
 rc=0
 build() {   # build <part> <srcfile>

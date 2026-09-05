@@ -133,20 +133,64 @@ module cradle_block() {
             translate([CR_BLOCK_X, cy - CR_LEN/2, 0])
                 cube([CR_WALL + CR_FLANGE, CR_LEN, TRAY_T]);
         }
-        // wire exit at the terminal end, notched down from the top
-        translate([CR_BLOCK_X - 1, cy - 12, CR_H - 12]) cube([CR_WALL + 2, 24, 13]);
         for (b = CRADLE_BOLT) if (b[0] > 0)
-            translate([b[0] - CR_BLOCK_X, b[1] - (cy - CR_LEN/2), -1])
-                translate([CR_BLOCK_X, cy - CR_LEN/2, 0])
-                    cylinder(d=M3_CLEAR, h=TRAY_T + 2);
+            translate([b[0], b[1], -1]) cylinder(d=M3_CLEAR, h=TRAY_T + 2);
     }
 }
 
-// Printed at the origin, one block; print two (the second mirrored in X).
+// Terminal shroud - the OTHER end block, grown into a closed box.
+//
+// RESTORED 2026-09-05. S11 specifies "a printed cover over the terminals" and
+// names loose antenna elements beside bare LiFePO4 posts as a fire risk. The
+// four-walled cradle carried that cover; replacing it with two open blocks
+// dropped it silently, and nothing recorded that it had gone.
+//
+// It grips the pack BODY on its inboard face and encloses the 6 mm of terminal
+// outboard of it: closed on the outboard face, the two ends and the top, open
+// towards the pack, with the wire leaving through a notch at the bottom.
+//
+// TWO NUMBERS ARE STILL MISSING and both are one caliper reading:
+//   - WHICH end the terminals are on (assumed +x)
+//   - how high up the end face they sit. The shroud runs the full height of
+//     Zone A because that is the only height that is safe without knowing.
+//     It can be cut down once the terminals are measured.
+module shroud() {
+    cy = (BATT_FRONT + BATT_BACK)/2;
+    x0 = CR_BLOCK_X;                      // inboard face, against the body
+    x1 = CR_SHROUD_X + CR_WALL;           // outboard face
+    difference() {
+        union() {
+            // outboard wall, full height
+            translate([CR_SHROUD_X, cy - CR_LEN/2, 0])
+                cube([CR_WALL, CR_LEN, CR_SHROUD_H]);
+            // end walls, INSIDE the pack's own depth - there is no floor to
+            // spare beyond it (deck.scad asserts the battery zone)
+            for (y = [cy - CR_LEN/2, cy + CR_LEN/2 - CR_WALL])
+                translate([x0, y, 0]) cube([x1 - x0, CR_WALL, CR_SHROUD_H]);
+            // lid
+            translate([x0, cy - CR_LEN/2, CR_SHROUD_H - CR_WALL])
+                cube([x1 - x0, CR_LEN, CR_WALL]);
+            // bolt flange
+            translate([x0, cy - CR_LEN/2, 0])
+                cube([x1 - x0 + CR_FLANGE, CR_LEN, TRAY_T]);
+        }
+        // wire exit, low in the outboard wall
+        translate([CR_SHROUD_X - 1, cy - 12, TRAY_T + 4])
+            cube([CR_WALL + 2, 24, 14]);
+        for (b = CRADLE_BOLT) if (b[0] > 0)
+            translate([b[0], b[1], -1]) cylinder(d=M3_CLEAR, h=TRAY_T + 2);
+    }
+}
+
+// Printed at the origin. cradle = the plain end, shroud = the terminal end.
 module cradle() {
     translate([-CR_BLOCK_X, -(BATT_FRONT + BATT_BACK)/2 + CR_LEN/2, 0])
         cradle_block();
 }
+module shroud_part() {
+    translate([-CR_BLOCK_X, -(BATT_FRONT + BATT_BACK)/2 + CR_LEN/2, 0]) shroud();
+}
 
 if (PART == "tray")   tray_half();
 if (PART == "cradle") cradle();
+if (PART == "shroud") shroud_part();

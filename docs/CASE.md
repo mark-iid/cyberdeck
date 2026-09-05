@@ -1665,10 +1665,61 @@ several of these are decisions, and they are the operator's.
 14. Tilt foot — §10 wants 15–20°, §1 forbids attaching to the shell, nothing is drawn.
 15. `docs/design/faceplate.svg` — superseded, still wrong (300 × 225, 48 mm rails).
 
-### What the audit changed
+### Drawn 2026-09-05 — findings 1, 2 and 3, and four more they uncovered
 
-Only one thing, because the rest are decisions: the insert-wall assertion was checking
-`FRAME_W` (12) when the binding case is the **front** member at `FRAME_WF` (8). It now
-checks the narrowest member. It still passes — 2.0 mm of wall against ruthex's 1.6 — but
-it was passing for the wrong reason, and `BOSS_D` is 8 against a front member of 8, so
-there is no margin left to spend there.
+**1 — Tile fastening now exists.** `TILE_SCREW` in `deck.scad` holds **fourteen**
+positions in plate coordinates. The frame grows a ⌀8 × 6.2 boss and an insert seat
+under each; every tile filters the same list by its own footprint and cuts a
+countersunk M3 clearance hole. Neither side re-lists anything, so they cannot
+disagree — and an assertion requires **every seat to be claimed by exactly one tile**,
+which caught two of them belonging to nobody while it was being written.
+
+No screw sits on the **front** ledge: it is `LEDGE_WF` = 5 wide and a ⌀8 boss will not
+fit, which is now an assertion rather than an omission.
+
+**The screen tile is deliberately left unfastened**, and this is a decision, not an
+oversight. It is 202 wide against a ledge whose inner edge is at ±130.25, so **it does
+not reach the frame anywhere except its front lip**. It is bounded on all four sides by
+the frame and the other tiles, carries no connector and takes no cable pull, and leaving
+it loose is what makes the screen serviceable without dismantling the plate.
+
+**2 — The frame now joins.** `JOINT_SEAT` holds sixteen positions, four per joint at 14
+and 26 either side, and `frame_full()` carries a seat at each. `member()` inherits them.
+
+*And the members were wrong in a second way.* The front rail is `FRAME_WF` (8) and the
+other three are `FRAME_W` (12), so **a back member is not a front member turned round**.
+`member()` drew only the +x+y quadrant, so building from it would have produced four
+back members and a frame that could not close. It now takes a `front` flag and there are
+two parts: `member` and `member_front`, two of each, mirroring one of each in X.
+
+**3 — The terminal shroud is back.** One of the two cradle blocks is now a closed box:
+outboard face, both ends and top closed, open toward the pack, wire out through a notch
+at the bottom. It runs the full height of Zone A (74.5) because that is the only height
+that is safe without knowing where the terminals sit.
+
+*And drawing it found the cradle was gripping the wrong thing.* **106 is the envelope,
+not the body** — a 100 mm case with 6 mm of terminal on one end. Both blocks closed on
+±53, so the terminal-end block was squeezing **the posts and their wires**, not the
+case. Blocks now close on the body at ±50.5, and the back tile's battery well follows the
+off-centre envelope (−51 … +57) instead of a centred 108, which is why `back_left` and
+`back_right` are now **89.25 and 83.25**, not twins.
+
+**Two numbers are still missing and both are one caliper reading:** *which end* the
+terminals are on (assumed +x) and *how high* up the end face they sit. The shroud is
+full-height because of the second one and can be cut down once it is known.
+
+**4 — The foam tape is 2 mm, not 0.5.** §12 quotes 0.5 as the gap the tape on the
+module's top face closes. That is the **frame**-to-module figure. What the module
+actually carries is the **tiles**, and they sit `LEDGE_H` = 1.5 higher than the frame's
+underside, so the real gap is **2.0**. Now derived as `FOAM_T` rather than quoted.
+
+### What else the audit changed
+
+The insert-wall assertion was checking `FRAME_W` (12) when the binding case is the
+**front** member at `FRAME_WF` (8). It now checks the narrowest member. It still passes —
+2.0 mm of wall against ruthex's 1.6 — but it was passing for the wrong reason, and
+`BOSS_D` is 8 against a front member of 8, so there is no margin left to spend there.
+
+**Still open from §14, untouched because they are decisions:** the keyboard/retention
+contradiction (4), the stale arithmetic (6), the plenum (7), the module's input voltage
+range (8) and the charge pigtail's fuse (9).
