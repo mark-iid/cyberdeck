@@ -6,7 +6,7 @@ For the next enclosure. Written to be shopped and printed against, not admired.
 1280×800 IPS 5-point touch unit (Amazon B0DX26BXPX) whose **backboard enclosure
 houses the Raspberry Pi 5 itself** — plus, now, the NVMe SSD and heatsink. It
 takes **DC 12 V** in, exposes HDMI / USB / power on the case, mounts via **VESA
-75/100**, and carries **its own active cooling fan**. So the 203 × 136.5 × 51 mm
+75/100**, and carries **its own active cooling fan**. So the 200 × 137.5 × 51 mm
 brick is the whole computer, not a screen bolted to a separate Pi.
 
 That collapses the build to three essentials — the JUNEBOX module, a keyboard,
@@ -121,18 +121,20 @@ printed pieces, for reasons below.
  │ RAIL  │        8" TOUCHSCREEN                │ RAIL  │
  │ 50 mm │          173 × 118                   │ 50 mm │
  │ [SMA] │        (1280 × 800)                  │[USB-A]│
- │ [PP]  │   module 203 × 136.5 hangs below     │[USB-A]│
+ │ [PP]  │   module 200 × 137.5 below           │[USB-A]│
  │ [⏻SW] │                                      │[RJ45] │
  └───────┴──────────────────────────────────────┴───────┘
  FRONT (operator)
           keyboard lifts out, sets on the surface in front
 ```
 
-**Width budget: 203 (module) + 2 × 50 (rails) = 303 of 304.** This stopped being the
-binding dimension the moment the shell was measured — it came in 5 mm *wider* than
-catalog, so the rails gained 2 mm each over the drawn 48 and the "SMA moves to a
-corner" contingency in §8 #4 is dead. Depth is comfortable too: 136.5 module + ~90 mm
-back channel against 229.
+**Width budget: 200 (module, measured 2026-09-04) + 2 × 52 = 304, exactly.** In
+practice the screen tile is drawn ~1 mm larger than the module all round, so the rails
+come out **~51 mm** each. This stopped being the binding dimension the moment the shell
+was measured — it came in wider than catalog, and the module came in *narrower* than the
+203 this doc carried, so the rails gained 3 mm each over the drawn 48 and the "SMA moves
+to a corner" contingency in §8 #4 is dead. Depth: **137.5** module + **91.5 mm** back
+channel against 229.
 
 **The module's own I/O sets which side is which** — power/AV exit its LEFT edge,
 USB/Ethernet its RIGHT — so the plate mirrors it: power + antenna left, data right,
@@ -140,7 +142,7 @@ short cable runs on both. Keep each rail on a **shallow raised lip** so cables e
 sideways rather than up into the screen's sightline.
 
 **Keyboard stays separate** (§9, §10). At 230 × 160 it cannot share the plate with
-a 136.5 mm-deep module inside 229 mm of depth — integrating it would require a
+a 137.5 mm-deep module inside 229 mm of depth — integrating it would require a
 1550/4800-class shell, ~2.8× the volume for one feature. It stows flat over the
 faceplate at close and is set on the surface in front during use, which is better
 ergonomics anyway: a mini keyboard with a touchpad wants to be positioned.
@@ -333,7 +335,7 @@ the JUNEBOX module + an 8" faceplate, does not fit the current ~1150-class shell
 |---|---|---|
 | Pelican 1150 (current class) | 184 × 118 × 84 | Battery will not fit inside. Today's problem. |
 | Pelican 1300 | 235 × 181 × 155 | **Rejected** — see below. |
-| **Pelican 1400** | 300 × 225 × 132 catalog · **305 × 230 × 100 measured** | 203 module + 2 × **50 mm** rails. See the survey below. |
+| **Pelican 1400** | 300 × 225 × 132 catalog · **305 × 230 × 100 measured** | 200 module + 2 × **~51 mm** rails. See the survey below. |
 | Apache 4800 (Harbor Freight) | 454 × 327 × 168 | **Rejected** — 1550-class, 2.8× the volume. See below. |
 
 ### Measured 2026-09-04 — the catalog numbers describe a different box
@@ -433,7 +435,7 @@ width. That was wrong. Harbor Freight lists it at **17-7/8 × 12-7/8 × 6-5/8 in
 | Keyboard on the plate? | no | no (284 < 296.5) | yes |
 
 The only thing the extra volume buys is the **integrated keyboard**, and that is a
-cliff rather than a slope: it needs module 136.5 + keyboard 160 = **296.5 mm of
+cliff rather than a slope: it needs module 137.5 + keyboard 160 = **297.5 mm of
 depth**, so the 1500 misses it by 12 mm and nothing below 1550-class clears it. So
 the choice is 2.8× the volume and ~2.5 kg for exactly one feature.
 
@@ -660,7 +662,7 @@ re-cuts every number in this section:
 | Zone | Space | Holds |
 |---|---|---|
 | **A — back channel** | ~180 × 88 × 90 mm beside the battery | SDR dongle, coax coil, **antenna cylinder** |
-| **B — under the module** | ~24 mm of air below the module, 203 × 136.5 footprint | flat, non-fragile items — adapters, spare coax, parts tray |
+| **B — under the module** | ~24 mm of air below the module, 200 × 137.5 footprint | flat, non-fragile items — adapters, spare coax, parts tray |
 | **C — over the faceplate** | thin, full width, under the closed lid | the keyboard itself, notes, cheat sheets |
 
 **Zone B has one rule: do not pack it solid.** The module's fan lives on its back
@@ -687,13 +689,13 @@ computer in a case and an actual go-kit.
 
 ## §8 — Open, needs the operator's measurements before CAD
 
-KNOWN (do not re-measure): JUNEBOX outer 203×136.5×51, VESA 75/100, 12V, own
+KNOWN: JUNEBOX outer **200 × 137.5** measured 2026-09-04 (× 51 still from spec — confirm), VESA 75/100, 12V, own
 fan, Pi+SSD inside · Perixx keyboard 230×160×**17** (vendor drawing 2026-09-04) · SMA antenna · Powerpole power.
 
 DONE:
 
 - ✅ **JUNEBOX active area = 173 × 118 mm** (measured 2026-09-02). The faceplate
-  window in docs/design/faceplate.svg is now cut to this, centered in the 203×136.5
+  window in docs/design/faceplate.svg is now cut to this, centered in the 200×137.5
   module face. (Runs a hair taller than the 172×107 an 8" 1280×800 would predict —
   cut to the measured number, not the theoretical.)
 - ✅ **Module I/O + power path** (photographed + confirmed 2026-09-02). Viewed from
@@ -1052,9 +1054,48 @@ channel rather than walling it off with the battery cradle.
 
 ### The plate then bears on two things
 
-With the module's top face at exactly 75, the plate rests on **the twelve ribs at its
-perimeter and the module's top face at its centre**. Far stiffer than a perimeter-only
-shelf, and the plate now carries only itself and the keyboard.
+With the module's top face at exactly 75 — and **flat**, confirmed 2026-09-04 — the
+plate rests on **the twelve ribs at its perimeter and the module's top face at its
+centre**. Far stiffer than a perimeter-only shelf, and the plate now carries only itself
+and the keyboard.
+
+### The rail TILE is 39 mm, not 51 — and it kills the round socket
+
+Drawing the frame surfaced this. The 51 mm "rail" is the zone from the plate edge to
+the module; **12 mm of it is frame**, so the rail *tile* — the part connectors are
+actually cut into — is **(280 − 202) / 2 = 39 mm**.
+
+| Part | Footprint | Tile left each side |
+|---|---|---|
+| SMA | 6.7 | 16.2 |
+| Powerpole retainer | 16.2 | 11.4 |
+| Switch flange | 20.6 | 9.2 |
+| USB | 21.5 | 8.8 |
+| **Round Powerpole socket flange** | **35** | **2.0 — unusable** |
+
+Earlier reasoning that the ⌀35 flange "fits comfortably in a 50 mm rail" was measuring
+the zone, not the tile. It does not fit. **The printed retainer was the right call for
+a reason that had not been found yet** — and this is exactly the class of error that
+only appears when geometry is drawn rather than described.
+
+### Frame and tile thicknesses, and what they cost
+
+The frame must be *taller* than the tiles, because a tile needs a ledge to land on and
+that ledge cannot hang below the frame — the module's top face is right there at 75.
+Frame height therefore trades directly against keyboard clearance:
+
+| Frame | Ledge | Tile | Plate top | Keyboard top | Clear of the 100 rim |
+|---|---|---|---|---|---|
+| 4.5 | — | 4.5 | 79.5 | 96.5 | 3.5 — but no ledge is possible |
+| **6.0** ✅ | **1.5** | **4.5** | **81.0** | **98.0** | **2.0** |
+| 8.0 | 3.5 | 4.5 | 83.0 | 100.0 | 0 — keyboard sits at the rim |
+
+**Chosen: 6 / 1.5 / 4.5, tiles flush with the frame top.** The ledge only carries a tile
+*edge*; the module carries the middle, which is why 1.5 mm is enough.
+
+**The cost:** the keep-out under the keyboard's footprint drops from 3.5 mm to **2.0**,
+putting the USB at 2.0 mm exactly on the limit. It goes outboard into the 37 mm strip the
+keyboard does not cover, alongside the SMA, which was going there anyway.
 
 ### What holds it down
 
@@ -1100,18 +1141,49 @@ Audit of 2026-09-04. Everything here is either undecided, undrawn, or unverified
 
 1. **Keystone mounting (§8 #8).** No working scheme. Not optional — the Pi's RJ45 is
    buried. Next step is a wall plate for reference geometry.
-2. **Nothing is drawn.** The frame, tiles, floor tray, plinth, cradle, retainer,
-   keyboard lip and tilt foot all exist as prose. `docs/design/faceplate.svg` is still
-   **300 × 225 with 48 mm rails and the module at x=48** — every cutout position in it
-   is wrong. This is the bulk of the remaining work.
+2. **Partly drawn as of 2026-09-04.** `docs/design/plate.scad` now carries the frame,
+   the splice, the screen tile, a rail blank and a joint coupon — all render-verified
+   manifold and all inside the Ender's 215 × 215:
+
+   | Part | Size | Note |
+   |---|---|---|
+   | `member` | 152 × 114.5 × 6 | ×4, each an L carrying one corner |
+   | `splice` | 70 × 10 × 4 | ×4, notched for the rib under each joint |
+   | `screen_tile` | 202 × 139.5 × 4.5 | prints in **one piece** |
+   | `rail_blank` | 39 × 139.5 × 4.5 | ×2, cutouts still pending |
+   | `joint_test` | 80 × 12 × 10.2 | print this first |
+
+   Still prose: the floor tray, plinth, battery cradle, Powerpole retainer, keyboard
+   lip and tilt foot. **`docs/design/faceplate.svg` is superseded and still wrong** —
+   300 × 225 with 48 mm rails and the module at x=48. Delete or regenerate it.
+   The rail cutouts cannot be finished until §8 #8 (keystone) closes and the A/B
+   selector is bought and measured.
 
 ### Needs a measurement, not a decision
 
-3. **Module outline.** Vendor says **200 × 136**; this doc uses **203 × 136.5**. A 3 mm
-   width difference feeds straight into the 50 mm rails.
-4. **VESA hole positions relative to the module outline**, for the plinth.
-5. **Whether the module's top face is flat enough to bear the plate**, or whether its
-   bezel stands proud.
+3. ✅ **Module outline — measured 2026-09-04: 200 × 137.5.** Neither the vendor's
+   200 × 136 nor this doc's 203 × 136.5. Rails go to ~51 mm each. **Thickness is still
+   unconfirmed at 51** from spec, and it sets the plinth directly (plinth = 75 −
+   thickness), so it is not a detail.
+3b. ✅ **Both the active area and the VESA square are perfectly centred** in the
+   200 × 137.5 face (operator, 2026-09-04). So the geometry is arithmetic, not
+   measurement:
+
+   | Derived | Value |
+   |---|---|
+   | Module centre | 100, 68.75 |
+   | VESA hole centres | **±37.5 both axes** → x 62.5 / 137.5, y 31.25 / 106.25 |
+   | Window margin left/right | **13.5 mm** |
+   | Window margin top/bottom | **9.75 mm** |
+
+   Nearest VESA hole sits 31.25 mm from the bottom edge, so the plinth pillar fits
+   inside the outline with room. Still wanted: the **hole thread** (VESA 75 is
+   normally M4) and roughly where the two back-face vents fall relative to the
+   pattern, so the pillar misses both.
+4. ✅ **VESA positions — resolved by the centring above.** Outstanding only: thread
+   size, and vent positions relative to the pattern.
+5. ✅ **Top face is flat** (operator, 2026-09-04) and **VESA is M4**. §12's "plate bears
+   on the module at its centre" stands — no relief pocket over the glass needed.
 6. **Module weight**, for the plinth and tray.
 7. **Which edge carries the OSD cluster and speakers.** They can be buried (§8), but
    the tray and cradle should not press on a speaker grille.
