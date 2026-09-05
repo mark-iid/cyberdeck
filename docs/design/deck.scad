@@ -126,9 +126,27 @@ assert(SPACER_L/2 <= PLATE_D/2 - CORNER_R - 2, "preload strip runs into the corn
 
 // --- Panel connectors. Vendor-published openings where they exist (S3) ------
 SMA_D    = 6.7;      // test-fitted 2026-09-04
-AUDIO_D  = 6.2;      // 3.5 mm headphone jack, PROVISIONAL - see S3. Not bought
-                     // yet, so this is a placeholder for the barrel thread, not
-                     // a measurement. Confirm before the left rail is printed.
+// 3.5 mm headphone jack, from the vendor drawing 2026-09-05 (0.23 / 0.27 /
+// 0.31 / 0.49 / 1.36 inch):
+//   thread OD 5.84   thread LENGTH 6.86   nut OD 7.87
+//   body OD  12.45   body length  34.54
+//
+// The 6.2 guess was right: it prints 6.0, which clears a 5.84 thread by 0.16.
+//
+// The THREAD LENGTH is the one that matters, and it is the keystone problem in
+// miniature. 6.86 of thread against a 4.5 tile leaves 2.36 for the nut, and a
+// thin M6 nut is about 2.4. It does not go. This part is built for sheet metal.
+//
+// So the tile is relieved from BEHIND: a counterbore that lets the body seat
+// 2 mm deeper, leaving a 2.5 mm web at the front. Thread then spans 2.5 + 2.4 =
+// 4.9 against 6.86, with 2 mm spare. Nut sits on the front face, not recessed.
+AUDIO_D    = 6.2;      // -> 6.0 printed, against a 5.84 thread
+AUDIO_RB_D = 13.0;     // clears the 12.45 body
+AUDIO_WEB  = 2.5;      // what is left at the front
+AUDIO_THREAD = 6.86;
+assert(AUDIO_WEB + 2.4 <= AUDIO_THREAD, "audio jack has no thread left for its nut");
+assert(AUDIO_RB_D > 12.45, "audio relief will not pass the jack body");
+
 // --- Fasteners. ruthex RX-M3x5.7, hole published on the bag (S13 #10) -------
 INSERT_LEN = 5.7;
 INSERT_D   = 4.2;    // -> 4.0 as printed on this machine (S6 offset)

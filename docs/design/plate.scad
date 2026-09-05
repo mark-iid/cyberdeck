@@ -251,7 +251,7 @@ module rebated(cx, cy, w, l, web, margin=REBATE) {
 // the geometry it guards is decoration.
 LEFT_FEATURES = [
     ["SMA",       -50, "round",  SMA_D,   SMA_D],
-    ["audio",       0, "round",  AUDIO_D, AUDIO_D],
+    ["audio",       0, "round_rb", AUDIO_D, AUDIO_D, AUDIO_RB_D, AUDIO_WEB],
     ["Powerpole", -20, "rect",   PP_W,    PP_H],
     ["rocker",     30, "rebate", RK_W,    RK_L,   RK_WEB],
 ];
@@ -285,11 +285,13 @@ RIGHT_FEATURES = [
 // needs REBATE of relief all round; the RJ45's footprint is set by its screw
 // ears and their heads, not by the aperture between them.
 function f_across(f) =
-    f[2] == "rebate" ? f[3] + 2*REBATE :
-    f[2] == "rj45"   ? max(f[3], RJ_CSK_D) : f[3];
+    f[2] == "rebate"   ? f[3] + 2*REBATE :
+    f[2] == "rj45"     ? max(f[3], RJ_CSK_D) :
+    f[2] == "round_rb" ? f[5] : f[3];
 function f_along(f) =
-    f[2] == "rebate" ? f[4] + 2*REBATE :
-    f[2] == "rj45"   ? RJ_EAR + RJ_CSK_D : f[4];
+    f[2] == "rebate"   ? f[4] + 2*REBATE :
+    f[2] == "rj45"     ? RJ_EAR + RJ_CSK_D :
+    f[2] == "round_rb" ? f[5] : f[4];
 
 // Both rails, checked by the same three rules.
 RAILS = [["left", LEFT_FEATURES], ["right", RIGHT_FEATURES]];
@@ -313,6 +315,12 @@ module through(cy, w, l) {
 
 module feature(f) {
     if      (f[2] == "round")  translate([0, f[1], -1]) cylinder(d=f[3], h=TILE_T + 2);
+    // Round, with the tile relieved from BEHIND so a short thread can reach
+    // through. z=TILE_T is the front face, so the pocket opens at z=0.
+    else if (f[2] == "round_rb") {
+        translate([0, f[1], -1]) cylinder(d=f[3], h=TILE_T + 2);
+        translate([0, f[1], -1]) cylinder(d=f[5], h=TILE_T - f[6] + 1);
+    }
     else if (f[2] == "rect")   through(f[1], f[3], f[4]);
     else if (f[2] == "rebate") rebated(0, f[1], f[3], f[4], f[5]);
     else if (f[2] == "rj45") {
