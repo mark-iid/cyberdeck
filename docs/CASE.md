@@ -1753,6 +1753,60 @@ The insert-wall assertion was checking `FRAME_W` (12) when the binding case is t
 2.0 mm of wall against ruthex's 1.6 — but it was passing for the wrong reason, and
 `BOSS_D` is 8 against a front member of 8, so there is no margin left to spend there.
 
+### §14 #7 — plenum venting: DECIDED 2026-09-05, vent the back tiles
+
+**The plenum was never the problem; the back channel above it was.** Tracing the air
+properly: the module's vents face down into the plenum, and the plenum's back is **wide
+open to the back channel across the full 200 × 26.5** — there is no wall between them.
+The dead end is one storey up. The back channel is capped by the two back tiles, and the
+only way out was the ring around the battery:
+
+| Path | Open area |
+|---|---|
+| terminal side | blocked by the shroud below 74.5 |
+| other side | 1 × 70 = **70 mm²** |
+| front of the pack | 1.75 × 100 = **175 mm²** |
+| behind the pack | 3.25 × 100 = **325 mm²** |
+| plate edge to wall, between ribs | 0.25 mm slot |
+
+**Grilles in both back tiles: 5 slots in `back_left`, 7 in `back_right`, 4 × 51 each —
+2,448 mm².** Roughly four times the total above, and in open air rather than in a
+crevice around a battery.
+
+    module vents -> plenum -> back channel -> GRILLE -> open air
+
+**Back tiles and nowhere else,** and the reason is geometric rather than aesthetic:
+
+- **Not the screen tile.** It sits over the module's *top* face. Slots there open into
+  the 2 mm foam gap and connect to nothing.
+- **Not the rails.** They reach the plenum only through a 1 mm slot beside the module,
+  and they are already crowded with connectors.
+
+Slots are **4 mm** so nothing of consequence drops through, and inset 12 mm from every
+edge, which clears the tile screws by construction — with an assertion saying so, since
+"by construction" is what the plinth thought too.
+
 **Still open from §14, untouched because they are decisions:** the keyboard/retention
-contradiction (4), the stale arithmetic (6), the plenum (7), the module's input voltage
-range (8) and the charge pigtail's fuse (9).
+contradiction (4), the stale arithmetic (6), the module's input voltage range (8, and
+see below) and the charge pigtail's fuse (9).
+
+### §14 #8 — input voltage: SEARCHED 2026-09-05, no published tolerance exists
+
+The Amazon listing and the JUNEBOX user manual both say **"DC 12V Input"** and stop
+there. No range, no tolerance, no current, no wattage. The manual does confirm the unit
+will alternatively run from **USB-C** — note this is the *display board's* Type-C on the
+left edge, not the Pi's on the right, which §5 forbids powering through.
+
+Elecrow's 8-inch 1280 × 800 touchscreen looks like the same panel and **is not the same
+product** — it is a 5 V microUSB display drawing 3.79 W. Its numbers are not this unit's
+and were not borrowed.
+
+**So the mitigation is procedural, and the hardware for it already exists.** The 14.6 V
+case only arises while charging, and the rocker's centre **OFF** isolates *both* sources
+from the module. **Charge with the switch at OFF.** Label the plate accordingly, next to
+INT / OFF / EXT.
+
+Resting voltage is a separate and milder question: a full LiFePO4 sits at ~13.3–13.6 V,
+which is inside what a 12 V-input device normally tolerates — 13.8 V is the automotive
+norm — but that is an inference about the class, **not a verified fact about this unit**.
+One question to the seller settles it and costs nothing.

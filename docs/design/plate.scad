@@ -178,6 +178,30 @@ module screen_tile() {
 // 6 mm of terminal on one end. A centred well would foul the terminals.
 WELL_X0 = BATT_X0 - 1;
 WELL_X1 = BATT_X1 + 1;
+// Vent grille. S14 #7: the module's vents face DOWN into the plenum, and the
+// plenum's back is wide open to the back channel across the full 200 x 26.5 -
+// but the back channel itself was capped by these tiles, with nothing but the
+// ring around the battery to breathe through. Slots here complete the path:
+//
+//     module vents -> plenum -> back channel -> THESE SLOTS -> open air
+//
+// They go in the BACK tiles and nowhere else. The screen tile sits over the
+// module's TOP face, so slots there would open into the 2 mm foam gap and
+// reach nothing; the rails are crowded with connectors and reach the plenum
+// only through a 1 mm slot beside the module.
+//
+// 4 mm wide so nothing of consequence drops through, and inset 12 mm from
+// every edge, which keeps them clear of the tile screws by construction.
+VENT_W = 4; VENT_PITCH = 9; VENT_INSET = 12;
+
+module vent_slots(x0, x1, y0, y1) {
+    n = floor((x1 - x0 - VENT_W) / VENT_PITCH) + 1;
+    span = (n - 1)*VENT_PITCH + VENT_W;
+    for (i = [0 : n-1])
+        translate([x0 + (x1 - x0 - span)/2 + i*VENT_PITCH, y0, -1])
+            cube([VENT_W, y1 - y0, TILE_T + 2]);
+}
+
 module back_tile(side) {
     w  = side > 0 ? OPEN_W/2 - WELL_X1 : WELL_X0 + OPEN_W/2;
     d  = OPEN_BACK - TILE_BACK;
@@ -185,6 +209,8 @@ module back_tile(side) {
     difference() {
         translate([x0, TILE_BACK, 0]) cube([w, d, TILE_T]);
         tile_screws(x0 + w/2, TILE_BACK + d/2, w, d);
+        vent_slots(x0 + VENT_INSET, x0 + w - VENT_INSET,
+                   TILE_BACK + VENT_INSET, TILE_BACK + d - VENT_INSET);
     }
 }
 
@@ -372,6 +398,17 @@ function claims(t) = len([for (f = TILE_FOOTPRINT)
 for (t = TILE_SCREW)
     assert(claims(t) == 1,
            str("tile screw at ", t, " is claimed by ", claims(t), " tiles, not 1"));
+
+// A vent slot must never land on a tile screw.
+for (side = [-1, 1]) {
+    w  = side > 0 ? OPEN_W/2 - WELL_X1 : WELL_X0 + OPEN_W/2;
+    x0 = side > 0 ? WELL_X1 : -OPEN_W/2;
+    for (t = TILE_SCREW)
+        assert(!(t[0] > x0 + VENT_INSET - VENT_W && t[0] < x0 + w - VENT_INSET
+                 && t[1] > TILE_BACK + VENT_INSET
+                 && t[1] < OPEN_BACK - VENT_INSET),
+               str("vent grille runs over the tile screw at ", t));
+}
 
 // Members carry bosses below z=0; lift them so the STL sits on the bed. Print
 // top face DOWN, bosses up.
