@@ -1815,6 +1815,34 @@ The insert-wall assertion was checking `FRAME_W` (12) when the binding case is t
 2.0 mm of wall against ruthex's 1.6 — but it was passing for the wrong reason, and
 `BOSS_D` is 8 against a front member of 8, so there is no margin left to spend there.
 
+### Powerpole retainer — the four numbers it needs
+
+The last undrawn part. A PP15-45 has a constant cross-section and no shoulder, so a plain
+pocket cannot resist an unplugging pull; **the roll pin is the only feature on it that can
+retain anything.** The plan is a pocket the bonded pair enters from BEHIND, with the pin
+fitted afterwards, bearing on the back of the panel:
+
+        front (outside)                    behind the plate
+        |
+        |   [==== bonded pair ====]===========
+        |    ^mating face          ^pin, fitted after insertion
+        |<-->|<--------- A -------->|
+        | 4.5 tile
+
+| # | Measure | Why it decides something |
+|---|---|---|
+| **A** | mating face → **centre** of the pin hole, along the connector's axis | Sets how much material can sit in front of the pin. If A is under ~6 the tile has to be relieved, like the audio jack; if it is 10+ a boss can be added behind. |
+| **B** | pin hole **diameter** | Nominally 2.38 (3/32"). Sets the slot the pin needs to pass. |
+| **C** | **which way the hole runs** — through the 16.2 mm width, or the 8.5 mm height? | Decides which face of the pocket gets the slot. |
+| **D** | overall housing **length** | How deep the pocket is, and how far the pair stands out in front. |
+
+*Through-hole or blind also matters:* a through hole lets the pin stand out both sides
+and bear on two shoulders instead of one.
+
+**Fallback if the pin turns out unusable:** a two-piece clamp that screws around the
+housing on the existing tile screws and grips it, needing no feature on the connector at
+all. More parts, but it removes the dependency entirely.
+
 ### ✅ Plinth printed 2026-09-05 — +0.2 in Z, cause not established
 
 **26.7 for a drawn 26.5, and the VESA pattern lines up.**
