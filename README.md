@@ -114,7 +114,9 @@ bin/70-thermal-tune.sh measure   # 5-min sustained-load thermal profile
 
 - `DESIGN.md` — the reasoning. §6 is the thermal story, start to finish.
 - `docs/CASE.md` — the enclosure. **Where the active work is.**
-- `docs/design/faceplate.svg` — faceplate, window cut to the measured 173x118.
+- `docs/design/*.scad` — the parts, with the cross-part assertions that gate them
+  (`docs/design/build.sh` builds and checks all sixteen).
+  *`faceplate.svg` is superseded and wrong — CASE §13.*
 - `docs/INVENTORY.md` — full baseline capture.
 - `docs/CONTENT.md` — offline content gaps (medical, maps, repair) and the
   GPS-time problem that silently breaks FT8 off-grid.
@@ -142,13 +144,21 @@ bin/70-thermal-tune.sh measure 300   # re-measure any time; expect 2400MHz flat
 duplicates the fallback rather than adding one; `sudo apt remove jtdx` plus
 dropping its (verified-working) rules, when confirmed.
 
-**The case is the open work** (`docs/CASE.md`). The **Pelican 1400 is ordered**;
-the JUNEBOX module is the whole computer (Pi + NVMe inside its backboard, 12 V
-in, VESA 75/100, own fan), so the build is module + keyboard + LiFePO4 pack.
+**The case is the open work** (`docs/CASE.md`). As of **2026-09-06** the Pelican
+1400 is **in hand and surveyed**, every part is bought, and the deck is
+**printing**. The JUNEBOX module is the whole computer (Pi + NVMe inside its
+backboard, 12 V in, VESA 75/100, own fan), so the build is module + keyboard +
+LiFePO4 pack.
+
+Printed and checked: three connector coupons, the joint coupon, and the module
+plinth. Ready to print: the whole faceplate except the right rail, plus the floor
+tray, battery blocks and terminal shroud. Blocked: the right rail (waiting on the
+RJ45's ear spacing) and the Powerpole retainer (needs four measurements off a
+housing). See **CASE.md § Build status** for the live list.
 
 | Open | Blocks | Notes |
 |---|---|---|
-| The 1400's **real flat floor width** | CAD, faceplate rails | Catalog says 300 mm; layout budgets 203 + 2×48 = **299 of 300**, i.e. zero margin. Expect ~285 mm usable. Tape on the shell once it lands — CASE §8. |
+| ~~The 1400's **real flat floor width**~~ | ~~CAD, faceplate rails~~ | **RESOLVED 2026-09-04.** The catalog 300 mm was wrong twice over: the interior at the rib shelf is **305 × 231.4**, and the plate rides that shelf rather than the floor. Plate is **304.5 × 230.5**. CASE §6. |
 | RTC cell (ML2020) | off-grid timekeeping | `J5`/`BATT` is EMPTY. Charging stays **disabled** until a known-rechargeable cell is fitted. |
 | QLG2 GPS | sub-second time for FT8 | **Jumper it to 3.3V logic first** — 5V default will damage a Pi GPIO. `bin/50-doomsday-extras.sh time`. |
 

@@ -13,8 +13,60 @@ That collapses the build to three essentials — the JUNEBOX module, a keyboard,
 and the Miady LFP8AH LiFePO4 pack (12.8 V, 8 Ah, **102.4 Wh**) — plus an
 **optional** RTL-SDR + telescopic antenna. The SDR is the first thing to cut if
 space is tight; the deck is fully functional without it. The
-operator has a 3D printer and an existing ~Pelican-1150-class shell that "opens
-upside down."
+operator has a 3D printer, and the shell is a **Pelican 1400** — in hand, surveyed
+and cross-checked against Pelican's own CAD (§6).
+
+## Build status — 2026-09-06
+
+**Everything is bought.** Every line of the §7 buy list is owned or ordered; three are
+in transit — the **DPDT rocker**, the **RJ45 panel extension** and the **3.5 mm audio
+extension**. Both the rocker and the audio jack arrived with usable vendor drawings, so
+neither needs a test coupon.
+
+### Printed and checked
+
+| Part | Result |
+|---|---|
+| connector coupons ×3 | 2026-09-04. Gave ⌀16.2 → the printer's **+0.2 hole offset**, the USB's 21.5 × 24.5 opening and its 2.0 web, and SMA ⌀6.7 |
+| `joint_test` | ✅ 2026-09-05. Settles the ⌀4.2 × 6.7 insert seat, the 1 mm skin, the ⌀8 boss + counterbore, **M3 × 10**, and joint stiffness. Melt test done. |
+| `plinth` | ✅ 2026-09-05. **26.7** for a drawn 26.5; VESA pattern lines up. Module has a home. |
+
+### Ready to print — nothing unknown
+
+| Part | Qty | Size | Colour |
+|---|---|---|---|
+| `member` | 2 | 152.25 × 115.25 × 12.2 | **shows** |
+| `member_front` | 2 | 152.25 × 115.25 × 12.2 | **shows** |
+| `screen_tile` | 1 | 202 × 135.5 × 4.5 | **shows** |
+| `left_rail` | 1 | 39.25 × 135.5 × 4.5 | **shows** |
+| `back_left` / `back_right` | 1 each | 69.25 / 89.25 × 75 × 4.5 | **shows** |
+| `splice` | 4 | 70 × 12 × 5 | hidden |
+| `tray` | 2 (mirror one) | 132.5 × 195 × 4 | hidden |
+| `cradle` | 1 | 11 × 70 × 20 | hidden |
+| `shroud` | 1 | 31 × 70 × 74.5 | mostly hidden |
+| `preload` | 2, **TPU** | 12 × 190 × 20 | free choice |
+
+Visible parts total ~193 cm³; hidden ~165 cm³. Print the hidden ones from whatever
+is open.
+
+**Print `shroud` early and measure its height.** At 74.5 mm drawn it is the one part
+tall enough to separate a Z *scale* error (~75.1) from a fixed offset (~74.7), and it
+is on the list anyway — see the plinth note in §14.
+
+### Blocked, and on what
+
+| Part | Waiting on |
+|---|---|
+| `right_rail` | `RJ_EAR` = 31 is provisional until the RJ45 extension lands |
+| Powerpole retainer | Undrawn — needs four measurements off a housing (§14) |
+
+### Open questions that do not block printing
+
+1. **Keyboard retention in the lid** — deferred by the operator, 2026-09-05.
+2. **Charge pigtail fuse** — must tap downstream of the battery fuse, or carry its own.
+3. **Module input voltage** — no published tolerance exists; mitigation is to charge
+   with the rocker at **OFF**, and to label the plate that way.
+4. **Splice rib notch** — the only joint feature never checked against a real rib.
 
 ## §1 — The one constraint that decides everything
 
@@ -537,6 +589,10 @@ something if you buy new.
 Orderable now, in parallel with the shell. Quantities are for one deck. Search
 strings are given rather than links, which rot; **the verify column is the part that
 matters** — three of these have common traps (below).
+
+**Status 2026-09-06: everything below is owned or ordered.** In transit: the DPDT
+rocker, the RJ45 panel extension, the 3.5 mm audio extension. Everything else is in
+hand. Rows kept for the *verify* column, which is what matters on arrival.
 
 | Qty | Part | Search string | Verify |
 |---|---|---|---|
