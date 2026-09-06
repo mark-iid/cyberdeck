@@ -109,7 +109,19 @@ PLINTH_H    = SHELF_H - MOD_T - TRAY_T - PLINTH_BIAS;   // 26.5
 // which is the frame-to-module figure. The TILES are what the module actually
 // carries, and they sit LEDGE_H higher than the frame's underside, so the real
 // gap is 2.0. Buy 2 mm tape, not 0.5.
-FOAM_T      = LEDGE_H + PLINTH_BIAS;                    // 2.0
+FOAM_T      = LEDGE_H + PLINTH_BIAS;                    // 2.0 nominal, 1.8 measured
+// MEASURED 2026-09-05, first plinth: 26.7 for a drawn 26.5. With the
+// calibration bar's 6.05 for a drawn 6.00, that is +0.83% and +0.75% - a
+// consistent ~0.8% Z OVERSIZE, not caliper noise and not a fixed offset.
+//
+// NOT compensated, deliberately. PLINTH_BIAS exists to absorb error in this
+// direction and it did: the real stack is 4.03 + 26.7 + 44 = 74.73, so the
+// module's top still lands 0.27 BELOW the 75 shelf and the plate keeps landing
+// on its ribs. Correcting a 0.8% scale would add a second correction, which
+// could itself be wrong, to fix nothing.
+//
+// Only consequence: the foam tape closes 1.77 rather than 2.0. 2 mm tape still
+// works - it compresses, which is the point of using tape and not a shim.
 
 // --- Plate preload, S14 #4 ---------------------------------------------------
 // The keyboard used to be the spacer that let the lid foam press the plate onto

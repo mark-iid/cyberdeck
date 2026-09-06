@@ -1815,6 +1815,38 @@ The insert-wall assertion was checking `FRAME_W` (12) when the binding case is t
 2.0 mm of wall against ruthex's 1.6 — but it was passing for the wrong reason, and
 `BOSS_D` is 8 against a front member of 8, so there is no margin left to spend there.
 
+### ✅ Plinth printed 2026-09-05 — and the Z error is a scale, not noise
+
+**26.7 for a drawn 26.5, and the VESA pattern lines up.** The operator flagged the 0.2
+as possibly caliper error. It is not — it is the second data point on the same effect:
+
+| Drawn | Measured | Offset | Scale |
+|---|---|---|---|
+| 6.00 (calibration bar) | 6.05 | +0.05 | **+0.83 %** |
+| 26.50 (plinth) | 26.70 | +0.20 | **+0.75 %** |
+
+A fixed offset would have given +0.05 twice. It did not. **This machine prints ~0.8 %
+oversize in Z**, and §6's earlier "Z is accurate" was true only because a 6 mm sample
+cannot resolve 0.8 %.
+
+**Not compensated, deliberately.** `PLINTH_BIAS` exists precisely to absorb error in this
+direction, and it did its job:
+
+    tray 4.03 + plinth 26.70 + module 44.00 = 74.73     shelf is 75.00
+
+The module's top still lands **0.27 mm below** the shelf, so the plate keeps landing on
+its twelve ribs rather than being lifted off them — the exact failure the bias was
+invented to prevent. Correcting a 0.8 % scale would add a second correction, which could
+itself be wrong, to fix nothing.
+
+**One consequence, and it is small:** the foam tape now closes **1.77 mm**, not 2.0.
+2 mm tape still works — it compresses, which is the entire reason it is tape.
+
+**Where 0.8 % does not matter:** everything else vertical is small enough that it is
+under a tenth of a millimetre. A 4.5 tile becomes 4.53, a 2.0 rocker web 2.02, a 6.7
+insert seat 6.75 and deeper is harmless. The shroud at 74.5 becomes 75.1 and still
+clears the back tile at 76.5.
+
 ### ✅ `joint_test` PASSED 2026-09-05 — the joint is settled
 
 Printed and assembled by the operator, all checks good. That closes five numbers that
