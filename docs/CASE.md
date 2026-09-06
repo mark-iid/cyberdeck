@@ -18,10 +18,21 @@ and cross-checked against Pelican's own CAD (§6).
 
 ## Build status — 2026-09-06
 
-**Everything is bought.** Every line of the §7 buy list is owned or ordered; three are
-in transit — the **DPDT rocker**, the **RJ45 panel extension** and the **3.5 mm audio
-extension**. Both the rocker and the audio jack arrived with usable vendor drawings, so
-neither needs a test coupon.
+**Everything is bought.** Every line of the §7 buy list is owned or in hand. The
+**DPDT rocker** and the **3.5 mm audio extension** landed 2026-09-06; only the **RJ45
+panel extension** is still in transit. Both arrivals came with usable vendor drawings,
+so neither needs a test coupon — but both drawings were *read off images*, and §7's
+rule is that the verify column is the part that matters. Four numbers to confirm before
+`left_rail` prints:
+
+| Part | Confirm | Because |
+|---|---|---|
+| rocker | **centre position is OFF** | The whole A/B scheme is built on it. Meter it in all three positions. |
+| rocker | the **2 mm** step, bezel underside → snap catch | `RK_WEB` came from reading that dimension off an image. |
+| audio | **nut thickness** | Assumed 2.4 and never had it. The back relief is sized on it. |
+| audio | thread **length 6.86** | It is why the tile is relieved at all. |
+
+Everything else on both parts is a confirmation, not a dependency.
 
 ### Printed and checked
 
