@@ -110,16 +110,15 @@ PLINTH_H    = SHELF_H - MOD_T - TRAY_T - PLINTH_BIAS;   // 26.5
 // carries, and they sit LEDGE_H higher than the frame's underside, so the real
 // gap is 2.0. Buy 2 mm tape, not 0.5.
 FOAM_T      = LEDGE_H + PLINTH_BIAS;                    // 2.0 nominal, 1.8 measured
-// MEASURED 2026-09-05, first plinth: 26.7 for a drawn 26.5, so about +0.2.
-// That much is real - 0.2 is too big to blame on a hobby caliper. Whether it is
-// a scale error or a fixed offset is NOT established: the only other data point
-// is the 6.00 bar reading 6.05, and +0.05 is inside the instrument's own error.
-// The shroud, 74.5 tall and already on the print list, will separate the two.
+// Z ERROR CLOSED 2026-09-07 across three heights: 6.00 -> 6.05, 26.50 -> 26.70,
+// 74.50 -> 74.60. A 0.8% scale would have made the shroud 75.10; it measured
+// 74.60, so scale is out. A fixed offset is out too - the three offsets are
+// +0.05, +0.20 and +0.10. What is left is ordinary FDM variation that does not
+// track height, so there is nothing to compensate and nothing is compensated.
 //
-// NOT compensated either way. PLINTH_BIAS exists to absorb error in this
-// direction and it did: ~4 + 26.7 + 44 = ~74.7, so the module's top still lands
-// below the 75 shelf and the plate keeps landing on its ribs. Correcting a
-// cause you have not identified is how you end up with two errors.
+// PLINTH_BIAS absorbs it regardless of cause: ~4 + 26.7 + 44 = ~74.7 against a
+// 75 shelf, so the module's top still lands below it and the plate keeps
+// landing on its ribs.
 //
 // Only consequence: the foam tape closes ~1.8 rather than 2.0. 2 mm tape still
 // works - it compresses, which is the point of using tape and not a shim.

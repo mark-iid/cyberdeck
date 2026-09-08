@@ -43,6 +43,7 @@ SMA ⌀6.7 (coupon), audio (part), Powerpole pocket (part), rocker (part).
 | connector coupons ×3 | 2026-09-04. Gave ⌀16.2 → the printer's **+0.2 hole offset**, the USB's 21.5 × 24.5 opening and its 2.0 web, and SMA ⌀6.7 |
 | `joint_test` | ✅ 2026-09-05. Settles the ⌀4.2 × 6.7 insert seat, the 1 mm skin, the ⌀8 boss + counterbore, **M3 × 10**, and joint stiffness. Melt test done. |
 | `plinth` | ✅ 2026-09-05. **26.7** for a drawn 26.5; VESA pattern lines up. Module has a home. |
+| `shroud` | ✅ 2026-09-07. **74.6** for a drawn 74.5 — the reading that closed the Z question below. |
 
 ### Ready to print — nothing unknown
 
@@ -1952,36 +1953,35 @@ and bear on two shoulders instead of one.
 housing on the existing tile screws and grips it, needing no feature on the connector at
 all. More parts, but it removes the dependency entirely.
 
-### ✅ Plinth printed 2026-09-05 — +0.2 in Z, cause not established
+### ✅ Z error CLOSED 2026-09-07 — there is no systematic error to model
 
-**26.7 for a drawn 26.5, and the VESA pattern lines up.**
+The plinth measuring 26.7 for a drawn 26.5 raised the question. The shroud, at 74.5 mm
+the tallest part in the build, was the test that settles it — and it was already on the
+print list, so it cost nothing.
 
-An earlier revision of this section called that "a ~0.8 % Z scale error, not caliper
-noise", on the strength of two readings. **That claim was over-read and is withdrawn.**
-
-| Drawn | Measured | Offset | Within a hobby caliper's error? |
+| Drawn | Measured | Offset | Implied scale |
 |---|---|---|---|
-| 6.00 (calibration bar) | 6.05 | +0.05 | **yes** — this point proves nothing |
-| 26.50 (plinth) | 26.70 | +0.20 | no — 0.2 is far outside it |
+| 6.00 calibration bar | 6.05 | +0.05 | +0.83 % |
+| 26.50 plinth | 26.70 | +0.20 | +0.75 % |
+| **74.50 shroud** | **74.60** | **+0.10** | **+0.13 %** |
 
-The plinth really is about **+0.2 oversize**; 0.2 mm is too large to blame on the
-instrument. But the *shape* of the error — scale versus fixed offset versus a proud top
-layer — rests entirely on the 6 mm point, and at +0.05 that point is inside the noise of
-the tool that produced it. One good reading and one unusable one do not make a trend.
+**A 0.8 % scale predicted 75.10. It measured 74.60. Scale is ruled out.** A fixed offset
+is ruled out too — +0.05, +0.20 and +0.10 are not the same number.
 
-**No action either way, which is why this is not worth chasing now.** `PLINTH_BIAS`
-exists to absorb error in this direction and it did:
+**Neither model fits, and that is the answer.** What is left is a small positive bias of
+0.05–0.20 mm that does not track height: ordinary FDM variation — first-layer squish
+changing with where the part sits on the bed, top-layer over-extrusion, and where the
+caliper lands. The plinth's +0.2 was the high end of normal, not evidence of a trend.
+
+**So: no compensation, anywhere.** Which is what the model already did, for a different
+reason — `PLINTH_BIAS` absorbs error in this direction regardless of its cause:
 
     tray ~4 + plinth 26.70 + module 44.00 = ~74.7      shelf is 75.00
 
-The module's top still lands below the shelf, so the plate keeps landing on its twelve
-ribs — the failure the bias was invented to prevent. Foam tape closes ~1.8 rather than
-2.0, and tape compresses.
-
-**It settles itself for free.** The `shroud` is 74.5 mm tall and already on the print
-list. A 0.8 % scale would make it ~75.1; a fixed +0.2 would make it ~74.7. That is a
-0.4 mm difference on a part being printed anyway — measure it when it comes off and the
-question answers itself, with no coupon and no guessing.
+*The earlier revision of this section called it "a ~0.8 % Z scale error, not caliper
+noise". That was over-read from two points, one of which (+0.05) sat inside the
+instrument's own error, and the operator said so at the time. Withdrawn 2026-09-05,
+and now closed with a third point that discriminates.*
 
 ### ✅ `joint_test` PASSED 2026-09-05 — the joint is settled
 
