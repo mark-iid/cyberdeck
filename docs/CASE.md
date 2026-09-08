@@ -52,6 +52,7 @@ SMA ⌀6.7 (coupon), audio (part), Powerpole pocket (part), rocker (part).
 | `member_front` | 2 | 152.25 × 115.25 × 12.2 | **shows** |
 | `screen_tile` | 1 | 202 × 135.5 × 4.5 | **shows** |
 | `left_rail` | 1 | 39.25 × 135.5 × 4.5 | **shows** |
+| `pp_retainer` | 1 | 32 × 14.8 × 10 | hidden |
 | `back_left` / `back_right` | 1 each | 69.25 / 89.25 × 75 × 4.5 | **shows** |
 | `splice` | 4 | 70 × 12 × 5 | hidden |
 | `tray` | 2 (mirror one) | 132.5 × 195 × 4 | hidden |
@@ -71,7 +72,20 @@ is on the list anyway — see the plinth note in §14.
 | Part | Waiting on |
 |---|---|
 | `right_rail` | RJ45 in hand 2026-09-07 — needs the **five numbers** below |
-| Powerpole retainer | Undrawn — needs the **four numbers** in §14 |
+
+✅ **Powerpole retainer DRAWN 2026-09-07** — `pp_retainer`, 32 × 14.8 × 10, one per deck,
+hidden behind the plate. The last part that had no geometry at all. Measured: mating face
+to pin centre **9.5**, pin **2.38**, hole through the **8.5 axis**, housing **24.6** long.
+
+With the mating face flush at the tile's front, the pin lands **5.0 mm behind the tile** —
+inside the block, with 5 mm of wall in front of it to take the pull. The pin passes
+through wall, housing, wall: **double shear, and captive once fitted.** Assembly is push
+the pair home from behind, then push the pin through. Two countersunk M3s through the
+tile into inserts in the block, on 26 mm centres.
+
+*One assumption flagged in the code: 16.2 × 8.5 is taken as the connector's cross-section
+rather than an already-clearanced pocket. If it was the latter the pocket ends up ~0.5
+loose, which the pin makes harmless — retention is the pin's job, not the pocket's.*
 
 #### RJ45 extension — what to measure now it is here
 

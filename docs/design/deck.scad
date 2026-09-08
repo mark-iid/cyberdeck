@@ -139,6 +139,27 @@ assert(SPACER_L/2 <= PLATE_D/2 - CORNER_R - 2, "preload strip runs into the corn
 
 // --- Panel connectors. Vendor-published openings where they exist (S3) ------
 SMA_D    = 6.7;      // test-fitted 2026-09-04
+
+// --- Anderson PP15-45 bonded pair, measured 2026-09-07 -----------------------
+// A pair has a constant cross-section and no shoulder, so nothing about its
+// OUTSIDE can stop it being pulled back out. The roll pin is the only feature
+// that can, which is why this part waited for a measurement instead of being
+// guessed at.
+PP_W    = 16.2;      // across the rail
+PP_H    = 8.5;       // along the rail
+PP_A    = 9.5;       // mating face -> pin hole CENTRE, along the axis
+PP_PIN  = 2.38;      // 3/32" roll pin
+PP_LEN  = 24.6;      // housing overall
+// The pin runs through the 8.5 axis, so it exits the two faces that lie along
+// the rail - the retainer takes it in DOUBLE shear, one wall each side.
+PP_SLIP = 0.3;       // pocket clearance on top of the +0.2 print offset
+PP_WALL = 3;
+PP_DEPTH = 10;       // retainer body behind the tile
+PP_EAR  = 26;        // screw centres, across the rail
+assert(PP_A > TILE_T + 3,
+       "Powerpole pin lands too close behind the tile to leave a shoulder");
+assert(PP_A - TILE_T + PP_WALL <= PP_DEPTH + PP_WALL,
+       "Powerpole retainer is too shallow to reach the pin");
 // 3.5 mm headphone jack, from the vendor drawing 2026-09-05 (0.23 / 0.27 /
 // 0.31 / 0.49 / 1.36 inch):
 //   thread OD 5.84   thread LENGTH 6.86   nut OD 7.87

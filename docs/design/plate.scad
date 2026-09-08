@@ -239,7 +239,7 @@ RK_BEZ_W = 25.3; RK_BEZ_L = 35;   // across the rail / along it
 // the panel thickness the switch is built for. Was guessed at 1.2, and matches
 // the USB's coupon-tested 2.0 exactly. Settled.
 RK_WEB = 2.0;
-PP_W = 16.2; PP_H = 8.5;
+// PP_* are in deck.scad with the measured pin geometry.
 REBATE = 3;                       // relief margin around a snapped-in part
 // SMA_D and AUDIO_D live in deck.scad with the rest of the connector openings.
 
@@ -260,7 +260,7 @@ module rebated(cx, cy, w, l, web, margin=REBATE) {
 LEFT_FEATURES = [
     ["SMA",       -50, "round",  SMA_D,   SMA_D],
     ["audio",       0, "round_rb", AUDIO_D, AUDIO_D, AUDIO_RB_D, AUDIO_WEB],
-    ["Powerpole", -20, "rect",   PP_W,    PP_H],
+    ["Powerpole", -20, "pp",     PP_W,    PP_H],
     // 21 ACROSS the rail, 28.5 along. An earlier revision had this the other
     // way up, putting 28.7 across a 39.25 tile - 5.27 mm of material each side,
     // which S3 had already written down as "too thin". The doc said one thing
@@ -303,10 +303,12 @@ RIGHT_FEATURES = [
 // which does not go in.
 function rb_margin(f) = max(REBATE, (f[6] - f[3])/2 + 0.5, (f[7] - f[4])/2 + 0.5);
 function f_across(f) =
+    f[2] == "pp"       ? PP_EAR + RJ_CSK_D :
     f[2] == "rebate"   ? f[3] + 2*rb_margin(f) :
     f[2] == "rj45"     ? max(f[3], RJ_CSK_D) :
     f[2] == "round_rb" ? f[5] : f[3];
 function f_along(f) =
+    f[2] == "pp"       ? max(f[4], RJ_CSK_D) :
     f[2] == "rebate"   ? f[4] + 2*rb_margin(f) :
     f[2] == "rj45"     ? RJ_EAR + RJ_CSK_D :
     f[2] == "round_rb" ? f[5] : f[4];
@@ -341,6 +343,12 @@ module feature(f) {
     if      (f[2] == "round")  translate([0, f[1], -1]) cylinder(d=f[3], h=TILE_T + 2);
     // Round, with the tile relieved from BEHIND so a short thread can reach
     // through. z=TILE_T is the front face, so the pocket opens at z=0.
+    // Powerpole: the pocket the pair passes through, plus two countersunk
+    // screws that pull the retainer up against the tile's back face.
+    else if (f[2] == "pp") {
+        through(f[1], f[3] + 0.2 + PP_SLIP, f[4] + 0.2 + PP_SLIP);
+        for (x = [-PP_EAR/2, PP_EAR/2]) translate([x, f[1], 0]) tile_screw();
+    }
     else if (f[2] == "round_rb") {
         translate([0, f[1], -1]) cylinder(d=f[3], h=TILE_T + 2);
         translate([0, f[1], -1]) cylinder(d=f[5], h=TILE_T - f[6] + 1);
@@ -385,6 +393,41 @@ module rail_tile(features, side) {
 }
 module left_rail()  { rail_tile(LEFT_FEATURES, -1); }
 module right_rail() { rail_tile(RIGHT_FEATURES,  1); }
+
+// Powerpole retainer - the part that waited for a measurement.
+//
+// A bonded PP15-45 pair is a constant cross-section with no shoulder, so a
+// plain pocket cannot hold it: pull the plug and the pair comes with it. The
+// 3/32" roll pin is the only feature on the housing that can take that load.
+//
+// Measured 2026-09-07: mating face to pin centre 9.5, pin 2.38, hole runs
+// through the 8.5 mm axis, housing 24.6 long. With the mating face flush at
+// the tile's front, the pin sits 9.5 - 4.5 = 5.0 BEHIND the tile - inside this
+// block, with 5 mm of wall in front of it to take the pull.
+//
+// The pin passes through retainer wall, housing, retainer wall: DOUBLE shear,
+// and captive once fitted. Assembly is push the pair home from behind, then
+// push the pin through.
+//
+// ⚠️ 16.2 x 8.5 is taken as the CONNECTOR's cross-section, not an already-
+// clearanced pocket. If it was the latter the pocket ends up ~0.5 loose, which
+// the pin makes harmless - retention is the pin's job, not the pocket's.
+module pp_retainer() {
+    ow = PP_EAR + 6;
+    od = PP_H + 2*PP_WALL + PP_SLIP;
+    pw = PP_W + 0.2 + PP_SLIP;
+    pd = PP_H + 0.2 + PP_SLIP;
+    difference() {
+        translate([-ow/2, -od/2, 0]) cube([ow, od, PP_DEPTH]);
+        translate([-pw/2, -pd/2, -1]) cube([pw, pd, PP_DEPTH + 2]);
+        // pin, through both walls and the housing between them
+        translate([0, 0, PP_A - TILE_T]) rotate([90, 0, 0])
+            cylinder(d=PP_PIN + 0.2, h=od + 2, center=true);
+        // insert seats, blind from the front face
+        for (x = [-PP_EAR/2, PP_EAR/2])
+            translate([x, 0, -1]) cylinder(d=INSERT_D, h=INSERT_H + 1);
+    }
+}
 
 // Plate preload strip - print TWO, in TPU (S14 #4).
 //
@@ -478,6 +521,7 @@ else if (PART == "rail_blank") rail_blank();
 else if (PART == "back_left")  back_tile(-1);
 else if (PART == "back_right") back_tile(1);
 else if (PART == "preload")    preload_strip();
+else if (PART == "pp_retainer") pp_retainer();
 else if (PART == "left_rail")  left_rail();
 else if (PART == "right_rail") right_rail();
 else if (PART == "joint_test") joint_test();
