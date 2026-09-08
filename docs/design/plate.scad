@@ -477,6 +477,38 @@ module pp_retainer() {
     }
 }
 
+// Front joint strap - BONDED, not bolted, and the reason is arithmetic.
+//
+// A narrower splice fixes the wall interference but NOT the other conflict: the
+// ⌀8 boss itself is 1.2 mm inside the module. And that is true for ANY seat
+// position in an 8 mm rail - the boss cannot go outboard of the plate edge, so
+// its inboard face always reaches past the module's front face at -110.25.
+// There is no boss-and-splice arrangement that fits. The fastening has to
+// change, not its size.
+//
+// What IS free is the band between the plate's edge and the module's front
+// face: 5 mm wide, and nothing below it for the full 70 mm down to the tray.
+// A strap bonded into that band ties the joint using only space nobody wants.
+//
+// It needs NO change to the members - the two already printed stay good, and
+// their front insert seats simply go unused.
+//
+// PERMANENT. Epoxy, not CA: PETG does not solvent-weld and CA is brittle in
+// peel. Key both faces with abrasive first. The other three joints stay
+// bolted, so the frame still comes apart along its length.
+FS_LEN = 60;                      // +-30 either side of the joint
+FS_W   = 4.5;                     // plate edge -110.75, clear of the module
+FS_H   = 5;
+FS_RIB = RIB_OVERLAP_D + 0.75;    // scallop for the rib under the joint
+
+module front_strap() {
+    difference() {
+        cube([FS_LEN, FS_W, FS_H]);
+        // rib relief, outer edge, at the joint centre
+        translate([FS_LEN/2 - 4, -1, -1]) cube([8, FS_RIB + 1, FS_H + 2]);
+    }
+}
+
 // Plate preload strip - print TWO, in TPU (S14 #4).
 //
 // It replaces the keyboard as the thing the lid foam presses on. Sits on a SIDE
@@ -569,6 +601,7 @@ else if (PART == "rail_blank") rail_blank();
 else if (PART == "back_left")  back_tile(-1);
 else if (PART == "back_right") back_tile(1);
 else if (PART == "preload")    preload_strip();
+else if (PART == "front_strap") front_strap();
 else if (PART == "pp_retainer") pp_retainer();
 else if (PART == "left_rail")  left_rail();
 else if (PART == "right_rail") right_rail();
