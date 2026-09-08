@@ -44,6 +44,7 @@ SMA ⌀6.7 (coupon), audio (part), Powerpole pocket (part), rocker (part).
 | `joint_test` | ✅ 2026-09-05. Settles the ⌀4.2 × 6.7 insert seat, the 1 mm skin, the ⌀8 boss + counterbore, **M3 × 10**, and joint stiffness. Melt test done. |
 | `plinth` | ✅ 2026-09-05. **26.7** for a drawn 26.5; VESA pattern lines up. Module has a home. |
 | `shroud` | ✅ 2026-09-07. **74.6** for a drawn 74.5 — the reading that closed the Z question below. |
+| `member` ×1 | ✅ 2026-09-07. Fits the shell. Corner radius, rib bearing and the seats all good — see the caveat under Print order. |
 
 ### Ready to print — nothing unknown
 
@@ -88,6 +89,23 @@ visible parts.
 **Stop after step 1 and measure.** If the member is oversize the fix is sanding; if it is
 undersize the fix is a reprint, and finding that out on one part instead of eight is the
 whole point of the bias being recorded in §6.
+
+✅ **Step 1 done 2026-09-07 — the first member fits.** The R18 corner matches the shell's,
+it sits down on the rib shelf, and the seats came out.
+
+**What that does and does not prove.** One member is a *quarter* frame, and it can slide
+anywhere in the opening, so it cannot test the numbers the bias was chosen for:
+
+| Confirmed by one member | Still open until two |
+|---|---|
+| corner radius against the shell | `PLATE_W` **304.5** end to end |
+| bearing on the rib tops at 75 | `PLATE_D` **230.5** end to end |
+| joint seats and tile bosses in a real part | guaranteed bearing — 1.5 wide, 1.1 deep |
+| nothing binds in the corner | whether four members actually close |
+
+**One caliper reading converts "seems to fit" into a number**: the two arm lengths, drawn
+**152.25** and **115.25**. Get those and the full-frame dimensions are arithmetic against
+the already-surveyed 305 × 231.4 interior, rather than something to discover at step 3.
 
 ### Blocked, and on what
 
