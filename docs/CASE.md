@@ -18,8 +18,8 @@ and cross-checked against Pelican's own CAD (§6).
 
 ## Build status — 2026-09-06
 
-**Everything is bought.** Every line of the §7 buy list is in hand except the **RJ45
-panel extension**, still in transit. The **DPDT rocker** and the **3.5 mm audio
+**Everything is bought and everything has arrived.** The RJ45 extension landed
+2026-09-07, closing the buy list. The **DPDT rocker** and the **3.5 mm audio
 extension** landed 2026-09-06 and were **verified against their drawings on 2026-09-07**:
 
 | Confirmed on the part | Drawing said | Measured |
@@ -70,8 +70,21 @@ is on the list anyway — see the plinth note in §14.
 
 | Part | Waiting on |
 |---|---|
-| `right_rail` | `RJ_EAR` = 31 is provisional until the RJ45 extension lands |
-| Powerpole retainer | Undrawn — needs four measurements off a housing (§14) |
+| `right_rail` | RJ45 in hand 2026-09-07 — needs the **five numbers** below |
+| Powerpole retainer | Undrawn — needs the **four numbers** in §14 |
+
+#### RJ45 extension — what to measure now it is here
+
+| # | Measure | Decides |
+|---|---|---|
+| **1** | **ear hole centre-to-centre** | `RJ_EAR`, provisional at **31**. The one that blocks the tile. |
+| 2 | body cross-section where it passes the panel | the 16.6 × 13.6 aperture |
+| 3 | ear hole **diameter** | `RJ_CLEAR` 3.6 prints 3.4 — fine for ⌀3 or M3, not for anything larger |
+| 4 | ear **thickness** | countersunk screw length: tile 4.5 + ears + nut |
+| 5 | cable **length** | must reach the module's right edge **plus §12's 150 mm service loop** |
+
+*Also confirm it is female-to-male, not a female-to-female coupler — the male end plugs
+straight into the Pi and deletes the internal patch cable.*
 
 **That is the whole list.** Every other part of the deck is drawn, asserted and
 printable.
