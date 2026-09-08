@@ -18,21 +18,23 @@ and cross-checked against Pelican's own CAD (§6).
 
 ## Build status — 2026-09-06
 
-**Everything is bought.** Every line of the §7 buy list is owned or in hand. The
-**DPDT rocker** and the **3.5 mm audio extension** landed 2026-09-06; only the **RJ45
-panel extension** is still in transit. Both arrivals came with usable vendor drawings,
-so neither needs a test coupon — but both drawings were *read off images*, and §7's
-rule is that the verify column is the part that matters. Four numbers to confirm before
-`left_rail` prints:
+**Everything is bought.** Every line of the §7 buy list is in hand except the **RJ45
+panel extension**, still in transit. The **DPDT rocker** and the **3.5 mm audio
+extension** landed 2026-09-06 and were **verified against their drawings on 2026-09-07**:
 
-| Part | Confirm | Because |
+| Confirmed on the part | Drawing said | Measured |
 |---|---|---|
-| rocker | **centre position is OFF** | The whole A/B scheme is built on it. Meter it in all three positions. |
-| rocker | the **2 mm** step, bezel underside → snap catch | `RK_WEB` came from reading that dimension off an image. |
-| audio | **nut thickness** | Assumed 2.4 and never had it. The back relief is sized on it. |
-| audio | thread **length 6.86** | It is why the tile is relieved at all. |
+| rocker centre position | OFF | **OFF** ✅ metered |
+| rocker bezel → snap catch | 2 | **2.0** ✅ |
+| audio thread length | 6.86 | **6.9** |
+| audio nut thickness | *never had it — assumed 2.4* | **2.5** |
 
-Everything else on both parts is a confirmation, not a dependency.
+Both drawings had been read off product images, so all four were confirmations that
+could have gone wrong. They did not. The audio relief still holds with room:
+**2.5 web + 2.5 nut = 5.0 against 6.9 of thread, 1.9 mm spare.**
+
+**`left_rail` is unblocked.** Every cutout on it is now measured or vendor-published:
+SMA ⌀6.7 (coupon), audio (part), Powerpole pocket (part), rocker (part).
 
 ### Printed and checked
 
@@ -70,6 +72,9 @@ is on the list anyway — see the plinth note in §14.
 |---|---|
 | `right_rail` | `RJ_EAR` = 31 is provisional until the RJ45 extension lands |
 | Powerpole retainer | Undrawn — needs four measurements off a housing (§14) |
+
+**That is the whole list.** Every other part of the deck is drawn, asserted and
+printable.
 
 ### Open questions that do not block printing
 

@@ -156,8 +156,13 @@ SMA_D    = 6.7;      // test-fitted 2026-09-04
 AUDIO_D    = 6.2;      // -> 6.0 printed, against a 5.84 thread
 AUDIO_RB_D = 13.0;     // clears the 12.45 body
 AUDIO_WEB  = 2.5;      // what is left at the front
-AUDIO_THREAD = 6.86;
-assert(AUDIO_WEB + 2.4 <= AUDIO_THREAD, "audio jack has no thread left for its nut");
+// MEASURED on the part 2026-09-07, replacing numbers read off a product image:
+// thread 6.9 (drawing said 6.86) and the nut 2.5 (assumed 2.4, never known).
+// 2.5 web + 2.5 nut = 5.0 against 6.9, so 1.9 mm spare. The relief stands.
+AUDIO_THREAD = 6.9;
+AUDIO_NUT    = 2.5;
+assert(AUDIO_WEB + AUDIO_NUT <= AUDIO_THREAD,
+       "audio jack has no thread left for its nut");
 assert(AUDIO_RB_D > 12.45, "audio relief will not pass the jack body");
 
 // --- Fasteners. ruthex RX-M3x5.7, hole published on the bag (S13 #10) -------

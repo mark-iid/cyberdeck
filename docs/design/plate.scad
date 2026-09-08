@@ -234,10 +234,10 @@ module rail_blank() {
 // rated 20A/125VAC and 16A/250VAC - both AC, there is no DC figure.
 RK_W = 28.7; RK_L = 21.2;         // 28.5 x 21 + the 0.2 offset
 RK_BEZ_W = 25.3; RK_BEZ_L = 35;   // across the rail / along it
-// 2.0, from the "2" on the drawing - the step between the bezel underside and
-// the snap catch, which IS the panel thickness the switch is built for. Was
-// guessed at 1.2. Corroborated by the USB, a part of the same family, whose
-// web tested at exactly 2.0 on the coupon (S8 #5).
+// 2.0 - read off the drawing, then CONFIRMED on the part with calipers
+// 2026-09-07. The step between the bezel underside and the snap catch, which is
+// the panel thickness the switch is built for. Was guessed at 1.2, and matches
+// the USB's coupon-tested 2.0 exactly. Settled.
 RK_WEB = 2.0;
 PP_W = 16.2; PP_H = 8.5;
 REBATE = 3;                       // relief margin around a snapped-in part
