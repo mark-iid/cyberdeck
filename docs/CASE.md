@@ -148,6 +148,47 @@ anyway, so the check is free.
 1.5 mm on the inner side — below the vendor minimum — and an insert splits its thinnest
 wall first, so symmetric beats biased here.*
 
+### 🔴 BLOCKER — the front joint cannot be spliced as drawn (2026-09-07)
+
+Found by the operator fitting a printed `member_front`: the splice stands ~2 mm past the
+plate's edge and holds the frame off the case wall. Checking it found a second conflict
+underneath.
+
+**The front rail has 8 mm of width and nothing else has any room:**
+
+| | |
+|---|---|
+| front rail | y −115.25 … −107.25 |
+| case wall | y −115.7 — **0.45 mm outboard** |
+| splice, 12 wide on the seat line | y −117.25 … −105.25 → **2 mm past the plate edge** |
+| module, top at 74.5 | underlies the **inner 3 mm** of the rail, 0.5 below the frame |
+| insert boss, hanging 1.7 | reaches z 73.3 → **1.2 mm into the module** |
+
+**So the usable width for anything hanging below the front rail is 5 mm** — from the
+plate edge to the module's front face. An M3 insert needs 7.2. **The boss-and-splice
+scheme cannot fit there at all**, and the second conflict would have shown up at assembly
+even if the splice had been narrowed.
+
+Why nothing moves: `FRAME_WF` is pinned at 8 by the front ledge not covering the screen
+(asserted); the module cannot go back — the battery has 2.75 mm of slack behind it; the
+wall is where it is.
+
+**This does not invalidate anything printed.** The members are fine; only the front
+joint's *fastening* is wrong.
+
+#### Options
+
+| | Fix | Cost |
+|---|---|---|
+| **A** | **No splice at the front joint** — butt it. The frame is a closed ring held by the other three splices and trapped by the case walls on all four sides. | Nothing. Weakest joint of the four. |
+| **B** | **A + dowel pins** in the butting end faces (8 × 6 each, room for two ⌀3). Resists shear and keeps the joint aligned. | Two blind holes; pins are 3 mm rod or printed. Still no tension capacity. |
+| **C** | **Screw down from the top** into a nut in the 5 mm band. | Two visible countersunk heads on the show face, and an M3 nut at 5.5 across flats only just fits the band. |
+| **D** | **Drop the module** so a splice clears it — plinth 26.5 → ~21.5. | Reprints the plinth; screen recesses 4.5 mm below the shelf instead of 0.5. |
+
+**Recommended: B.** It costs nothing already printed, adds no visible fastener, and the
+front joint is the least loaded of the four — the preload strips bear on the *side*
+members, and the plate is trapped on every edge. A is the same thing without the pins.
+
 ### Frame BOM — handedness, stated once
 
 **The frame is four L pieces and no two adjacent ones are the same part.**
