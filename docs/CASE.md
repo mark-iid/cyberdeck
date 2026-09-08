@@ -202,6 +202,29 @@ front face there are **5 mm**, with nothing below for the full 70 mm down to the
 recess the screen 4.5 mm behind the tile. Screwing from the top puts two visible heads on
 the show face.*
 
+### Which way up everything goes
+
+**Members print upside-down relative to how they install.** The STL is exported with the
+flat show face on the bed, so a member comes off the printer with its **bosses pointing
+up**. In the case they point **down**. Flip it.
+
+    ===============================   <- flat face: the SHOW face, points UP
+     ()                       ()      <- ⌀8 bosses: point DOWN, hold the inserts
+    ---------------------------
+      |  splice, counterbored face UP against the member
+      |  scallop toward the WALL
+      O  screw heads underneath, M3 x 10 up from below
+
+| Part | Identify it by | Which way |
+|---|---|---|
+| member | the face with two ⌀8 bumps | bumps **down** |
+| splice | the face with the ⌀8.6 counterbores | counterbores **up**, against the member |
+| splice | the scallop in one long edge | scallop toward the **case wall** |
+| `front_strap` | scallop in one long edge | bonded under the front joint, scallop to the wall |
+
+Screw heads finish on the splice's exposed underside. Nothing shows on the plate's top
+face — that is what the 1 mm of skin over each blind insert is for.
+
 ### Frame BOM — handedness, stated once
 
 **The frame is four L pieces and no two adjacent ones are the same part.**
