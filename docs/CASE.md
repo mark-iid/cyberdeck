@@ -148,6 +148,24 @@ anyway, so the check is free.
 1.5 mm on the inner side — below the vendor minimum — and an insert splits its thinnest
 wall first, so symmetric beats biased here.*
 
+### Frame BOM — handedness, stated once
+
+**The frame is four L pieces and no two adjacent ones are the same part.**
+
+| Print | Qty | Slicer |
+|---|---|---|
+| `member` | 2 | one as exported, **one mirrored in X** |
+| `member_front` | 2 | one as exported, **one mirrored in X** |
+| `splice` | 4 | all identical — rotate 180° about Z to put the scallop toward the wall |
+
+`frame_full` is mirror-symmetric about the centreline, so a front-**right** member and a
+front-**left** are mirror images, not copies. Two unmirrored copies gives two right-hand
+fronts and the frame does not close. **A spare cannot be flipped over to fix it** — that
+puts the insert bosses on the show face.
+
+The splices are the exception and need no mirroring: turning one 180° about Z moves the
+scallop to the other edge while keeping the counterbored face upward.
+
 ### Print order — and why it is this order
 
 **Everything visible derives from the plate's outer dimensions.** `OPEN_W` and `OPEN_D`
