@@ -293,6 +293,14 @@ RJ_W = RJ_BODY_W + 0.2 + 0.3;     // 16.2 - print offset plus 0.3 clearance
 RJ_L = RJ_BODY_L + 0.2 + 0.3;     // 16.0
 RJ_EAR = 27.5;                    // hole centres, measured (was 31, a guess)
 RJ_EAR_T = 7;                     // ear thickness - sets the screw length
+// EARS GO BEHIND THE PLATE. Confirmed with the operator 2026-09-07, and it is
+// what sets the aperture: mounted from behind, only the socket nose passes
+// through, so the hole is the nose's 15.7 x 15.5. Mounted from the FRONT the
+// wider rear body would have to pass instead - about 22 x 22 - and the ears and
+// screw heads would sit on the show face.
+//
+// Behind wins twice: a 22 hole leaves 8.6 mm of tile each side against 11.8,
+// and the front stays clean. It is also what S3 has specified all along.
 // Screw: 4.5 of tile + 7 of ear = 11.5 under the head, plus a nut -> M3 x 16.
 // If the ears turn out THREADED, M3 x 12 and no nut. Worth a look before buying.
 assert(RJ_EAR + RJ_CSK_D <= RAIL_D, "RJ45 ears run off the end of the rail");
