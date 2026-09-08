@@ -68,6 +68,27 @@ is open.
 tall enough to separate a Z *scale* error (~75.1) from a fixed offset (~74.7), and it
 is on the list anyway — see the plinth note in §14.
 
+### Print order — and why it is this order
+
+**Everything visible derives from the plate's outer dimensions.** `OPEN_W` and `OPEN_D`
+set the screen tile, both rails and both back tiles, and those come from `PLATE_W` 304.5
+and `PLATE_D` 230.5 — **both deliberately biased oversize and never yet checked against
+the real shell** (§6). Print a tile before a member and a bad bias costs all seven
+visible parts.
+
+| Step | Print | What it settles |
+|---|---|---|
+| **1** | `member` ×1 | The 304.5 / 230.5 bias, the R18 corner against the shell's, bearing on the rib shelf, and the joint seats in a real member rather than a coupon. **21.6 cm³ to test the assumption everything else rests on.** |
+| **2** | `member_front` ×1 + `splice` ×1 | Joined to step 1 this is the **complete right side of the frame**, 230.5 end to end. Verifies the depth fully, the joint in situ, and the splice's rib notch — the one joint feature never checked against a real rib. |
+| **3** | 1 more of each + 3 more `splice` | Mirror in the slicer. Frame complete; offer the whole thing into the case. |
+| **4** | tiles: `screen_tile`, `left_rail`, `right_rail`, `back_left`, `back_right` | Only now, with the opening confirmed. |
+| **5** | floor: `tray` ×2, `cradle`, `pp_retainer` | Independent of the frame; colour does not matter. |
+| — | `preload` ×2 in TPU | Any time. Good filler between the big prints. |
+
+**Stop after step 1 and measure.** If the member is oversize the fix is sanding; if it is
+undersize the fix is a reprint, and finding that out on one part instead of eight is the
+whole point of the bias being recorded in §6.
+
 ### Blocked, and on what
 
 **Nothing.** Every part is drawn, asserted and printable as of 2026-09-07.
@@ -97,16 +118,13 @@ about **22 × 22** — and the ears and screw heads would land on the show face.
 twice: 11.8 mm of tile each side rather than 8.6, and a clean front. It is also what §3
 has specified since the RJ45 replaced the keystone.
 
-⚠️ **One number this raises, and it is the audio jack's problem again:** how far does the
-socket nose stand out **in front of the ears**? The tile is 4.5 thick.
+✅ **Nose finishes nearly flush with the tile front** (operator 2026-09-07), so **no
+relief is needed** — unlike the audio jack, which is the same class of part and did need
+one. Worth checking either way: a recessed socket would put an RJ45 plug's latch out of
+reach.
 
-- nose ≥ 4.5 → the socket face finishes flush or proud. Ideal, nothing to change.
-- nose < 4.5 → the socket sits **recessed** inside the hole, and an RJ45 plug's latch
-  needs to reach it. The fix is the same as the audio jack's: relieve the tile from
-  behind so the nose starts further forward.
-
-*Also, before buying screws: are the ears **threaded**? If so M3 × 12 and no nut; if not,
-M3 × 16 with one.*
+✅ **Ear holes are threaded**, so no nut: **M3 × 12 countersunk**, 4.5 through the tile
+and ~7 of engagement in the ear.
 
 **`right_rail` is unblocked. Nothing in the build is waiting on a part any more.**
 

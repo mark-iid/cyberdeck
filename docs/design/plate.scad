@@ -301,8 +301,12 @@ RJ_EAR_T = 7;                     // ear thickness - sets the screw length
 //
 // Behind wins twice: a 22 hole leaves 8.6 mm of tile each side against 11.8,
 // and the front stays clean. It is also what S3 has specified all along.
-// Screw: 4.5 of tile + 7 of ear = 11.5 under the head, plus a nut -> M3 x 16.
-// If the ears turn out THREADED, M3 x 12 and no nut. Worth a look before buying.
+// Ears are THREADED (operator 2026-09-07), so no nut: M3 x 12 countersunk,
+// 4.5 through the tile and ~7 of engagement in the ear.
+//
+// Socket nose finishes NEARLY FLUSH with the tile's front face, so the tile
+// needs no relief - unlike the audio jack, which is the same class of part and
+// did. Checked because a recessed socket would put a plug's latch out of reach.
 assert(RJ_EAR + RJ_CSK_D <= RAIL_D, "RJ45 ears run off the end of the rail");
 RJ_CLEAR = 3.6;                   // M3 clearance, drawn 0.2 over (holes print
                                   // undersize) AND for slop across two ears
