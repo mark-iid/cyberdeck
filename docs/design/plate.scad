@@ -134,7 +134,30 @@ module insert_bore() {
 }
 
 // Splice bar, screwed up into the rim's underside either side of a joint.
-// Notched to clear the 4 x 2 mm rib that sits directly under that joint.
+//
+// HOW IT MEETS THE RIBS - corrected 2026-09-07 after the operator asked, which
+// is the only reason it was ever checked.
+//
+// The frame sits ON the rib tops at 75. The ribs are fins standing 2 mm proud of
+// the wall, so BELOW 75 the rib is solid material in the outermost 2 mm of the
+// opening. The splice hangs below 75, and the plate's edge reaches 1.75 mm past
+// a rib's inner face - so at every joint the splice's OUTER EDGE runs straight
+// into the rib that the joint is deliberately placed over.
+//
+// The previous relief cut a 6 x 2.6 slot across the splice's TOP face. That
+// clears a rib projecting DOWNWARD onto the splice, which is not what a rib
+// does - its top is coplanar with the frame's underside, and all of it is below.
+// The slot removed material where there was no conflict and left the conflict
+// untouched. Written from a description, never drawn against a rib.
+//
+// The real relief is a SCALLOP in the outer edge: the rib is only 4 mm wide and
+// sits at the joint centre, while the splice's screws are at +-14 and +-26, so
+// 2.5 mm off the outer edge over 8 mm of length clears it and touches nothing.
+RIB_RELIEF = max(RIB_OVERLAP_W, RIB_OVERLAP_D) + 0.75;   // 2.5
+assert(RIB_RELIEF > max(RIB_OVERLAP_W, RIB_OVERLAP_D),
+       "splice relief is shallower than the rib it must clear");
+assert(4 + 4 < 2*14 - SPL_CB_D,
+       "splice rib relief reaches the nearest counterbore");
 // Widened 10 -> 12 to match the member: it now has to carry a counterbore that
 // swallows the member's ⌀8 insert boss, and 8 in 10 left 1 mm of wall.
 // Thickened 4 -> 5 as well: the counterbore eats 2 mm, and 2 mm of web left
@@ -147,7 +170,9 @@ SPL_CB_H = BOSS_H + 0.3;          // so the splice clamps on the flat, not the b
 module splice() {
     difference() {
         translate([-SPL_L/2, -SPL_W/2, 0]) cube([SPL_L, SPL_W, SPL_T]);
-        translate([-3, -SPL_W/2 - 1, SPL_T - 2.6]) cube([6, SPL_W + 2, 3]);   // rib relief
+        // rib relief - OUTER EDGE (+y), the side that faces the case wall
+        translate([-4, SPL_W/2 - RIB_RELIEF, -1])
+            cube([8, RIB_RELIEF + 1, SPL_T + 2]);
         for (x = [-26, -14, 14, 26]) {
             translate([x, 0, -1]) cylinder(d=3.4, h=SPL_T + 2);
             translate([x, 0, SPL_T - SPL_CB_H]) cylinder(d=SPL_CB_D, h=SPL_CB_H + 1);

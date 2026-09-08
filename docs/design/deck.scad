@@ -30,6 +30,11 @@ RIB_PROUD = 2;       // so the shelf opening is CASE_W - 2*RIB_PROUD
 FLOOR_W   = 270;     // the FLAT floor, before the ~17 mm fillet climbs
 FLOOR_D   = 200;
 BED       = 215;     // Ender 3 usable
+// How far the plate's edge reaches PAST a rib's inner face - i.e. how much of
+// the plate's underside actually lands on a rib top. It is also how far
+// anything hanging BELOW the plate at a rib would foul it.
+RIB_OVERLAP_W = 304.5/2 - (CASE_W/2 - RIB_PROUD);   // 1.75
+RIB_OVERLAP_D = 230.5/2 - (CASE_D/2 - RIB_PROUD);   // 1.55
 
 // --- The module. Measured 2026-09-04 (S13 #3) -------------------------------
 MOD_W = 200; MOD_D = 137.5; MOD_T = 44;
@@ -338,6 +343,12 @@ assert(28.7 + 2*3 <= RAIL_W, "rocker rebate is wider than the rail tile");
 // Against the NARROWEST member, which is the front one at FRAME_WF. Checking
 // FRAME_W passes trivially and would not notice a boss outgrowing the front.
 assert(BOSS_D <= FRAME_WF, "insert boss is wider than the front frame member");
+// The front ledge must not creep over the screen. This is what pins FRAME_WF at
+// 8: at 10 the ledge inner edge lands 0.25 mm INSIDE the active area and the
+// frame starts covering the picture. It was never asserted, so "just widen the
+// front member" looked free right up until this line was written.
+assert(MOD_CY - WIN_D/2 >= -PLATE_D/2 + FRAME_WF + LEDGE_WF,
+       "front ledge overlaps the screen's active area");
 assert((FRAME_WF - (INSERT_D - 0.2))/2 >= 1.6,
        "insert has less than 1.6 mm of wall in the front frame member");
 

@@ -69,6 +69,85 @@ is open.
 tall enough to separate a Z *scale* error (~75.1) from a fixed offset (~74.7), and it
 is on the list anyway — see the plinth note in §14.
 
+### ✅ How the splice meets the ribs — corrected 2026-09-07
+
+The operator asked, having assumed the member sits directly on the ribs. **It does** — and
+asking is the only reason this got checked.
+
+    wall                                              wall at 152.5
+     |####|  rib, 2 mm proud, top at 75
+     |####|________________________________
+     |####|  frame member, underside at 75          <- lands on the rib top
+     |####|
+     |    |  splice, hanging BELOW 75               <- runs INTO the rib
+     |    |
+
+The frame lands on the rib tops at 75. The ribs are fins standing 2 mm proud of the wall,
+so **below 75 the rib is solid material** in the outermost 2 mm of the opening. The
+splice hangs below 75, and the plate's edge reaches **1.75 mm past a rib's inner face**.
+So at every joint the splice's outer edge runs straight into the rib the joint was
+deliberately placed over.
+
+**The relief that was drawn did not work.** It cut a 6 × 2.6 slot across the splice's
+**top** face — which would clear a rib projecting *downward* onto the splice. A rib does
+not do that; its top is coplanar with the frame's underside and all of it is below. The
+slot removed material where there was no conflict and left the conflict untouched.
+
+*It was written from a description and never drawn against a rib.* §14 flagged it as "the
+least-verified thing here" on 2026-09-05 and it stayed that way until the question was
+asked — a comment describing geometry is not geometry, which is the same fault as the
+plinth, the cradle and the rocker.
+
+**The fix is a scallop in the outer edge**, not a slot in the top. The rib is only 4 mm
+wide and sits at the joint centre, while the splice's screws are at ±14 and ±26 — so
+**2.5 mm off the outer edge over 8 mm of length** clears it and touches nothing else.
+Derived from `RIB_OVERLAP`, with assertions that it is deeper than the overlap and does
+not reach the nearest counterbore.
+
+⚠️ **The splice is now handed: the scallop must face the wall.** It is symmetric
+end-to-end but not across its width.
+
+### The front member's insert seats are the thinnest spot in the build
+
+Noticed on the first `member_front` slice, 2026-09-07: the two seats on the **front** rail
+sit hard against both edges, unlike the side and back ones. **Not an error, and not
+fixable by widening.**
+
+| | Member width | Wall around a printed ⌀4.0 hole |
+|---|---|---|
+| side and back rails | 12 | **4.0 mm** |
+| **front rail** | **8** | **2.0 mm** — vendor minimum is 1.6 |
+
+The ⌀8 boss is exactly as wide as the 8 mm rail, which is why the circles look like they
+are falling off the edge. They are not — below the member the boss is a free-standing
+cylinder, so there is no thin sliver and nothing to print badly. The wall that matters is
+the **2.0 mm around the hole**, and it clears the vendor's 1.6.
+
+**Why the front rail cannot just be widened**, which was the obvious fix:
+
+| `FRAME_WF` | Opening front | Ledge inner edge | Clearance to the screen |
+|---|---|---|---|
+| **8** ✅ | −107.25 | −102.25 | **+1.75** |
+| 10 | −105.25 | −100.25 | **−0.25** — ledge over the picture |
+| 12 | −103.25 | −98.25 | −2.25 |
+
+The active area starts at y = −100.5. At 10 the front ledge lands *inside* it and the
+frame begins covering the screen. **That constraint was never asserted** — it is now, so
+the next person who reaches for the obvious fix gets stopped rather than shipping it.
+
+**The residual risk, stated plainly:** `joint_test` validated a **12 mm** member with
+4 mm of wall. The 8 mm case has **half that wall and has never been tested**, and it sits
+on the plate's outer edge — which is also the surface that bears on the rib shelf, so a
+bulge from melting an insert in would lift the plate off a rib.
+
+**Test it on the part, not on a new coupon.** Print one `member_front`, melt its two
+front inserts in, and look at the outer edge before printing the second. Two are needed
+anyway, so the check is free.
+
+*The seats stay centred. Shifting them inward to protect the outer edge would leave
+1.5 mm on the inner side — below the vendor minimum — and an insert splits its thinnest
+wall first, so symmetric beats biased here.*
+
 ### Print order — and why it is this order
 
 **Everything visible derives from the plate's outer dimensions.** `OPEN_W` and `OPEN_D`
