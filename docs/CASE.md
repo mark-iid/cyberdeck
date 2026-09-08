@@ -69,9 +69,30 @@ is on the list anyway — see the plinth note in §14.
 
 ### Blocked, and on what
 
-| Part | Waiting on |
-|---|---|
-| `right_rail` | RJ45 in hand 2026-09-07 — needs the **five numbers** below |
+**Nothing.** Every part is drawn, asserted and printable as of 2026-09-07.
+
+✅ **RJ45 measured 2026-09-07 — and the aperture was wrong, not just the ear spacing.**
+
+| # | Was | Measured | Consequence |
+|---|---|---|---|
+| 1 | `RJ_EAR` **31**, a guess | **27.5** centres | ear holes move 1.75 each |
+| 2 | aperture **16.6 × 13.6** | body **15.7 × 15.5** | ⚠️ **1.9 mm too short.** The plug would not have gone in. |
+| 3 | ear hole ⌀ assumed ~3 | **3.4** | `RJ_CLEAR` prints 3.4 — an M3 passes both, unchanged |
+| 4 | ear thickness unknown | **7** | screw is 4.5 tile + 7 ear = 11.5 + nut → **M3 × 16** |
+| 5 | cable length unknown | **12" / 305 mm** | run ~100 + §12's 150 loop = 250. **55 mm spare** ✅ |
+
+**#2 is the one that mattered.** The old numbers came from a listing's "jack face
+16 × 13"; the real body is **very nearly square**. The tile would have printed and been
+unusable, and nothing in the assertion set could have caught it — a wrong number that is
+internally consistent looks exactly like a right one. Only a caliper on the part finds it.
+
+Aperture is now drawn **16.2 × 16.0**, printing 16.0 × 15.8 for 0.3 mm of clearance
+each way.
+
+*Before buying screws: check whether the ears are **threaded**. If they are, M3 × 12 and
+no nut; if not, M3 × 16 with one.*
+
+**`right_rail` is unblocked. Nothing in the build is waiting on a part any more.**
 
 ✅ **Powerpole retainer DRAWN 2026-09-07** — `pp_retainer`, 32 × 14.8 × 10, one per deck,
 hidden behind the plate. The last part that had no geometry at all. Measured: mating face
@@ -87,18 +108,7 @@ tile into inserts in the block, on 26 mm centres.
 rather than an already-clearanced pocket. If it was the latter the pocket ends up ~0.5
 loose, which the pin makes harmless — retention is the pin's job, not the pocket's.*
 
-#### RJ45 extension — what to measure now it is here
 
-| # | Measure | Decides |
-|---|---|---|
-| **1** | **ear hole centre-to-centre** | `RJ_EAR`, provisional at **31**. The one that blocks the tile. |
-| 2 | body cross-section where it passes the panel | the 16.6 × 13.6 aperture |
-| 3 | ear hole **diameter** | `RJ_CLEAR` 3.6 prints 3.4 — fine for ⌀3 or M3, not for anything larger |
-| 4 | ear **thickness** | countersunk screw length: tile 4.5 + ears + nut |
-| 5 | cable **length** | must reach the module's right edge **plus §12's 150 mm service loop** |
-
-*Also confirm it is female-to-male, not a female-to-female coupler — the male end plugs
-straight into the Pi and deletes the internal patch cable.*
 
 **That is the whole list.** Every other part of the deck is drawn, asserted and
 printable.

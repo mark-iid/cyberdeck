@@ -283,8 +283,19 @@ LEFT_FEATURES = [
 // threaded or plain-with-a-nut - which is still unknown until the part lands.
 USB_W = 21.5; USB_L = 24.5; USB_WEB = 2.0;
 USB_BEZ_W = 25.4; USB_BEZ_L = 28.6;   // vendor sheet
-RJ_W = 16.6; RJ_L = 13.6;
-RJ_EAR = 31;                      // PROVISIONAL - confirm on arrival (S8 #8)
+// MEASURED on the part 2026-09-07, and it corrects the aperture, not just the
+// ear spacing. The body is 15.7 x 15.5 - very nearly SQUARE. This file had
+// 16.6 x 13.6, derived from a listing's "jack face 16 x 13", so the aperture
+// was 1.9 mm too SHORT in one axis and the connector would not have gone in.
+// The tile would have printed unusable. Nothing catches that but a caliper.
+RJ_BODY_W = 15.7; RJ_BODY_L = 15.5;
+RJ_W = RJ_BODY_W + 0.2 + 0.3;     // 16.2 - print offset plus 0.3 clearance
+RJ_L = RJ_BODY_L + 0.2 + 0.3;     // 16.0
+RJ_EAR = 27.5;                    // hole centres, measured (was 31, a guess)
+RJ_EAR_T = 7;                     // ear thickness - sets the screw length
+// Screw: 4.5 of tile + 7 of ear = 11.5 under the head, plus a nut -> M3 x 16.
+// If the ears turn out THREADED, M3 x 12 and no nut. Worth a look before buying.
+assert(RJ_EAR + RJ_CSK_D <= RAIL_D, "RJ45 ears run off the end of the rail");
 RJ_CLEAR = 3.6;                   // M3 clearance, drawn 0.2 over (holes print
                                   // undersize) AND for slop across two ears
 RJ_CSK_D = 6.4;                   // M3 90 deg countersunk head, same 0.2
