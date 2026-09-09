@@ -202,6 +202,32 @@ front face there are **5 mm**, with nothing below for the full 70 mm down to the
 recess the screen 4.5 mm behind the tile. Screwing from the top puts two visible heads on
 the show face.*
 
+### Fastener schedule
+
+| Where | Qty | Size | Head | Into |
+|---|---|---|---|---|
+| Frame joints — splice up into the members | **12** | **M3 × 10** | any (hidden below the plate) | heat-set insert |
+| Tiles down into the frame ledge | **14** | **M3 × 10** | **countersunk** | heat-set insert |
+| Powerpole retainer through the left rail | **2** | **M3 × 10** | **countersunk** | heat-set insert |
+| RJ45 ears through the right rail | **2** | **M3 × 12** | **countersunk** | the ears' own threads |
+| Plinth down into the floor tray | **4** | **M3 × 16** + nut | any | nut ⚠️ see below |
+| Cradle block + shroud into the tray | **4** | **M3 × 12** + nut | any | nut ⚠️ see below |
+| Plinth up into the module's VESA | **4** | **M4 × 35** | any | the module's own threads |
+
+**28 M3 × 10 (16 of them countersunk), 2 M3 × 12 countersunk, 4 M3 × 16, 4 M3 × 12,
+4 M4 × 35, 8 M3 nuts.**
+
+**Heat-set inserts needed: 28** — 12 frame joints, 14 tiles, 2 Powerpole. The four seats
+in the front members go unused now that joint is bonded; leave them empty.
+
+**Why M3 × 10 and not 12** for the tile screws: the tile is 4.5 and the insert is 5.7, so
+10.2 is fully engaged. The seat is 6.7 deep, so 11.2 is the most a screw can take before
+it bottoms out — a 12 will jack the tile back off the ledge.
+
+⚠️ **Unresolved: the four plinth and four cradle nuts land under the tray, which then
+sits on eight nuts instead of flat on the case floor.** Either counterbore the tray's
+underside for them, or turn those screws over and put the nut on top. Not yet drawn.
+
 ### Which way up everything goes
 
 **Members print upside-down relative to how they install.** The STL is exported with the
