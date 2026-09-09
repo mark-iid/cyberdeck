@@ -174,7 +174,11 @@ module splice() {
         translate([-4, SPL_W/2 - RIB_RELIEF, -1])
             cube([8, RIB_RELIEF + 1, SPL_T + 2]);
         for (x = [-26, -14, 14, 26]) {
-            translate([x, 0, -1]) cylinder(d=3.4, h=SPL_T + 2);
+            // M3_CLEAR, not a literal. This was hardcoded 3.4 and was the one
+            // place missed when M3_CLEAR went to 3.6 - which was widened for
+            // exactly this case, two separately printed parts whose holes have
+            // to line up. Found by measuring the solid, not by reading code.
+            translate([x, 0, -1]) cylinder(d=M3_CLEAR, h=SPL_T + 2);
             translate([x, 0, SPL_T - SPL_CB_H]) cylinder(d=SPL_CB_D, h=SPL_CB_H + 1);
         }
     }

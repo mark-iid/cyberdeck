@@ -260,6 +260,47 @@ by design; `screen_tile` 32 is a frame with a window and **no fasteners on purpo
 (§14 #4); `front_strap` 28 is a bar with one scallop. Everything else is in the hundreds
 or thousands.
 
+### Part-by-part inventory, measured 2026-09-07
+
+The audit above still missed a bolt drilled into a window, and an operator screenshot
+caught it. **The diagnosis is not bad luck: every check in this repo tests something its
+author already thought of.** Assertions encode a model; if the model is wrong in a way
+nobody imagined, they pass. Every fault in this build — the keystone, the front-rail
+bosses, the splice against a rib, the tray's windows — was found by *looking at
+something*, never by a check.
+
+So: `docs/design/slice-svg.py` and `docs/design/features.py` slice a finished STL and
+report **what is actually in it** — every loop's size and centre. They assert nothing.
+Run `features.py part.stl [height-fraction]`; some features only appear at certain
+heights, so sweep 0.3 / 0.5 / 0.75 on anything with bosses.
+
+| Part | Measured contents | |
+|---|---|---|
+| `member` | 4 joint seats + **5** ledge seats (3 side, 2 back) | ✅ |
+| `member_front` | 4 joint seats + 2 ledge seats | ✅ |
+| `splice` | 4 holes on ±14/±26 + rib scallop | ⚠️ holes were **⌀3.4, now 3.6** |
+| `front_strap` | 60 × 4.5 outline + rib scallop | ✅ |
+| `screen_tile` | 173 × 118 window, **no fasteners** | ✅ by design |
+| `left_rail` | rocker 21.2 × 28.7 · audio ⌀13 relief · Powerpole 16.7 × 9 · SMA ⌀6.7 · 2 retainer screws on 26 · 3 tile screws | ✅ |
+| `right_rail` | USB 21.5 × 24.5 · RJ45 16.2 × 16.0 · 2 ears on **27.5** · 3 tile screws | ✅ |
+| `back_left` | 5 vent slots 4 × 51 · 4 tile screws | ✅ |
+| `back_right` | 7 vent slots 4 × 51 · 4 tile screws | ✅ |
+| `tray` | 2 windows · 6 bolts, each with a hex nut pocket | ✅ after the window fix |
+| `plinth` | 4 × ⌀4.7 VESA · 4 × ⌀3.6 into the tray · rib ring 85/67 | ✅ |
+| `cradle` / `shroud` | 2 tray bolts each | ✅ |
+| `pp_retainer` | pocket 16.7 × 9 · pin hole ⌀2.58 · 2 insert seats on 26 | ✅ |
+| `preload` | plain 12 × 190 × 20 | ✅ by design |
+
+**One real fault found: the splice's holes were hardcoded ⌀3.4** and were the single place
+missed when `M3_CLEAR` went to 3.6 — a change made for exactly that case, two separately
+printed parts whose holes must line up. *The already-printed splices assemble fine
+(operator, 2026-09-07); the fix applies to any reprint.*
+
+**A caution on `member`:** its two back-ledge seats do not appear in a slice at 40 % of
+height and do at 75 %. That is the ledge sitting lower than the rail, not a missing
+feature. **Sweep heights before concluding anything is absent** — I briefly concluded it
+was, and it was not.
+
 ### Fastener schedule
 
 | Where | Qty | Size | Head | Into |
