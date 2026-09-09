@@ -46,6 +46,7 @@ SMA ⌀6.7 (coupon), audio (part), Powerpole pocket (part), rocker (part).
 | `shroud` | ✅ 2026-09-07. **74.6** for a drawn 74.5 — the reading that closed the Z question below. |
 | `member` ×1 | ✅ 2026-09-07. Fits the shell. Corner radius, rib bearing and the seats all good. |
 | **frame complete** | ✅ 2026-09-07. All four members printed and fitting. **`PLATE_W` 304.5 and `PLATE_D` 230.5 are confirmed against the real shell** — the oversize bias called in §6 was right, and needed no sanding. |
+| **frame ASSEMBLED and fitted** | ✅ 2026-09-07. Bolted with three splices: **sits clean on all twelve ribs with no rocking**, every splice scallop clears its rib, `front_strap` dry-fits. §12's perimeter-support scheme is proven. |
 | `member_front` ×2, `splice` ×4, `front_strap`, `shroud` | ✅ printed |
 
 ### Ready to print — nothing unknown
@@ -109,6 +110,10 @@ not reach the nearest counterbore.
 
 ⚠️ **The splice is now handed: the scallop must face the wall.** It is symmetric
 end-to-end but not across its width.
+
+✅ **CONFIRMED in the case 2026-09-07** — every scallop clears its rib and the assembled
+frame sits clean on all twelve ribs with no rocking. This was the last unverified joint
+feature, open since 2026-09-05, and the one whose first version was wrong.
 
 ### The front member's insert seats are the thinnest spot in the build
 
