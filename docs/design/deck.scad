@@ -102,8 +102,11 @@ TILE_GAP = 1;
 
 // --- Floor chassis ----------------------------------------------------------
 TRAY_T      = 4;
-TRAY_W      = 132.5;   // per half, split at x=0
-TRAY_D      = 195;
+// DERIVED from the floor it sits on, not restated. 2.5 mm of clearance all
+// round against the fillet that traps it.
+TRAY_GAP    = 2.5;
+TRAY_W      = (FLOOR_W - 2*TRAY_GAP)/2;   // 132.5 per half, split at x=0
+TRAY_D      = FLOOR_D - 2*TRAY_GAP;       // 195
 CR_WALL     = 3;
 CR_H        = 20;      // how far up the pack's 90 mm the cradle grips
 CR_FLANGE   = 8;
@@ -144,6 +147,13 @@ FOAM_T      = LEDGE_H + PLINTH_BIAS;                    // 2.0 nominal, 1.8 meas
 // Strips sit on the SIDE frame members, directly over the six side ribs, so the
 // load goes into the plate where the plate is actually supported - not into the
 // middle, which would just push on the module.
+// The front strap lives in the band between the plate's edge and the module's
+// front face. That band was measured by hand when the strap was drawn and never
+// asserted - so this is the check, not the comment.
+FS_BAND = MOD_FRONT - (-PLATE_D/2);       // 5.0
+FS_W    = 4.5;
+assert(FS_W < FS_BAND, "front strap is wider than the band beside the module");
+
 SPACER_H = BASE_H - PLATE_TOP + 1;   // 20: one mm of deliberate squeeze
 SPACER_L = 190;                      // clear of the R18 corners at +-97.25
 assert(SPACER_H >= BASE_H - PLATE_TOP, "preload strip is shorter than the recess");

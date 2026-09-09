@@ -260,6 +260,36 @@ by design; `screen_tile` 32 is a frame with a window and **no fasteners on purpo
 (§14 #4); `front_strap` 28 is a bar with one scallop. Everything else is in the hundreds
 or thousands.
 
+### Derive-or-restate review of the unprinted parts — 2026-09-07
+
+The corner fault was the first one closed *structurally*: the tile now **derives** its
+outline from the frame instead of restating it. Every fault so far has been a restatement
+that drifted. So each remaining unprinted part was asked one question: **what does it mate
+with, and does its geometry derive from that mate or independently restate it?**
+
+| Part | Mates with | Verdict |
+|---|---|---|
+| `screen_tile` | module, opening, rails, back tiles | **derives** — width `MOD_W + 2·TILE_GAP`, span `OPEN_FRONT`…`TILE_BACK`, window centred on `MOD_CY` |
+| `left_rail` / `right_rail` | opening, frame ledge, their connectors | **derives** — width is what the module leaves, corner clipped to the opening, screws from the shared list |
+| `cradle` / `shroud` | pack body, tray | **derives** — grip face from `BATT_BODY_W`, length from `BATT_D`, bolts shared |
+| `pp_retainer` | Powerpole housing, left rail | **derives** — pocket from `PP_W/PP_H`, pin from the measured `PP_A`, screws from `PP_EAR` shared with the rail |
+| `preload` | side frame members, lid foam | **derives** — height from `BASE_H − PLATE_TOP`, width `FRAME_W` |
+| `tray` | case floor, plinth, cradle | ⚠️ **restated** — fixed below |
+| `front_strap` | plate edge, module front face | ⚠️ **restated** — fixed below |
+
+**Two restatements found and converted:**
+
+- `TRAY_W` and `TRAY_D` were literals 132.5 and 195 with an assertion that they fit the
+  floor. Now **derived**: `(FLOOR_W − 2·TRAY_GAP)/2` and `FLOOR_D − 2·TRAY_GAP`. Same
+  numbers, but they now move if the floor survey ever does.
+- `FS_W` was 4.5 with the band measured by hand in a comment. Now **asserted** against
+  `MOD_FRONT − (−PLATE_D/2)` = 5.0, so the strap cannot outgrow its gap unnoticed.
+
+**One thing worth knowing, not a fault:** the pack's back edge overhangs the tray by
+**2.5 mm** — the tray stops at y 97.5 and the pack reaches 100. That is 67.5 of a 70 mm
+base supported with the centre of mass well inside, so it will not rock. The tray cannot
+reach further without losing its clearance to the fillet that traps it.
+
 ### ✅ Tiles now match the opening's rounded corners — 2026-09-07
 
 The opening the tiles drop into has **rounded corners, radius 6** (`CORNER_R` − `FRAME_W`).

@@ -526,7 +526,7 @@ module pp_retainer() {
 // peel. Key both faces with abrasive first. The other three joints stay
 // bolted, so the frame still comes apart along its length.
 FS_LEN = 60;                      // +-30 either side of the joint
-FS_W   = 4.5;                     // plate edge -110.75, clear of the module
+// FS_W is in deck.scad, asserted against the band it has to fit.
 FS_H   = 5;
 FS_RIB = RIB_OVERLAP_D + 0.75;    // scallop for the rib under the joint
 
