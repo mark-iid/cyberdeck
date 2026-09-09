@@ -44,7 +44,9 @@ SMA ⌀6.7 (coupon), audio (part), Powerpole pocket (part), rocker (part).
 | `joint_test` | ✅ 2026-09-05. Settles the ⌀4.2 × 6.7 insert seat, the 1 mm skin, the ⌀8 boss + counterbore, **M3 × 10**, and joint stiffness. Melt test done. |
 | `plinth` | ✅ 2026-09-05. **26.7** for a drawn 26.5; VESA pattern lines up. Module has a home. |
 | `shroud` | ✅ 2026-09-07. **74.6** for a drawn 74.5 — the reading that closed the Z question below. |
-| `member` ×1 | ✅ 2026-09-07. Fits the shell. Corner radius, rib bearing and the seats all good — see the caveat under Print order. |
+| `member` ×1 | ✅ 2026-09-07. Fits the shell. Corner radius, rib bearing and the seats all good. |
+| **frame complete** | ✅ 2026-09-07. All four members printed and fitting. **`PLATE_W` 304.5 and `PLATE_D` 230.5 are confirmed against the real shell** — the oversize bias called in §6 was right, and needed no sanding. |
+| `member_front` ×2, `splice` ×4, `front_strap`, `shroud` | ✅ printed |
 
 ### Ready to print — nothing unknown
 
@@ -136,14 +138,10 @@ The active area starts at y = −100.5. At 10 the front ledge lands *inside* it 
 frame begins covering the screen. **That constraint was never asserted** — it is now, so
 the next person who reaches for the obvious fix gets stopped rather than shipping it.
 
-**The residual risk, stated plainly:** `joint_test` validated a **12 mm** member with
-4 mm of wall. The 8 mm case has **half that wall and has never been tested**, and it sits
-on the plate's outer edge — which is also the surface that bears on the rib shelf, so a
-bulge from melting an insert in would lift the plate off a rib.
-
-**Test it on the part, not on a new coupon.** Print one `member_front`, melt its two
-front inserts in, and look at the outer edge before printing the second. Two are needed
-anyway, so the check is free.
+✅ **RETIRED 2026-09-07 by the bonded front joint.** The 8 mm wall was only ever a
+concern because an insert had to be melted into it. That joint is now bonded, so the
+front rail's four seats go unused and **no insert anywhere in the build sits in less than
+4 mm of wall.** The risk went away as a side effect of fixing a different problem.
 
 *The seats stay centred. Shifting them inward to protect the outer edge would leave
 1.5 mm on the inner side — below the vendor minimum — and an insert splits its thinnest
