@@ -226,6 +226,17 @@ change to a bolt pattern, a part's placement, or a coordinate frame.
 | `plinth` | 4 plinth bolts, plinth + both tray halves | ✅ PASS |
 | `cradle` | 4 cradle and shroud bolts | ❌ **FAILED, now fixed** |
 
+⚠️ **And the probe has a blind spot it cannot fix.** It tests "is there material where a
+hole should be" — but **a window is also no material**, so a bolt drilled into fresh air
+reads as a pass. Both plinth bolts, at y = −79 and −4, fell inside the tray's two plenum
+windows: the holes were cut into nothing and **the plinth had nothing to bolt to.** Found
+from a slicer screenshot, 2026-09-07, not from anything in this repo.
+
+Fixed two ways. The tray's windows are now **one** spanning *between* the plinth's cross
+ribs rather than across them, and they are declared as a **list** so an assertion can
+check every bolt lands on material and not in or beside a window. That check is
+arithmetic, so unlike the probe it cannot give a false pass.
+
 **The cradle failure was real and would have reached assembly.** `tray_half` drilled
 `if (b[0] >= 0)` and relied on mirroring for the other side — correct while the pattern
 was symmetric. It stopped being symmetric when the shroud moved to the terminal side:

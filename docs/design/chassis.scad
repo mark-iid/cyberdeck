@@ -80,19 +80,41 @@ RIB    = 12;       // TRAY_T is declared up with the plinth, which stands on it
 
 // Plinth and cradle bolts come from deck.scad in CASE coordinates.
 
+// Windows declared as a LIST, so the bolt positions can be checked against them.
+//
+// The old pair spanned y -85.5..-60 and -48..10, and BOTH plinth bolts - at
+// y = -79 and -4 - fell inside them. The holes were drilled into fresh air and
+// the plinth had nothing to bolt to. Found from a slicer screenshot, not from
+// any check here: check-holes.scad probes for "no material where a hole should
+// be", and a window is also no material, so it read as a pass.
+//
+// One window now, spanning between the plinth's two cross ribs rather than
+// across them.
+TRAY_WINDOWS = [
+    [RIB, -73, TRAY_W - RIB, -10],          // plenum, between the plinth ribs
+    [84,   24, TRAY_W - RIB, TRAY_D/2 - RIB] // back channel, beside the battery
+];
+
 module tray_window(x0, y0, x1, y1) {
     translate([x0, y0, -1]) cube([x1 - x0, y1 - y0, TRAY_T + 2]);
+}
+
+// Every bolt must land on material, not in a window. This is the check that was
+// missing; it is arithmetic, so it costs nothing and cannot give a false pass.
+for (b0 = concat(PLINTH_BOLT, CRADLE_BOLT)) {
+    b = [abs(b0[0]), b0[1]];
+    for (w = TRAY_WINDOWS)
+        assert(!(b[0] > w[0] - 4 && b[0] < w[2] + 4 &&
+                 b[1] > w[1] - 4 && b[1] < w[3] + 4),
+               str("tray bolt at ", b, " falls in or beside a window"));
+    assert(b[0] <= TRAY_W - 4 && abs(b[1]) <= TRAY_D/2 - 4,
+           str("tray bolt at ", b, " is off the tray"));
 }
 
 module tray_half() {
     difference() {
         translate([0, -TRAY_D/2, 0]) cube([TRAY_W, TRAY_D, TRAY_T]);
-        // under the module - the plenum must stay open
-        tray_window(RIB, -TRAY_D/2 + RIB, TRAY_W - RIB, -60);
-        tray_window(RIB, -48, TRAY_W - RIB, 10);
-        // back channel, beside the battery
-        tray_window(84, 24, TRAY_W - RIB, TRAY_D/2 - RIB);   // 84 not 66: the
-        // shroud bolts at 77.5 and needs material under it
+        for (w = TRAY_WINDOWS) tray_window(w[0], w[1], w[2], w[3]);
         // EVERY bolt, folded onto x >= 0 with abs() - not filtered to x >= 0.
         //
         // The filter was written when the pattern was symmetric, so mirroring
