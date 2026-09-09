@@ -108,6 +108,14 @@ CR_WALL     = 3;
 CR_H        = 20;      // how far up the pack's 90 mm the cradle grips
 CR_FLANGE   = 8;
 CR_SLIP     = 1;       // total clearance across a captured dimension
+// Nut traps in the tray's UNDERSIDE. Without them the eight chassis nuts sit
+// between the tray and the case floor, and the tray rides 2.4 mm up on them -
+// which does not just rock, it breaks the stack: 6.4 + 26.5 + 44 = 76.9 against
+// a 75 shelf, so the module lifts the plate off its ribs. Exactly the failure
+// PLINTH_BIAS exists to prevent, arriving by a route the assertion cannot see
+// because a nut is not geometry.
+NUT_AF    = 5.5 + 0.4;   // M3 hex across flats, plus clearance
+NUT_POCK  = 2.6;         // 2.4 nut + 0.2, leaving TRAY_T - 2.6 = 1.4 of tray
 PLINTH_BIAS = 0.5;   // drawn short on purpose, see chassis.scad
 PLINTH_H    = SHELF_H - MOD_T - TRAY_T - PLINTH_BIAS;   // 26.5
 // The gap the foam tape on the module's top face has to close. S12 quotes 0.5,

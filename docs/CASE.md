@@ -210,12 +210,12 @@ the show face.*
 | Tiles down into the frame ledge | **14** | **M3 × 10** | **countersunk** | heat-set insert |
 | Powerpole retainer through the left rail | **2** | **M3 × 10** | **countersunk** | heat-set insert |
 | RJ45 ears through the right rail | **2** | **M3 × 12** | **countersunk** | the ears' own threads |
-| Plinth down into the floor tray | **4** | **M3 × 16** + nut | any | nut ⚠️ see below |
-| Cradle block + shroud into the tray | **4** | **M3 × 12** + nut | any | nut ⚠️ see below |
+| Plinth down into the floor tray | **4** | **M3 × 10** + nut | any | nut, in a pocket |
+| Cradle block + shroud into the tray | **4** | **M3 × 8** + nut | any | nut, in a pocket |
 | Plinth up into the module's VESA | **4** | **M4 × 35** | any | the module's own threads |
 
-**28 M3 × 10 (16 of them countersunk), 2 M3 × 12 countersunk, 4 M3 × 16, 4 M3 × 12,
-4 M4 × 35, 8 M3 nuts.**
+**32 M3 × 10 (16 of them countersunk), 2 M3 × 12 countersunk, 4 M3 × 8, 4 M4 × 35,
+8 M3 nuts.**
 
 **Heat-set inserts needed: 28** — 12 frame joints, 14 tiles, 2 Powerpole. The four seats
 in the front members go unused now that joint is bonded; leave them empty.
@@ -224,9 +224,29 @@ in the front members go unused now that joint is bonded; leave them empty.
 10.2 is fully engaged. The seat is 6.7 deep, so 11.2 is the most a screw can take before
 it bottoms out — a 12 will jack the tile back off the ledge.
 
-⚠️ **Unresolved: the four plinth and four cradle nuts land under the tray, which then
-sits on eight nuts instead of flat on the case floor.** Either counterbore the tray's
-underside for them, or turn those screws over and put the nut on top. Not yet drawn.
+✅ **The eight chassis nuts sit in hex pockets in the tray's underside** (2.6 deep,
+leaving 1.4 mm of tray), so nothing protrudes and the tray lies flat.
+
+**This was not cosmetic.** Nuts under the tray would have raised it 2.4 mm, and the stack
+becomes `6.4 + 26.5 + 44 = 76.9` against a 75 mm shelf — **the module lifts the plate off
+its ribs.** That is the exact failure `PLINTH_BIAS` exists to prevent, arriving by a route
+no assertion could catch, because a nut is not geometry. The pockets also shorten the
+screws from 16 and 12 to **10 and 8**.
+
+### Where the tray sits
+
+    case floor  ────────────────────────────────   z = 0
+                 [ tray, 4 mm ]                     265 x 195 on the FLAT floor
+                 [ plinth, 26.5 ]                   bolted through the tray
+                 [ module, 44 ]                     bolted to the plinth (VESA)
+    rib shelf   ─────────────────── 75              module top lands at 74.5
+
+Two halves, 132.5 × 195 each, split at x = 0, laid on the **flat 270 × 200 floor** before
+the corner fillet climbs. Clearance is 2.5 mm all round. **Nothing fastens it to the
+shell** (§1) — the fillet traps it on four sides, and the mass on top holds it down.
+
+The two halves are not joined to each other: **the plinth bridges the seam** and bolts
+into both, which is why its bolts are at x = ±20 and none on the centreline.
 
 ### Which way up everything goes
 

@@ -94,8 +94,14 @@ module tray_half() {
         tray_window(84, 24, TRAY_W - RIB, TRAY_D/2 - RIB);   // 84 not 66: the
         // shroud bolts at 77.5 and needs material under it
         // Only the holes falling on THIS half (x >= 0); the mirror gets the rest.
-        for (b = concat(PLINTH_BOLT, CRADLE_BOLT)) if (b[0] >= 0)
+        // Each gets a hex nut trap in the UNDERSIDE so nothing protrudes below
+        // the tray - it has to sit flat on the case floor or the whole stack
+        // rises (deck.scad).
+        for (b = concat(PLINTH_BOLT, CRADLE_BOLT)) if (b[0] >= 0) {
             translate([b[0], b[1], -1]) cylinder(d=M3_CLEAR, h=TRAY_T + 2);
+            translate([b[0], b[1], -1])
+                cylinder(d=NUT_AF/cos(30), h=NUT_POCK + 1, $fn=6);
+        }
     }
 }
 
