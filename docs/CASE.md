@@ -260,6 +260,36 @@ by design; `screen_tile` 32 is a frame with a window and **no fasteners on purpo
 (§14 #4); `front_strap` 28 is a bar with one scallop. Everything else is in the hundreds
 or thousands.
 
+### ⚠️ The shroud does not shield anything — corrected 2026-09-07
+
+It is named for a job it was never geometrically able to do:
+
+| | |
+|---|---|
+| terminal end face | **70 × 90**, spanning z 4 … 94 |
+| shroud cavity | **64 × 67.5**, spanning z 4 … 71.5 |
+
+Covering 70 of depth needs 76 with walls, against a **72.75** battery zone. Reaching z 94
+means passing the back tile at **76.5**. Both impossible — so no version of this part
+could have worked, at any size.
+
+**That comparison is one subtraction and it was never made.** The part was named after
+the job, given a rationale for why full height was necessary, and checked only for
+internal consistency. Same shape as the keystone: designed against a description rather
+than against the thing it had to fit.
+
+**The part stays as printed.** Its mechanical job is real and it does it: inboard face at
+x −50.5 against the pack body at −50, so it braces the 100 mm axis exactly like the plain
+block opposite. Terminals at −58 sit inside its cavity; its end walls are outboard of the
+body and clash with nothing.
+
+**Terminal insulation moves off the printed parts entirely** — boots or heat-shrink on
+the lugs, which is the normal answer for battery posts and costs no space (operator,
+2026-09-07). §11's fire hazard is addressed there, not here.
+
+*Fallback if the two blocks prove not to hold the pack firmly enough: the case's own pick
+foam, packed beside it. No new part needed.*
+
 ### Part-by-part inventory, measured 2026-09-07
 
 The audit above still missed a bolt drilled into a window, and an operator screenshot
