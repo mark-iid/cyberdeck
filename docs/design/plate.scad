@@ -234,7 +234,7 @@ module back_tile(side) {
     w  = side > 0 ? OPEN_W/2 - WELL_X1 : WELL_X0 + OPEN_W/2;
     d  = OPEN_BACK - TILE_BACK;
     x0 = side > 0 ? WELL_X1 : -OPEN_W/2;
-    difference() {
+    in_opening() difference() {
         translate([x0, TILE_BACK, 0]) cube([w, d, TILE_T]);
         tile_screws(x0 + w/2, TILE_BACK + d/2, w, d, 0, 0);
         vent_slots(x0 + VENT_INSET, x0 + w - VENT_INSET,
@@ -418,6 +418,24 @@ module feature(f) {
     else assert(false, str(f[0], " has an unknown cutout kind"));
 }
 
+// The opening the tiles drop into has ROUNDED corners - radius CORNER_R minus
+// FRAME_W, so 6. Four of the five tiles reach one of those corners and were
+// drawn as plain rectangles with square corners, which foul the frame's fillet
+// and hold the tile up. Found by the operator fitting a printed back tile,
+// 2026-09-07.
+//
+// Rather than round each tile by hand, every tile is intersected with the
+// OPENING'S OWN PROFILE - the same rr() call frame_full() uses. A tile cannot
+// then disagree with the frame about its corners, whatever the radius becomes.
+OPEN_R = CORNER_R - FRAME_W;      // 6
+
+module in_opening() {
+    intersection() {
+        children();
+        translate([0, OPEN_CY, -1]) rr(OPEN_W, OPEN_D, OPEN_R, TILE_T + 2);
+    }
+}
+
 // A countersunk clearance hole, head flush with the tile top.
 module tile_screw() {
     translate([0, 0, -1]) cylinder(d=RJ_CLEAR, h=TILE_T + 2);
@@ -443,11 +461,12 @@ RAIL_CX = (MOD_W/2 + TILE_GAP + OPEN_W/2)/2;    // 120.625
 RAIL_CY = (OPEN_FRONT + TILE_BACK)/2;           // -39.5
 
 module rail_tile(features, side) {
-    difference() {
-        translate([-RAIL_W/2, -RAIL_D/2, 0]) cube([RAIL_W, RAIL_D, TILE_T]);
-        for (f = features) feature(f);
-        tile_screws(side*RAIL_CX, RAIL_CY, RAIL_W, RAIL_D, side*RAIL_CX, RAIL_CY);
-    }
+    translate([-side*RAIL_CX, -RAIL_CY, 0]) in_opening()
+        translate([side*RAIL_CX, RAIL_CY, 0]) difference() {
+            translate([-RAIL_W/2, -RAIL_D/2, 0]) cube([RAIL_W, RAIL_D, TILE_T]);
+            for (f = features) feature(f);
+            tile_screws(side*RAIL_CX, RAIL_CY, RAIL_W, RAIL_D, side*RAIL_CX, RAIL_CY);
+        }
 }
 module left_rail()  { rail_tile(LEFT_FEATURES, -1); }
 module right_rail() { rail_tile(RIGHT_FEATURES,  1); }

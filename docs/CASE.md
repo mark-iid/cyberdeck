@@ -260,6 +260,34 @@ by design; `screen_tile` 32 is a frame with a window and **no fasteners on purpo
 (§14 #4); `front_strap` 28 is a bar with one scallop. Everything else is in the hundreds
 or thousands.
 
+### ✅ Tiles now match the opening's rounded corners — 2026-09-07
+
+The opening the tiles drop into has **rounded corners, radius 6** (`CORNER_R` − `FRAME_W`).
+All five tiles were drawn as plain rectangles. **Four of them reach one of those corners**
+and their square corner fouls the frame's fillet, holding the tile up off its ledge.
+Found by the operator fitting a printed back tile.
+
+| Tile | Corner it reaches |
+|---|---|
+| `back_left` | opening's back-left |
+| `back_right` | opening's back-right |
+| `left_rail` | opening's front-left |
+| `right_rail` | opening's front-right |
+| `screen_tile` | none — it stops at x ±101, far from any corner ✅ |
+
+**Fixed by construction, not by hand.** Every tile is now intersected with the *opening's
+own profile* — the same `rr()` call `frame_full()` uses. A tile cannot disagree with the
+frame about its corners whatever the radius later becomes, and nobody has to remember
+which tiles touch which corner.
+
+*The two printed back tiles do not need reprinting: it is one corner each, about 35 mm³
+of material, a minute with a file.* The rails had not been printed yet.
+
+**This is the fourth fault of the same kind** — the keystone, the tray's windows, the
+shroud's cavity, and now this. All four are a part checked against its own definition
+rather than against the thing it has to meet. The frame's corner radius has been in
+`CORNER_R` since the first day and the tiles simply never referred to it.
+
 ### ⚠️ The shroud does not shield anything — corrected 2026-09-07
 
 It is named for a job it was never geometrically able to do:
