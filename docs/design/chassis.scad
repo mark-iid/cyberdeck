@@ -93,11 +93,23 @@ module tray_half() {
         // back channel, beside the battery
         tray_window(84, 24, TRAY_W - RIB, TRAY_D/2 - RIB);   // 84 not 66: the
         // shroud bolts at 77.5 and needs material under it
-        // Only the holes falling on THIS half (x >= 0); the mirror gets the rest.
+        // EVERY bolt, folded onto x >= 0 with abs() - not filtered to x >= 0.
+        //
+        // The filter was written when the pattern was symmetric, so mirroring
+        // one half reproduced the other. CRADLE_BOLT stopped being symmetric
+        // when the shroud moved to the terminal side: the block bolts at +57.5
+        // and the shroud at -77.5. Filtering dropped the shroud's holes, and
+        // mirroring then put a useless pair at -57.5 instead. The tray had no
+        // holes for the shroud at all. check-holes.scad caught it.
+        //
+        // Folding gives both halves all three x positions, so two per half go
+        // unused. Four spare ⌀3.6 holes in a skeletal tray costs nothing;
+        // guessing which half needs which cost an afternoon.
         // Each gets a hex nut trap in the UNDERSIDE so nothing protrudes below
         // the tray - it has to sit flat on the case floor or the whole stack
         // rises (deck.scad).
-        for (b = concat(PLINTH_BOLT, CRADLE_BOLT)) if (b[0] >= 0) {
+        for (b0 = concat(PLINTH_BOLT, CRADLE_BOLT)) {
+            b = [abs(b0[0]), b0[1]];
             translate([b[0], b[1], -1]) cylinder(d=M3_CLEAR, h=TRAY_T + 2);
             translate([b[0], b[1], -1])
                 cylinder(d=NUT_AF/cos(30), h=NUT_POCK + 1, $fn=6);

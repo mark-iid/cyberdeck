@@ -205,6 +205,50 @@ front face there are **5 mm**, with nothing below for the full 70 mm down to the
 recess the screen 4.5 mm behind the tile. Screwing from the top puts two visible heads on
 the show face.*
 
+### Full-build audit, 2026-09-07 — every fastener hole probed
+
+Prompted by both back tiles exporting with **no screw holes at all**. The shared screw
+list was right and its assertion passed; the holes were placed in the wrong coordinate
+frame, landed off the part, and cut nothing. Bounding box, solid count, z = 0 seating and
+the list assertion were all still green.
+
+**An assertion can only compare numbers to numbers.** `docs/design/check-holes.scad`
+compares the list to the **solid**: a thin probe at every declared fastener position,
+intersected with the parts as assembled. Material where a hole should be is a failure
+nothing else in this repo can see. Run it with `docs/design/check-holes.sh` after any
+change to a bolt pattern, a part's placement, or a coordinate frame.
+
+| Probe | Covers | Result |
+|---|---|---|
+| `joint` | 16 frame joint seats, against all four members reassembled | ✅ PASS |
+| `ledge` | 14 tile seats in the frame's ledge | ✅ PASS |
+| `tile` | 14 through-holes in the five tiles, each moved to where it sits | ✅ PASS |
+| `plinth` | 4 plinth bolts, plinth + both tray halves | ✅ PASS |
+| `cradle` | 4 cradle and shroud bolts | ❌ **FAILED, now fixed** |
+
+**The cradle failure was real and would have reached assembly.** `tray_half` drilled
+`if (b[0] >= 0)` and relied on mirroring for the other side — correct while the pattern
+was symmetric. It stopped being symmetric when the shroud moved to the terminal side:
+block bolts at +57.5, shroud at −77.5. The filter dropped the shroud's holes entirely and
+mirroring put a useless pair at −57.5 instead. **The tray had nowhere to bolt the terminal
+shroud.** Now folded with `abs()`, so both halves carry all three x positions and two per
+half go unused — four spare ⌀3.6 holes in a skeletal tray, against an afternoon lost.
+
+**Also added, since the same class of thing was never checked:**
+
+- `check-stl.py` now reports **facet count**, and warns below 24. A part whose cutouts
+  silently failed to cut looks perfect on every other line — 112 facets against a
+  sibling's 2176 was the only visible symptom.
+- Assertions that the five tiles **fill the opening exactly**: screen tile + two rails
+  across the width, front section + back section down the depth, and back tiles + battery
+  well across the width again. Each is sized from a different chain of constants and
+  nothing had ever added them up.
+
+**Clean facet counts, for reference:** `preload` 12 and `rail_blank` 12 are plain blocks
+by design; `screen_tile` 32 is a frame with a window and **no fasteners on purpose**
+(§14 #4); `front_strap` 28 is a bar with one scallop. Everything else is in the hundreds
+or thousands.
+
 ### Fastener schedule
 
 | Where | Qty | Size | Head | Into |

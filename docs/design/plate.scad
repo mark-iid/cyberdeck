@@ -232,7 +232,7 @@ module back_tile(side) {
     x0 = side > 0 ? WELL_X1 : -OPEN_W/2;
     difference() {
         translate([x0, TILE_BACK, 0]) cube([w, d, TILE_T]);
-        tile_screws(x0 + w/2, TILE_BACK + d/2, w, d);
+        tile_screws(x0 + w/2, TILE_BACK + d/2, w, d, 0, 0);
         vent_slots(x0 + VENT_INSET, x0 + w - VENT_INSET,
                    TILE_BACK + VENT_INSET, TILE_BACK + d - VENT_INSET);
     }
@@ -423,10 +423,16 @@ module tile_screw() {
 // The screws from the shared list that fall inside this tile's footprint, with
 // the tile's own origin subtracted. Filtering rather than re-listing is what
 // stops a tile and the frame disagreeing about where a screw is.
-module tile_screws(cx, cy, w, d) {
+// (cx, cy, w, d) is the tile's footprint in PLATE coordinates; (ox, oy) is the
+// origin the tile is actually DRAWN about. The rails are drawn centred on
+// themselves, so ox = cx; the back tiles are drawn in plate coordinates, so
+// ox = 0. Passing the wrong one puts the holes somewhere the tile is not and
+// they silently cut nothing - which is exactly what happened to both back
+// tiles, and no assertion saw it because the screw LIST was correct.
+module tile_screws(cx, cy, w, d, ox, oy) {
     for (t = TILE_SCREW)
         if (abs(t[0] - cx) < w/2 && abs(t[1] - cy) < d/2)
-            translate([t[0] - cx, t[1] - cy, 0]) tile_screw();
+            translate([t[0] - ox, t[1] - oy, 0]) tile_screw();
 }
 
 RAIL_CX = (MOD_W/2 + TILE_GAP + OPEN_W/2)/2;    // 120.625
@@ -436,7 +442,7 @@ module rail_tile(features, side) {
     difference() {
         translate([-RAIL_W/2, -RAIL_D/2, 0]) cube([RAIL_W, RAIL_D, TILE_T]);
         for (f = features) feature(f);
-        tile_screws(side*RAIL_CX, RAIL_CY, RAIL_W, RAIL_D);
+        tile_screws(side*RAIL_CX, RAIL_CY, RAIL_W, RAIL_D, side*RAIL_CX, RAIL_CY);
     }
 }
 module left_rail()  { rail_tile(LEFT_FEATURES, -1); }
@@ -587,6 +593,19 @@ for (side = [-1, 1]) {
                  && t[1] < OPEN_BACK - VENT_INSET),
                str("vent grille runs over the tile screw at ", t));
 }
+
+// The five tiles must cover the opening exactly - no gap, no overlap. Each is
+// sized from a different chain of constants (the screen tile from the module,
+// the rails from what is left over, the back tiles from the battery envelope),
+// and nothing until now added them up.
+assert(MOD_W + 2*TILE_GAP + 2*RAIL_W == OPEN_W,
+       "screen tile + two rails do not fill the opening's width");
+assert((TILE_BACK - OPEN_FRONT) + (OPEN_BACK - TILE_BACK) == OPEN_D,
+       "tiles do not fill the opening's depth");
+assert((WELL_X0 + OPEN_W/2) + (WELL_X1 - WELL_X0) + (OPEN_W/2 - WELL_X1) == OPEN_W,
+       "back tiles plus the battery well do not fill the opening's width");
+assert(WELL_X0 < BATT_X0 && WELL_X1 > BATT_X1,
+       "battery well does not clear the pack");
 
 // Members carry bosses below z=0. Exported FLIPPED, for the same reason as the
 // joint coupon: visible face on the bed, every boss pointing up.
