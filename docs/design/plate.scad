@@ -188,10 +188,34 @@ module splice() {
 // Spans the opening front back to just past the module, with the window over
 // the active area - which is centred on the module, not on the plate.
 TILE_BACK = MOD_FRONT + MOD_D + TILE_GAP;   // +28.25
+// Trapped under the rails by a thin lap, 2026-09-07.
+//
+// The tile reaches no ledge on its sides, so it cannot be screwed down; it was
+// a drop-in held by the module's foam tape. The rails were already printed by
+// the time this was wanted, so the lap had to go entirely on THIS part: a thin
+// flange along each side that slides UNDER the rail tile. Lift the screen tile
+// and it fouls the rail, which is bolted down. Nothing else changes.
+//
+// LAP_T is 1.2 against the rail's underside at LEDGE_H = 1.5, so 0.3 of
+// clearance. The flange deliberately does NOT support the rail - a flange
+// printed slightly proud would tip the rail off its ledge, which is worse than
+// the cantilever it replaces.
+//
+// LAP_W is limited by the bed, not by what would be ideal: 202 + 2x5 = 212
+// against 215.
+LAP_W = 5;
+LAP_T = 1.2;
+assert(LAP_T < LEDGE_H, "screen tile lap is thicker than the gap under the rail");
+assert(MOD_W + 2*TILE_GAP + 2*LAP_W <= BED, "screen tile with laps is off the bed");
+
 module screen_tile() {
     w = MOD_W + 2*TILE_GAP;
+    d = TILE_BACK - OPEN_FRONT;
     difference() {
-        translate([-w/2, OPEN_FRONT, 0]) cube([w, TILE_BACK - OPEN_FRONT, TILE_T]);
+        union() {
+            translate([-w/2, OPEN_FRONT, 0]) cube([w, d, TILE_T]);
+            translate([-w/2 - LAP_W, OPEN_FRONT, 0]) cube([w + 2*LAP_W, d, LAP_T]);
+        }
         translate([-WIN_W/2, MOD_CY - WIN_D/2, -1]) cube([WIN_W, WIN_D, TILE_T + 2]);
     }
 }

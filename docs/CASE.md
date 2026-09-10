@@ -2307,11 +2307,30 @@ which caught two of them belonging to nobody while it was being written.
 No screw sits on the **front** ledge: it is `LEDGE_WF` = 5 wide and a ⌀8 boss will not
 fit, which is now an assertion rather than an omission.
 
-**The screen tile is deliberately left unfastened**, and this is a decision, not an
-oversight. It is 202 wide against a ledge whose inner edge is at ±130.25, so **it does
-not reach the frame anywhere except its front lip**. It is bounded on all four sides by
-the frame and the other tiles, carries no connector and takes no cable pull, and leaving
-it loose is what makes the screen serviceable without dismantling the plate.
+**The screen tile takes no screws** — it is 202 wide against a ledge whose inner edge is
+at ±130.25, so **it does not reach the frame anywhere except its front lip**. It cannot be
+bolted down.
+
+**It is trapped under the rails instead** (2026-09-07). A **5 mm lap, 1.2 thick**, runs
+along each side and slides beneath the rail tile, whose underside sits at `LEDGE_H` = 1.5 —
+so 0.3 of clearance. Lift the screen tile and it fouls a rail, and the rails are bolted.
+
+Two constraints shaped it:
+
+- **The rails were already printed**, so the lap had to go entirely on this part. A
+  matching rebate in the rails would have been tidier and was no longer available.
+- **The bed, not the ideal.** 202 + 2 × 5 = **212 against 215**. That is why the lap is
+  5 mm and not 10.
+
+**The lap deliberately does not support the rail.** A flange printed slightly proud would
+tip the rail off its ledge, which is worse than the cantilever it would relieve — hence
+1.2 against 1.5 rather than a flush 1.5.
+
+Removing the tile is still a lift-the-rail job, not a dismantle-the-plate job, so the
+screen stays serviceable.
+
+*Rolls back in one commit if it is not wanted; the tile reverts to a plain 202-wide
+drop-in held by the module's foam tape.*
 
 **2 — The frame now joins.** `JOINT_SEAT` holds sixteen positions, four per joint at 14
 and 26 either side, and `frame_full()` carries a seat at each. `member()` inherits them.
