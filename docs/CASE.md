@@ -2326,8 +2326,13 @@ Two constraints shaped it:
 tip the rail off its ledge, which is worse than the cantilever it would relieve — hence
 1.2 against 1.5 rather than a flush 1.5.
 
-Removing the tile is still a lift-the-rail job, not a dismantle-the-plate job, so the
-screen stays serviceable.
+**Assembly order is now fixed by this: the screen tile goes in BEFORE the rails.**
+With both rails bolted the tile cannot be fitted at all — engaging one lap needs the tile
+to slide 5 mm that way, which pulls the opposite lap out from under its rail, and no
+amount of tilting substitutes because rotation does not translate the far lap outboard.
+
+Servicing is the reverse and still cheap: unbolt **one** rail (4 screws), slide the tile
+5 mm toward the gap to free the far lap, lift it out. Not a dismantle-the-plate job.
 
 *Rolls back in one commit if it is not wanted; the tile reverts to a plain 202-wide
 drop-in held by the module's foam tape.*
