@@ -556,9 +556,21 @@ module pp_retainer() {
         // pin, through both walls and the housing between them
         translate([0, 0, PP_A - TILE_T]) rotate([90, 0, 0])
             cylinder(d=PP_PIN + 0.2, h=od + 2, center=true);
-        // insert seats, blind from the front face
-        for (x = [-PP_EAR/2, PP_EAR/2])
-            translate([x, 0, -1]) cylinder(d=INSERT_D, h=INSERT_H + 1);
+        // ONE insert seat, inboard only. The outboard one at plate x -133.625
+        // sits inside the frame's ledge (-140.25..-130.25), so a screw there
+        // cannot reach this part - the ledge is between them. It was also
+        // 1.6 mm from the rail tile's own ledge screw at -135.25.
+        //
+        // PP_EAR = 26 was sized against the rail's 39.25 width and never
+        // against what is UNDERNEATH the rail. Found by the assembly sweep:
+        // 6.375 x 14.8 x 1.5 = 141.53 mm3 of this part inside member_FL's
+        // ledge, matching the measured overlap exactly.
+        translate([PP_EAR/2, 0, -1]) cylinder(d=INSERT_D, h=INSERT_H + 1);
+        // ledge relief: the outboard end loses its top LEDGE_H so the frame's
+        // ledge can pass over it. On the printed part this is a file job -
+        // 6.4 x 14.8 x 1.5 off one top corner.
+        translate([-ow/2 - 1, -od/2 - 1, PP_DEPTH - LEDGE_H])
+            cube([ow/2 - 9.625 + 1, od + 2, LEDGE_H + 1]);
     }
 }
 
