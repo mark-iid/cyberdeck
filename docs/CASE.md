@@ -465,7 +465,7 @@ was, and it was not.
 | RJ45 ears through the right rail | **2** | **M3 × 12** | **countersunk** | the ears' own threads |
 | Plinth down into the floor tray | **4** | **M3 × 10** + nut | any | nut, in a pocket |
 | Cradle block + shroud into the tray | **4** | **M3 × 8** + nut | any | nut, in a pocket |
-| Plinth up into the module's VESA | **4** | **M4 × 35** | any | the module's own threads |
+| Plinth up into the module's VESA | **4** | **M4 × 30** | **countersunk** | the module's own threads — head must bury, §15 |
 
 **32 M3 × 10 (16 of them countersunk), 2 M3 × 12 countersunk, 4 M3 × 8, 4 M4 × 35,
 8 M3 nuts.**
@@ -1175,7 +1175,7 @@ hand. Rows kept for the *verify* column, which is what matters on arrival.
 | Qty | Part | Search string | Verify |
 |---|---|---|---|
 | 1 | SMA bulkhead, F–F | `SMA female to female bulkhead panel mount connector` | **SMA, not RP-SMA.** ⌀6.5 mm hole, ships with nut + washer. Left rail; matches the all-SMA RTL-SDR kit with no adapter. |
-| 1 | SMA jumper | `SMA male to male cable RG316 15cm` | 100–150 mm. RG316/RG178 stays flexible. Bulkhead → dongle inside. |
+| 1 | SMA jumper | `SMA male to male cable RG316 30cm` | ⚠️ **300 mm, not 150.** The run is 127.6 plus §12's 150 mm service loop = 278 (§15). The 150 in hand is 128 short. |
 | ~~2~~ **1** | USB-A dual, square flush ✅ | `Dual Ports Square USB 3.0 Panel Flush Mount Extension Cable with Buckle` | **ORDERED 2026-09-04.** Supersedes the 2× snap-in row. Both ports in one square housing = **one** cutout. Measure the opening and the buckle's panel-thickness range on arrival (§8 #5). Right rail. |
 | 0 | Powerpole panel inlet | ~~`Powerwerx PanelPole1`~~ · round socket now **surplus** | ⚠️ **Do not buy.** PanelPole1 needs a 1-1/8" hole — no smaller than the round socket already ordered, and both are far too big for the rail. **Print a PP15-45 retainer instead** (~16 × 8.3 mm/pair). The ordered socket moves to the case sidewall. §8 #7. |
 | 1 | **Master + selector switch** | `DPDT ON-OFF-ON rocker 6 pin 16A` | **NEW 2026-09-04.** One part replaces both the anti-vandal button and the A/B selector (§5). Panel opening 28.5 × 21, 6.3 mm spades. Verify **DPDT** and **ON-OFF-ON**, not ON-OFF. The 16 A is an *AC* rating — fine at 12 V / 2.5 A, but it is not a DC figure. |
@@ -2698,3 +2698,100 @@ Resting voltage is a separate and milder question: a full LiFePO4 sits at ~13.3�
 which is inside what a 12 V-input device normally tolerates — 13.8 V is the automotive
 norm — but that is an inference about the class, **not a verified fact about this unit**.
 One question to the seller settles it and costs nothing.
+
+
+## §15 — Assembly model and adversarial review, 2026-09-10/11
+
+Every part is drawn at the origin because that is what a printer wants. **Nothing had ever
+represented a part in its installed position**, so every question about how two parts meet
+was answered in someone's head. That is where the keystone, the tray's bolts, the square
+tile corners, the screen-tile lap and the ledge sign all came from.
+
+`docs/design/assembly.scad` places all 23 solids where they go. `check-all-pairs.sh`
+intersects each against the union of the others — **N renders cover all pairs, so nothing
+depends on choosing which pairs are worth checking.** That choice is what had been failing.
+`check-assembly.sh` runs four targeted checks. Both report overlap **volume**: contact is
+0, interference is not.
+
+### Result: 23 parts, 0 overlaps
+
+Confirmed twice, by a serial run and an independent parallel one.
+
+### What it found getting there
+
+| Overlap | Cause | Fix |
+|---|---|---|
+| **1012 mm³** battery in the ledge | the ledge ran across the battery well | cut the ledge at the well |
+| **191 mm³** shroud in the left ledge | asymmetric cut on a **mirrored** part | fold the cut to ±max |
+| **350 + 25 mm³** shroud in tile and ledge | shroud height measured from the **floor**, not the tray | 74.5 → 70, lid deleted |
+| **141 mm³** retainer in the left ledge | `PP_EAR` sized against the rail, not what is under it | drop the outboard seat, relieve for the ledge |
+| **24 mm³** screen lap in the retainer | lap reached 1.4 mm past the retainer's edge | notch the lap |
+
+Two of those repeat faults this project had already made once each — the mirrored
+asymmetric feature (the tray's bolt filter) and the wrong datum (the plinth forgetting the
+tray). **The same two mistakes, on different parts, months apart in the same week.**
+
+### Three adversarial reviews, findings verified before being believed
+
+**🔴 The flagship assertion cannot fail.** `PLINTH_H` is *defined* as
+`SHELF_H − MOD_T − TRAY_T − PLINTH_BIAS` and then asserted to sum to `SHELF_H`. Forcing
+`TRAY_T` to 6 makes `PLINTH_H` silently 24.5 and the sum still 75 — **passed**. The
+regression that "proved" it worked overrode `PLINTH_H` *after* its derivation. Three more
+are the same shape. All four now labelled; the real check on that stack is the interference
+test.
+
+**🔴 The four M4 VESA heads had nowhere to go.** The module's threads face down, so the
+screw enters from beneath and its head lands between plinth and tray: `4 + 4.0 + 26.5 + 44
+= 78.5` against a 75 shelf. Now countersunk. **Use M4 × 30 countersunk, not the ×35 socket
+cap on the buy list.** On the printed plinth this is a countersink bit in four holes.
+
+**🔴 `TRAY_W`/`TRAY_D` were re-declared as literals in `chassis.scad`** after being moved
+to `deck.scad`. OpenSCAD takes the last assignment in scope, so the literal won for that
+whole file — including for deck.scad's own asserts about it — while `plate.scad` saw the
+derived value. Removed.
+
+**🔴 The venting rationale was wrong by ~5,000×.** "Not the rails — they reach the plenum
+only through a 1 mm slot" confused `TILE_GAP`, a butt joint between tiles, with the real
+space. The module is 200 wide in a 305 shell, so there is a **52.5 × 137.5 = 7,219 mm²
+shaft** open to the plenum on each side.
+
+**🟠 The SMA jumper is short by 128 mm.** SMA at plate y −89.5, dongle in Zone A at
+y ≥ +27.25: direct run **127.6** plus §12's 150 mm loop = **278 mm** against a 150 mm cable
+in hand. The identical check was run for the RJ45 and passed with 55 mm spare; it was run
+for one of the five cables §12 names. **Buy a 300 mm RG316 jumper.**
+
+### ⚠️ Two measurements outstanding, and they could cost a rail
+
+`assert(f_across(f) <= RAIL_W)` measures a connector against **the tile's** 39.25 width.
+What is *behind* a rail is not 39.25 mm of air:
+
+    outboard of the connector centreline:   9.625 mm   then the frame's ledge
+    inboard:                               14.625 mm   then the screen tile's lap
+
+| Behind the rail | Half-width | |
+|---|---|---|
+| RJ45 rear body | ~11.0 *estimated* | would foul by 1.4 |
+| Rocker body | ~10.75 *estimated* | would foul by 1.1 |
+| Audio jack, 12.45 | 6.2 | clear ✅ |
+
+Both are estimates and both parts are in hand. **Measure the rear body width across the
+rail.** Over 19.25 mm total and that rail needs reprinting with the connector moved inboard.
+
+### Assembly order, forced by geometry and previously unstated
+
+- **Screen tile before the rails.** With both rails bolted the tile cannot be fitted:
+  engaging one lap needs a 5 mm slide that pulls the opposite lap out.
+- **M4s into the module before the plinth meets the tray.** Afterwards the plinth's four
+  M3s are driven down past an overhead module — 17.5 mm of headroom at 31.25 mm reach, a
+  **29° approach**. Needs a ball-end hex key, not a screwdriver.
+- **The shroud slides in sideways over the terminals**, never drops vertically — the posts
+  are spread over the pack's height and at least one will be under the lid line.
+- The eight chassis nuts sit in **blind downward pockets** with no retention, and the tray
+  then lies on the floor. They cannot be seated afterwards.
+
+### What the model still cannot see
+
+No case walls, ribs or fillet. **No fasteners** — which is exactly why the M4 fault read as
+0.000. The battery is drawn as its bare 100 mm body, so the 8 mm posts and 20 mm wire
+envelope are invisible to every check that mentions it. And 23 placements are still my
+judgement: a wrong one could hide a collision.
