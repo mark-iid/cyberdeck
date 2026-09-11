@@ -50,9 +50,22 @@ module plinth() {
             for (x = [-1, 1])
                 translate([x*VESA/2 - RIB_W/2, -VESA/2, 0]) cube([RIB_W, VESA, RIB_H]);
         }
-        // M4 up into the module's VESA threads
-        for (x = [-1, 1], y = [-1, 1])
+        // M4 up into the module's VESA threads.
+        //
+        // COUNTERSUNK, not a plain bore. The VESA threads face DOWN, so the
+        // screw enters from the plinth's underside and its head lands between
+        // the plinth and the tray. An M4 socket cap is 4.0 tall:
+        //     4 + 4.0 + 26.5 + 44 = 78.5  against a 75 shelf
+        // - the module lifts the plate off all twelve ribs. Even a low-head
+        // (2.6) gives 77.1. Only a head that is BURIED works, and the same
+        // reasoning already put nut pockets under the tray for the eight M3s;
+        // the four M4s were never given one.
+        M4_CSK = 8.4;                       // M4 90 deg countersunk head
+        for (x = [-1, 1], y = [-1, 1]) {
             translate([x*VESA/2, y*VESA/2, -1]) cylinder(d=M4_CLEAR, h=PLINTH_H + 2);
+            translate([x*VESA/2, y*VESA/2, -0.01])
+                cylinder(d1=M4_CSK, d2=M4_CLEAR, h=(M4_CSK - M4_CLEAR)/2 + 0.01);
+        }
         // M3 down into the floor tray, taken from the SHARED pattern in case
         // coordinates so the plinth and the tray cannot disagree about it.
         for (b = PLINTH_BOLT)
