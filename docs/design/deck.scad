@@ -161,6 +161,7 @@ assert(FS_W < FS_BAND, "front strap is wider than the band beside the module");
 
 SPACER_H = BASE_H - PLATE_TOP + 1;   // 20: one mm of deliberate squeeze
 SPACER_L = 190;                      // clear of the R18 corners at +-97.25
+// ⚠️ TAUTOLOGY: SPACER_H is defined as this + 1.
 assert(SPACER_H >= BASE_H - PLATE_TOP, "preload strip is shorter than the recess");
 assert(SPACER_L/2 <= PLATE_D/2 - CORNER_R - 2, "preload strip runs into the corner radius");
 
@@ -301,6 +302,15 @@ assert(TRAY_T + CR_SHROUD_H < SHELF_H, "shroud reaches above the rib shelf");
 // ============================================================================
 
 // 1. The vertical stack under the screen. This is the one that failed.
+// ⚠️ TAUTOLOGY - KEPT AS DOCUMENTATION, NOT AS A CHECK.
+// PLINTH_H is DEFINED as SHELF_H - MOD_T - TRAY_T - PLINTH_BIAS just above, so
+// this is that definition rearranged and cannot fail. Forcing TRAY_T to 6 makes
+// PLINTH_H silently become 24.5 and the sum still echoes 75. The regression
+// that "proved" it worked only overrode PLINTH_H *after* the derivation, which
+// tests nothing but a hand-typed literal.
+//
+// The real check on this stack is the interference test in assembly.scad, which
+// puts the module brick in place and asks whether the plate hits it.
 assert(TRAY_T + PLINTH_H + MOD_T + PLINTH_BIAS == SHELF_H,
        "module stack does not reach the rib shelf");
 
@@ -384,6 +394,7 @@ assert((FRAME_WF - (INSERT_D - 0.2))/2 >= 1.6,
 
 // --- 13. Tile screws must land on ledge, and the ledge must carry an insert --
 assert(BOSS_D <= LEDGE_W, "tile insert boss is wider than the ledge");
+// ⚠️ TAUTOLOGY: TILE_BOSS_H is defined as exactly this difference.
 assert(LEDGE_H + TILE_BOSS_H >= INSERT_H + INSERT_SKIN, "tile seat is too shallow");
 // No screw on the FRONT ledge: it is LEDGE_WF wide and a boss will not fit.
 for (t = TILE_SCREW)

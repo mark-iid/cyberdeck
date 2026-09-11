@@ -74,8 +74,13 @@ if (PART == "plinth") plinth();
 // module's vents face down into a 30.5 mm plenum and the tray must not wall it
 // off. It also saves most of the plastic and most of the print time.
 // ---------------------------------------------------------------------------
-TRAY_W = 132.5;    // per half
-TRAY_D = 195;
+// TRAY_W and TRAY_D are DERIVED in deck.scad from the floor they sit on. They
+// were re-declared here as literals, and OpenSCAD takes the last assignment in
+// a file's scope - so the literal won for the whole of chassis.scad, including
+// for deck.scad's own asserts about it, while plate.scad saw the derived value.
+// Two files quietly disagreeing about one number: the exact fault the shared
+// file exists to prevent. Proven by forcing FLOOR_W to 400 - the derivation
+// moved, this file did not.
 RIB    = 12;       // TRAY_T is declared up with the plinth, which stands on it
 
 // Plinth and cradle bolts come from deck.scad in CASE coordinates.

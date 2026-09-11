@@ -177,6 +177,7 @@ module insert_bore() {
 // sits at the joint centre, while the splice's screws are at +-14 and +-26, so
 // 2.5 mm off the outer edge over 8 mm of length clears it and touches nothing.
 RIB_RELIEF = max(RIB_OVERLAP_W, RIB_OVERLAP_D) + 0.75;   // 2.5
+// ⚠️ TAUTOLOGY: RIB_RELIEF is defined as this max + 0.75.
 assert(RIB_RELIEF > max(RIB_OVERLAP_W, RIB_OVERLAP_D),
        "splice relief is shallower than the rib it must clear");
 assert(4 + 4 < 2*14 - SPL_CB_D,
