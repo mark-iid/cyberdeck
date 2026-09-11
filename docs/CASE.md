@@ -290,6 +290,41 @@ with, and does its geometry derive from that mate or independently restate it?**
 base supported with the centre of mass well inside, so it will not rock. The tray cannot
 reach further without losing its clearance to the fillet that traps it.
 
+### 🔴 The ledge was inset the wrong way round — found 2026-09-09, members already printed
+
+`LEDGE_CY` used `OPEN_CY + (LEDGE_W − LEDGE_WF)/2`. It must be **minus**: the ledge's
+inner rectangle is inset `LEDGE_WF` at the front and `LEDGE_W` at the back, so its centre
+moves *backward* from the opening's centre, not forward.
+
+| | As drawn and printed | Correct |
+|---|---|---|
+| front ledge | **10 wide**, inner edge −97.25 | 5 wide, −102.25 |
+| back ledge | **5 wide** | 10 wide |
+
+**The screen's active area starts at y −100.5, so the front ledge lies over the top
+3.25 mm of the picture** — a strip 173 mm wide across the top of the screen.
+
+**The assertion that was supposed to catch this passed.** It recomputed the ledge edge
+from `FRAME_WF + LEDGE_WF` — the *intended* formula — and never looked at what
+`frame_full()` draws. It is now derived from `LEDGE_CY` and `LEDGE_ID` themselves, plus a
+second one checking the back-ledge screws sit on the ledge rather than off its edge.
+**A check that restates its subject cannot see the subject being wrong**, and this is the
+fifth time that exact sentence has applied.
+
+#### What it costs on parts already printed
+
+| Member | Fault | Fix |
+|---|---|---|
+| ×2 front | 5 mm of surplus ledge, 3.25 of it over the screen | **trim it** — a 5 × 1.5 mm step along ~134 mm of exposed inner edge, a file or Dremel job |
+| ×2 back | back ledge 5 not 10, so both back-ledge seats have **half their ⌀8 boss in air** | not fixable by removing material |
+
+The back tiles each have four screws: two into the **side** ledge, which are unaffected,
+and two into the back ledge, which are not. Options are to reprint the two back members
+(~43 cm³) or to **use two screws per back tile** and let the lid foam hold the back edge.
+
+*The `ledge` probe passed this too — a seat over thin air reads as "no material", which is
+what a correct hole also looks like. Same blind spot that passed the tray's bolts.*
+
 ### ✅ Tiles now match the opening's rounded corners — 2026-09-07
 
 The opening the tiles drop into has **rounded corners, radius 6** (`CORNER_R` − `FRAME_W`).

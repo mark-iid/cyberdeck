@@ -47,7 +47,12 @@ $fn = 64;
 // OPEN_* are in deck.scad too - the rail width falls out of them.
 LEDGE_IW = OPEN_W - 2*LEDGE_W;             // 260.5
 LEDGE_ID = OPEN_D - LEDGE_W - LEDGE_WF;    // 194
-LEDGE_CY = OPEN_CY + (LEDGE_W - LEDGE_WF)/2;
+// MINUS, not plus. The ledge inner rectangle is inset LEDGE_WF at the front and
+// LEDGE_W at the back, so its centre moves BACKWARD from the opening's centre,
+// not forward. With the sign wrong the front ledge came out 10 wide instead of
+// 5 - reaching y -97.25 and covering 3.25 mm of the screen's active area, which
+// starts at -100.5 - while the back ledge came out 5 instead of 10.
+LEDGE_CY = OPEN_CY - (LEDGE_W - LEDGE_WF)/2;
 OPEN_BACK  =  PLATE_D/2 - FRAME_W;         // +102.5
 
 module rr(w, d, r, h) {
@@ -662,6 +667,19 @@ assert((WELL_X0 + OPEN_W/2) + (WELL_X1 - WELL_X0) + (OPEN_W/2 - WELL_X1) == OPEN
        "back tiles plus the battery well do not fill the opening's width");
 assert(WELL_X0 < BATT_X0 && WELL_X1 > BATT_X1,
        "battery well does not clear the pack");
+
+// Derived from what frame_full() actually DRAWS, not from the intended formula.
+// The old version of this assertion recomputed the ledge inner edge from
+// FRAME_WF + LEDGE_WF and passed happily while the drawn ledge was 5 mm wider
+// and sitting over the screen. A check that restates its subject cannot see the
+// subject being wrong.
+assert(MOD_CY - WIN_D/2 >= LEDGE_CY - LEDGE_ID/2,
+       "front ledge overlaps the screen's active area");
+// The back-ledge tile screws must sit ON the back ledge, not on its edge.
+for (t = TILE_SCREW) if (t[1] > 90)
+    assert(t[1] - BOSS_D/2 >= LEDGE_CY + LEDGE_ID/2 &&
+           t[1] + BOSS_D/2 <= OPEN_BACK,
+           str("back-ledge screw at ", t, " hangs off the ledge"));
 
 // Members carry bosses below z=0. Exported FLIPPED, for the same reason as the
 // joint coupon: visible face on the bed, every boss pointing up.

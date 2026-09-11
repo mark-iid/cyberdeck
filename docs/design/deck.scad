@@ -361,12 +361,8 @@ assert(28.7 + 2*3 <= RAIL_W, "rocker rebate is wider than the rail tile");
 // Against the NARROWEST member, which is the front one at FRAME_WF. Checking
 // FRAME_W passes trivially and would not notice a boss outgrowing the front.
 assert(BOSS_D <= FRAME_WF, "insert boss is wider than the front frame member");
-// The front ledge must not creep over the screen. This is what pins FRAME_WF at
-// 8: at 10 the ledge inner edge lands 0.25 mm INSIDE the active area and the
-// frame starts covering the picture. It was never asserted, so "just widen the
-// front member" looked free right up until this line was written.
-assert(MOD_CY - WIN_D/2 >= -PLATE_D/2 + FRAME_WF + LEDGE_WF,
-       "front ledge overlaps the screen's active area");
+// The front-ledge-vs-screen check lives in plate.scad, where it can be derived
+// from the ledge frame_full() actually draws rather than from the intended one.
 assert((FRAME_WF - (INSERT_D - 0.2))/2 >= 1.6,
        "insert has less than 1.6 mm of wall in the front frame member");
 
