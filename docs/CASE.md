@@ -2326,6 +2326,22 @@ Two constraints shaped it:
 tip the rail off its ledge, which is worse than the cantilever it would relieve — hence
 1.2 against 1.5 rather than a flush 1.5.
 
+⚠️ **The first version of this was wrong and was printed before it was caught**
+(2026-09-09). The lap sat in the tile's **bottom 1.2 mm, coplanar with the body**. That
+assumed the rail's underside was 1.5 above the screen tile's underside. It is not —
+**tiles are drawn at z 0…TILE_T but installed at z LEDGE_H…FRAME_H**, so the screen tile
+and the rails rest on the *same plane*. A lap in the bottom layer lands in the rail's own
+space and holds the tile up. It also ran the full depth and fouled the **front ledge**,
+which does occupy z 0…1.5 — which is exactly where the tile sat proud.
+
+**The free space is below that plane**, under the rail's inner cantilever: from x 101 out
+to the ledge at 130.25 there is nothing between z 0 and 1.5. So the lap now **hangs
+beneath the body** and stops clear of the front ledge. Printed height is 5.7, not 4.5.
+
+*The root cause is that the model has never represented a tile in its installed position.
+Drawn-at-the-origin is right for printing and wrong for reasoning, and this is the second
+time that has cost something — the first was the tile-screw coordinate frame.*
+
 **Assembly order is now fixed by this: the screen tile goes in BEFORE the rails.**
 With both rails bolted the tile cannot be fitted at all — engaging one lap needs the tile
 to slide 5 mm that way, which pulls the opposite lap out from under its rail, and no

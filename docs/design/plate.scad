@@ -188,35 +188,44 @@ module splice() {
 // Spans the opening front back to just past the module, with the window over
 // the active area - which is centred on the module, not on the plate.
 TILE_BACK = MOD_FRONT + MOD_D + TILE_GAP;   // +28.25
-// Trapped under the rails by a thin lap, 2026-09-07.
+// Trapped under the rails by a thin lap. CORRECTED 2026-09-09.
 //
-// The tile reaches no ledge on its sides, so it cannot be screwed down; it was
-// a drop-in held by the module's foam tape. The rails were already printed by
-// the time this was wanted, so the lap had to go entirely on THIS part: a thin
-// flange along each side that slides UNDER the rail tile. Lift the screen tile
-// and it fouls the rail, which is bolted down. Nothing else changes.
+// The first version put the lap in the tile's BOTTOM 1.2 mm, coplanar with the
+// body. That was wrong, and the reason is that tiles are DRAWN at z 0..TILE_T
+// but INSTALLED at z LEDGE_H..FRAME_H - they sit on the ledge. So the rail's
+// underside is not 1.5 above the screen tile's underside; the two are
+// COPLANAR, both resting on the same ledge. A lap in the bottom layer lands in
+// the rail's own space and holds the tile up. The operator found it as a tile
+// that would not sit flat.
 //
-// LAP_T is 1.2 against the rail's underside at LEDGE_H = 1.5, so 0.3 of
-// clearance. The flange deliberately does NOT support the rail - a flange
-// printed slightly proud would tip the rail off its ledge, which is worse than
-// the cantilever it replaces.
+// The free space is BELOW that plane: under the rail's inner cantilever, from
+// x 101 out to the ledge at 130.25, there is nothing between z 0 and 1.5. So
+// the lap has to HANG below the body, not share its bottom face.
 //
-// LAP_W is limited by the bed, not by what would be ideal: 202 + 2x5 = 212
-// against 215.
+// It also has to stop short of the FRONT ledge, which does occupy z 0..1.5
+// across the opening - a lap running the full depth would foul it, which is
+// precisely where the tile was sitting proud.
 LAP_W = 5;
 LAP_T = 1.2;
 assert(LAP_T < LEDGE_H, "screen tile lap is thicker than the gap under the rail");
 assert(MOD_W + 2*TILE_GAP + 2*LAP_W <= BED, "screen tile with laps is off the bed");
 
 module screen_tile() {
-    w = MOD_W + 2*TILE_GAP;
-    d = TILE_BACK - OPEN_FRONT;
+    w  = MOD_W + 2*TILE_GAP;
+    y0 = OPEN_FRONT + LEDGE_WF + 1;      // clear of the front ledge
+    d  = TILE_BACK - y0;
     difference() {
         union() {
-            translate([-w/2, OPEN_FRONT, 0]) cube([w, d, TILE_T]);
-            translate([-w/2 - LAP_W, OPEN_FRONT, 0]) cube([w + 2*LAP_W, d, LAP_T]);
+            // body, lifted so the lap hangs beneath it
+            translate([-w/2, OPEN_FRONT, LAP_T]) cube([w, TILE_BACK - OPEN_FRONT, TILE_T]);
+            // side laps only, below the body, clear of the front ledge
+            // overlapped 0.5 into the body: butted exactly at w/2 the union
+            // leaves a coincident face and OpenSCAD reports a non-manifold
+            for (sx = [-1, 1])
+                translate([sx > 0 ? w/2 - 0.5 : -w/2 - LAP_W, y0, 0])
+                    cube([LAP_W + 0.5, d, LAP_T]);
         }
-        translate([-WIN_W/2, MOD_CY - WIN_D/2, -1]) cube([WIN_W, WIN_D, TILE_T + 2]);
+        translate([-WIN_W/2, MOD_CY - WIN_D/2, -1]) cube([WIN_W, WIN_D, TILE_T + LAP_T + 2]);
     }
 }
 
