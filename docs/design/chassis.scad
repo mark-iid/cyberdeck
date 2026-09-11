@@ -209,8 +209,9 @@ module shroud() {
                 cube([CR_WALL, CR_LEN, CR_SHROUD_H]);                    // outboard
             for (y = [CR_CY - CR_LEN/2, CR_CY + CR_LEN/2 - CR_WALL])
                 translate([x0, y, 0]) cube([x1 - x0, CR_WALL, CR_SHROUD_H]);
-            translate([x0, CR_CY - CR_LEN/2, CR_SHROUD_H - CR_WALL])
-                cube([x1 - x0, CR_LEN, CR_WALL]);                        // lid
+            // No lid. It existed to close a box for a shielding job the part
+            // cannot do (S14), and it was the top 3 mm of the 3.5 that stood
+            // inside the plate.
             translate([fx, CR_CY - CR_LEN/2, 0])
                 cube([x1 - x0 + CR_FLANGE, CR_LEN, TRAY_T]);             // flange
         }

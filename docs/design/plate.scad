@@ -81,8 +81,21 @@ module frame_full() {
                 // The BACK ledge crosses the battery well. The pack stands up
                 // through the plate there, so the ledge has to stop - found by
                 // the assembly check, 1012 mm3 of pack inside the ledge.
-                translate([WELL_X0, OPEN_BACK - LEDGE_W - 1, -1])
-                    cube([WELL_X1 - WELL_X0, LEDGE_W + 2, LEDGE_H + 2]);
+                //
+                // FOLDED to +-max, not cut at WELL_X0..WELL_X1. The well is
+                // OFF-CENTRE (-71..+51) and the two back members are one part
+                // MIRRORED, so a cut at 0..51 mirrors to -51..0 and leaves
+                // 20 mm of ledge standing at x -71..-51 - right where the
+                // terminal shroud comes up. The assembly check found exactly
+                // that: 191 mm3 of shroud inside the left member's ledge.
+                //
+                // Same fault as the tray's `if (b[0] >= 0)` bolt filter: an
+                // asymmetric feature on a mirrored part. Folding costs only
+                // unused ledge at x +51..+71 - the back-right tile still has
+                // 69 mm of bearing and both its screws sit beyond 71.
+                WELL_CUT = max(abs(WELL_X0), abs(WELL_X1));
+                translate([-WELL_CUT, OPEN_BACK - LEDGE_W - 1, -1])
+                    cube([2*WELL_CUT, LEDGE_W + 2, LEDGE_H + 2]);
             }
             // bosses under the ledge, deep enough for a tile screw's insert
             for (t = TILE_SCREW)

@@ -288,7 +288,13 @@ CRADLE_BOLT = concat(BLOCK_BOLT, SHROUD_BOLT);
 // bare terminals "a fire, not an inconvenience". The shroud closes the terminal
 // end up to the underside of the back tile - above that the pack is in the lid
 // recess, where nothing loose rides.
-CR_SHROUD_H = SHELF_H + LEDGE_H - 2;          // 74.5
+// 70, not 74.5. The shroud STANDS ON THE TRAY, so its height is measured from
+// case z = TRAY_T, not from the floor - and everything above the rib shelf at
+// 75 belongs to the plate. 74.5 put its top at case 78.5, which is 3.5 mm
+// inside the plate: 25 mm3 into the left member's ledge and 350 mm3 into the
+// back-left tile. Exactly the plinth's fault, which also forgot the tray.
+CR_SHROUD_H = SHELF_H - TRAY_T - 1;           // 70, top lands at case 74
+assert(TRAY_T + CR_SHROUD_H < SHELF_H, "shroud reaches above the rib shelf");
 
 // ============================================================================
 // ASSERTIONS. Each one is a sum that has already been got wrong, or could be.
