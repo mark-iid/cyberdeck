@@ -250,6 +250,13 @@ module screen_tile() {
                     cube([LAP_W + 0.5, d, LAP_T]);
         }
         translate([-WIN_W/2, MOD_CY - WIN_D/2, -1]) cube([WIN_W, WIN_D, TILE_T + LAP_T + 2]);
+        // The LEFT lap runs into the Powerpole retainer: the retainer's inboard
+        // edge is at plate -104.625 and the lap reaches -106, giving
+        // 1.375 x 14.8 x 1.2 = 24.42 mm3 - exactly what the assembly sweep
+        // measured. Notched rather than shortened: a 3 mm lap everywhere would
+        // be worse than a 5 mm one with a 17 mm window in it.
+        translate([-w/2 - LAP_W - 1, RAIL_CY - 20 - 8.4, -1])
+            cube([LAP_W + 1.5, 16.8, LAP_T + 1]);
     }
 }
 
