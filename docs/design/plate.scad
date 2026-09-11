@@ -78,6 +78,11 @@ module frame_full() {
                 translate([0, OPEN_CY, 0])
                     rr(OPEN_W, OPEN_D, CORNER_R - FRAME_W, LEDGE_H);
                 translate([0, LEDGE_CY, -1]) rr(LEDGE_IW, LEDGE_ID, 1, LEDGE_H + 2);
+                // The BACK ledge crosses the battery well. The pack stands up
+                // through the plate there, so the ledge has to stop - found by
+                // the assembly check, 1012 mm3 of pack inside the ledge.
+                translate([WELL_X0, OPEN_BACK - LEDGE_W - 1, -1])
+                    cube([WELL_X1 - WELL_X0, LEDGE_W + 2, LEDGE_H + 2]);
             }
             // bosses under the ledge, deep enough for a tile screw's insert
             for (t = TILE_SCREW)
@@ -242,8 +247,7 @@ module screen_tile() {
 // around the well also means the well needs no bridging.
 // The well follows the pack ENVELOPE, which is off-centre: body -50..+50 plus
 // 6 mm of terminal on one end. A centred well would foul the terminals.
-WELL_X0 = BATT_X0 - 1;
-WELL_X1 = BATT_X1 + 1;
+// WELL_X0/WELL_X1 are in deck.scad - the frame's ledge needs them too.
 // Vent grille. S14 #7: the module's vents face DOWN into the plenum, and the
 // plenum's back is wide open to the back channel across the full 200 x 26.5 -
 // but the back channel itself was capped by these tiles, with nothing but the

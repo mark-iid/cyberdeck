@@ -290,6 +290,37 @@ with, and does its geometry derive from that mate or independently restate it?**
 base supported with the centre of mass well inside, so it will not rock. The tray cannot
 reach further without losing its clearance to the fillet that traps it.
 
+### The assembly model, and the two collisions it found immediately — 2026-09-10
+
+Every part in this build is drawn at the origin because that is what a printer wants.
+**Nothing had ever represented a part in its installed position**, so every question about
+how two parts meet was answered in someone's head. `docs/design/assembly.scad` places
+them where they go; `check-assembly.sh` intersects them and reports the overlap
+**volume** — contact is 0, interference is not.
+
+Two collisions on the first run, neither visible to anything built before it:
+
+| | Overlap | Cause |
+|---|---|---|
+| **plate vs module** | 68.6 mm³ at y −110.25…−107.25, z −1.7…−0.5 | the **front joint's insert bosses**. That joint is bonded so they were never used — but they hang 1.7 below the frame while the module's top face is 0.5 below it and reaches forward to −110.25. **1.2 mm inside the module.** Seats deleted. |
+| **plate vs battery** | 1012.5 mm³ at y 93.25…100, z 0…1.5 | the **back ledge runs right round the opening**, including across the battery well. The pack stands up through the plate there. Ledge now stops at the well. |
+
+Both are printed-member faults, and both are fixed in the reprint that the ledge error had
+already forced.
+
+**Two bugs in the checker itself, found the same day:** it first treated *any*
+intersection as failure, so two solids resting on each other failed on a zero-thickness
+shared face; and it did not delete the previous run's STL, so after a fix it measured
+history and reported both collisions as still present. *A checker is code and has bugs
+like code — "I built a check" is not evidence of anything until the check has been
+debugged too.*
+
+**What these four checks cover, and what they do not.** Covered: tiles against the frame,
+anything standing over the screen, the plate against the module, the plate against the
+battery. **Not covered:** the chassis parts against each other, the plate against the case
+walls, anything against the tray, and *kinematics* — whether a part can be manoeuvred into
+place at all, as opposed to merely fitting once there.
+
 ### 🔴 The ledge was inset the wrong way round — found 2026-09-09, members already printed
 
 `LEDGE_CY` used `OPEN_CY + (LEDGE_W − LEDGE_WF)/2`. It must be **minus**: the ledge's

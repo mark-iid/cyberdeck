@@ -75,6 +75,11 @@ BATT_WIRE_W = 20;
 BATT_TERM_SIDE = -1;
 BATT_X0 = -BATT_BODY_W/2 - BATT_WIRE_W;      // -70, terminal side
 BATT_X1 =  BATT_BODY_W/2;                    // +50
+// The well the pack comes up through, in the back tiles AND in the frame's
+// ledge - the ledge runs right round the opening and would otherwise sit in
+// the pack's way.
+WELL_X0 = BATT_X0 - 1;
+WELL_X1 = BATT_X1 + 1;
 // It stands at the back of the flat floor, behind the module.
 BATT_BACK  = FLOOR_D/2;              // 100 - hard against where the fillet starts
 BATT_FRONT = BATT_BACK - BATT_D;     // 30
@@ -247,9 +252,14 @@ TILE_SCREW = concat(
 
 // Frame joints. Members butt at the centre of every side, four screws per joint,
 // pulled up from below by a splice. 14 and 26 from the joint, as the coupon.
+// NO FRONT SEATS. That joint is bonded (S14), so they were never going to be
+// used - and they are not merely surplus: their bosses hang 1.7 below the frame
+// at y -111.25, and the module's top face is 0.5 below it, reaching forward to
+// y -110.25. The bosses sat 1.2 mm INSIDE the module. The assembly check found
+// 68.6 mm3 of it; nothing else ever looked, because a boss and a module were
+// never in the same model.
 JOINT_SEAT = concat(
     [for (sx = [-1, 1], d = [14, 26]) [sx*d,  PLATE_D/2 - FRAME_W/2]],   // back
-    [for (sx = [-1, 1], d = [14, 26]) [sx*d, -PLATE_D/2 + FRAME_WF/2]],  // front
     [for (sx = [-1, 1], sy = [-1, 1], d = [14, 26])
         [sx*(PLATE_W/2 - FRAME_W/2), sy*d]]);                            // sides
 
