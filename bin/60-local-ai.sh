@@ -18,7 +18,7 @@
 # THERMAL: inference is sustained all-core load. This was previously blocked —
 # the machine hit 96.6 C after ONE short inference with no cooling. An active
 # cooler was fitted 2026-09-02 and it now holds 2400MHz at 76.8 C with zero
-# throttling (DESIGN §6.8), so this is safe to run. The 100 C guard below stays
+# throttling (DESIGN §4), so this is safe to run. The 100 C guard below stays
 # as a tripwire for a failed or obstructed fan.
 
 source "$(dirname "$0")/lib.sh"
@@ -42,7 +42,7 @@ thermal_check
 t="$(vcgencmd measure_temp 2>/dev/null | tr -dc '0-9.' | cut -d. -f1)"
 if [ -n "$t" ] && [ "$t" -ge 100 ] && [ "${FORCE:-0}" != 1 ]; then
     die "Currently ${t}C — only $((110 - t))C from the critical trip, and no fan.
-Let it cool, fit a fan (DESIGN §6), or re-run with FORCE=1."
+Let it cool, fit a fan (DESIGN §4), or re-run with FORCE=1."
 fi
 [ -n "$t" ] && [ "$t" -ge 85 ] && \
     warn "${t}C at start. Throttled builds are slow but safe; watch for thermal aborts."

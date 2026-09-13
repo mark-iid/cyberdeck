@@ -52,7 +52,7 @@ ver_ge() {
 # --- Thermal guard ----------------------------------------------------------
 # RESOLVED 2026-09-02: an active cooler was fitted and the deck now sustains the
 # full 2400MHz for 5 minutes of 4-core load, closed case, peaking at 76.8C with
-# throttle flags 0x0. See DESIGN §6.8.
+# throttle flags 0x0. See DESIGN §4.
 #
 # So all cores is now the correct default. The historical reason this was ever
 # halved: before the cooler the machine idled at 88-90C, was clock-capped to
@@ -74,6 +74,6 @@ thermal_check() {
     if [ -n "$f" ] && [ $(( $(printf '%d' "$f") & 0x4 )) -ne 0 ]; then
         warn "THERMALLY THROTTLED RIGHT NOW (${t}C) — unexpected with the cooler fitted."
         warn "Check the fan: cat /sys/devices/platform/cooling_fan/hwmon/hwmon*/fan1_input"
-        warn "and /sys/class/thermal/cooling_device0/cur_state. See DESIGN §6.8."
+        warn "and /sys/class/thermal/cooling_device0/cur_state. See DESIGN §4."
     fi
 }

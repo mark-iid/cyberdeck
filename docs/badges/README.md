@@ -27,7 +27,7 @@ fetch compositor.svg 'compositor-niri%20v26.04-5A4FCF'
 fetch shell.svg      'shell-bash-4EAA25?logo=gnubash&logoColor=white'
 fetch install.svg    'install-additive%20%C2%B7%20reversible-2E7D32'
 fetch thermal.svg    'thermal-2400%20MHz%20unthrottled-2E7D32'
-fetch case.svg       'case-Pelican%201400%20ordered-B8860B'
+fetch case.svg       'case-Pelican%201400%20built-2E7D32'
 ```
 
 Format is `<label>-<message>-<colour>`. URL-encode both text fields: `%20` for
@@ -35,9 +35,12 @@ space, `%C2%B7` for the `·` separator. A literal `-` in either field must be
 doubled (`--`), and `_` means a space in the shorthand form — which is why every
 space here is spelled `%20` instead.
 
-## Why static, not dynamic
+## Why static, and why vendored
 
-Dynamic shields (build status, last commit, issue count) work by shields.io
-calling **out** to the forge. `nas1.crosscreek:30143` is not reachable from the
-internet, so every one of those renders as a grey `inaccessible`. Static badges
-are the only kind that can work here, vendored or not.
+Static because there's no CI to report on — provisioning happens on the deck, not
+in a runner, so a build-status badge would be reporting on nothing.
+
+Vendored because **the deck is the machine most likely to be reading this README
+and the machine least likely to be online.** A `img.shields.io` URL renders as a
+broken-image box in a local markdown viewer with no network, which is precisely
+the situation this whole repo exists for. The files here render offline.

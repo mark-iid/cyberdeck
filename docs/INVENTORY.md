@@ -1,6 +1,9 @@
-# Inventory — raspberrypi.local, captured 2026-08-31
+# Inventory — captured 2026-08-31
 
-Baseline taken before any cyberdeck changes. Re-run the commands to diff.
+**This is a snapshot of the machine as found, before any of this repo ran.** It's kept
+for diffing, not as a description of the deck today — two rows below (cooling, and the
+AI stack) describe problems that are since fixed, and they're flagged where they appear.
+Re-run the commands to diff against the current state.
 
 ## Hardware
 
@@ -16,7 +19,7 @@ Baseline taken before any cyberdeck changes. Re-run the commands to diff.
 | Input | `TSTP MTouch` USB touchscreen + `TSTP MTouch` USB keyboard (same device, 2 interfaces) |
 | Audio | `vc4hdmi0`, `vc4hdmi1` — **HDMI playback only, no capture device** |
 | GPU | vc4-drm / v3d, Mesa **26.2.0** (rpt backports) |
-| **Cooling** | **NONE — no fan. Idles 88-90°C, throttled to 1.0GHz of 2.4GHz. See DESIGN §6.** |
+| **Cooling** | **As found: NONE — no fan, idling 88-90°C, throttled to 1.0 GHz of 2.4. Since fixed with an active cooler under the X1001; now full 2400 MHz sustained. DESIGN §4.** |
 
 `config.txt` highlights: `dtoverlay=vc4-kms-v3d`, `max_framebuffers=2`,
 `disable_fw_kms_setup=1`, `dtparam=audio=on`, **`dtparam=nvme`**,
@@ -48,7 +51,7 @@ Present and used: `foot` 1.21, `fuzzel` 1.12, `waybar` 0.12, `swaybg`,
 `swayidle`, `gtklock` 4.0, `mako-notifier` 1.10, `cliphist` 0.5,
 `wl-clipboard`, `wmctrl`, `seatd` 0.9, `xwayland` 24.1.6,
 `xdg-desktop-portal-{wlr,gtk}`, `qtwayland5` **(installed)**,
-`rustc`/`cargo` **1.85** (too old for niri — see DESIGN §4).
+`rustc`/`cargo` **1.85** (too old for niri — see DESIGN §8).
 
 ## Ham radio stack (installed)
 
@@ -73,12 +76,15 @@ WSJT-X and JTDX both link **Qt5**.
 `~/Bookshelf` — only **13 MB**: three PDFs (Raspberry Pi Beginner's Guide,
 two C programming books). The survival material is all in the ZIMs.
 
-## AI stack — BROKEN
+## AI stack
 
 - `~/mistral-7b-instruct-v0.3-q4_k_m.gguf`, `~/q4_0-orca-mini-3b.gguf`
-- `~/ai.py`, `~/codeai.py` — near-identical `llama_cpp` REPLs, both pointing at
-  the 3b model
-- **`import llama_cpp` → `ModuleNotFoundError`.** No ollama, no llama-server.
-- `~/venv` exists
+- `~/ai.py`, `~/codeai.py` — near-identical `llama_cpp` REPLs, both pointing at the 3B
+- `~/venv` with a working `llama_cpp_python` 0.3.16, plus torch 2.10 and transformers 5.2
+- No ollama, no llama-server
 
-Needs rebuilding. See DESIGN §5.
+**I first recorded this as "BROKEN" on a `ModuleNotFoundError`, and that was wrong** —
+the error came from running `~/ai.py` with the *system* python instead of
+`~/venv/bin/python`. The venv was fine the whole time. Replaced by
+`files/ai/ask-local.py` (installed as `ask-local`), and `llama-server` is the real
+upgrade. DESIGN §9.

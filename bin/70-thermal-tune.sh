@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Thermal tuning for a Pi 5 that CANNOT fit a fan (DESIGN §6).
+# Thermal tuning for a Pi 5 that CANNOT fit a fan (DESIGN §4).
 #
 # THE COUNTERINTUITIVE POINT, which is the whole reason this script exists:
 #
@@ -33,7 +33,7 @@ measure() {
     log "Applying ${dur}s of 4-core load (steady state is the number that counts)..."
     warn "NOTE: this is a scalar spin loop and UNDERSTATES real thermal load."
     warn "Measured on this deck: synthetic 76.8C, compile ~85C, LLM inference 82.3C"
-    warn "with the soft limit active. See DESIGN §6.9. For a realistic figure,"
+    warn "with the soft limit active. See DESIGN §4. For a realistic figure,"
     warn "load the machine with actual work and read vcgencmd during it."
     for i in 1 2 3 4; do (while :; do :; done) & done
     local pids; pids="$(jobs -p)"
@@ -60,7 +60,7 @@ set)
     # arm_boost pushes the peak clock. Boosting a Pi that cannot cool itself is
     # strictly counterproductive — it generates heat to reach a clock it will
     # immediately be throttled out of.
-    sudo sed -i 's/^arm_boost=1/#arm_boost=1  # disabled: no cooling headroom (DESIGN §6)/' "$CFG"
+    sudo sed -i 's/^arm_boost=1/#arm_boost=1  # disabled: no cooling headroom (DESIGN §4)/' "$CFG"
     sudo sed -i '/^arm_freq=/d' "$CFG"
     printf 'arm_freq=%s\n' "$freq" | sudo tee -a "$CFG" >/dev/null
 

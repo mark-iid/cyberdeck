@@ -147,7 +147,7 @@ spawn-at-startup "sh" "-c" "swaybg -i \"$HOME/Pictures/wallpaper.jpg\" -m fill |
 //
 // WSJT-X stays as the reference implementation and insurance; its rules below
 // are verified working. JTDX is a WSJT-X fork and duplicates that fallback
-// rather than adding one -- the operator does not intend to use it.
+// rather than adding one, and I don't intend to use it.
 // WSJT-X is two windows (main 880x685 + WideGraph 938x337 = 1022px stacked,
 // against ~770px usable). They CANNOT both be tiled here. So the main window
 // tiles full-width and the waterfall FLOATS on top, summoned when needed.
@@ -184,7 +184,7 @@ window-rule {
 }
 
 // JTDX rules REMOVED 2026-08-31 along with the package. It is a WSJT-X fork, so
-// it duplicated the fallback rather than adding one, and the operator does not
+// it duplicated the fallback rather than adding one, and I do not
 // use it (DESIGN §3). The rules were verified working before removal -- app-id
 // "jtdx", waterfall floated at 1272x202 -- so if `apt install jtdx` ever brings
 // it back, mirror the WSJT-X pair above rather than rediscovering it.
@@ -248,10 +248,10 @@ window-rule {
     open-maximized true
 }
 
-// qutebrowser is the primary reader for the offline stack (DESIGN §9): the ZIM
+// qutebrowser is the primary reader for the offline stack (DESIGN §7): the ZIM
 // library on :8080 and the local model on :8081. Full width — it is reading
 // long-form reference material on a 1280px panel.
-// qutebrowser is the primary reader for the offline stack (DESIGN §9): ZIMs on
+// qutebrowser is the primary reader for the offline stack (DESIGN §7): ZIMs on
 // :8080, the local model on :8081.
 //
 // app-id VERIFIED as "org.qutebrowser.qutebrowser" — NOT "qutebrowser". A rule
@@ -306,7 +306,7 @@ binds {
     }
 
     // --- The deck's own apps, on the number row's neighbours ----------------
-    // The offline stack, both in qutebrowser — see DESIGN §9. kiwix-desktop's
+    // The offline stack, both in qutebrowser — see DESIGN §7. kiwix-desktop's
     // content area is a QtWebEngine view where following a link means
     // Tab-cycling past every preceding one; qutebrowser's link hints (press f,
     // type the letter) make that two keystrokes. On a deck with no mouse that is

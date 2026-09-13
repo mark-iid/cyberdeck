@@ -8,23 +8,36 @@
 ![Thermal](docs/badges/thermal.svg)
 ![Case](docs/badges/case.svg)
 
-niri on a Raspberry Pi 5 cyberdeck: 1280x800 touchscreen, USB keyboard, no mouse,
-512GB NVMe, 123GB of offline reference material, and a ham radio stack.
+A Raspberry Pi 5 in a Pelican 1400, running niri: 1280×800 touchscreen, wired USB
+keyboard, no mouse, 512 GB NVMe, 123 GB of offline reference material, and a ham radio
+stack. Built to work with no network and no mains.
+
+**It's finished and it runs.** Full 2.4 GHz sustained with the case closed, ~74 °C under
+load, ~6 hours on the internal LiFePO4 pack.
+
+Two halves to this repo:
+
+- **The software** is additive provisioning for Raspberry Pi OS — scripts and configs
+  that add niri alongside the stock desktop without touching it. That's most of what
+  follows, plus [DESIGN.md](DESIGN.md) for the reasoning.
+- **The enclosure** is OpenSCAD, in [docs/design/](docs/design/), with the design
+  decisions in [docs/CASE.md](docs/CASE.md). Fifteen printed parts, no holes drilled in
+  the shell.
 
 ## This is additive. It is not a reinstall.
 
 Nothing here reformats, reinstalls, or replaces Raspberry Pi OS.
 
-- **labwc stays installed and stays the default session.** niri is added
-  *alongside* it in the lightdm session menu. Pick at the login screen.
-- Everything built from source installs under **`/usr/local`**, which no distro
-  package owns. `apt` stays consistent.
+- **labwc stays installed and stays the default session.** niri is added *alongside* it
+  in the lightdm session menu. Pick at the login screen.
+- Everything built from source installs under **`/usr/local`**, which no distro package
+  owns. `apt` stays consistent.
 - `apt` steps only ever **add** packages. Nothing is removed or replaced.
-- Configs are **symlinked** into `~/.config/{niri,waybar,foot}` — all new
-  directories. `~/.config/labwc` and `~/.config/wf-panel-pi` are never touched.
+- Configs are **symlinked** into `~/.config/{niri,waybar,foot}`, all new directories.
+  `~/.config/labwc` and `~/.config/wf-panel-pi` are never touched.
 - Your ZIMs, `~/.config/WSJT-X.ini`, gqrx, gnuradio, and pat configs are untouched.
 
-**Rollback is: log out, choose labwc.** You are exactly where you started.
+**Rollback is: log out, choose labwc.** You're exactly where you started.
 
 ## Usage
 
@@ -33,12 +46,12 @@ bin/provision.sh        # build + install everything (idempotent, re-runnable)
 bin/deploy-config.sh    # symlink configs into ~/.config
 ```
 
-**There is no session menu on this machine** — Raspberry Pi OS ships autologin
-(`autologin-session=rpd-labwc`), so it boots straight into labwc. To get into
-niri, in increasing order of commitment:
+**There's no session menu on this machine** — Raspberry Pi OS ships autologin, so it
+boots straight into whatever `autologin-session` says. To get into niri, in increasing
+order of commitment:
 
 ```sh
-niri                              # 1. nested inside labwc — zero risk smoke test
+niri                              # 1. nested inside labwc — zero-risk smoke test
                                   # 2. Ctrl+Alt+F2, log in, run: niri-session
 bin/90-set-session.sh niri        # 3. make it the boot default
 bin/90-set-session.sh labwc       #    ...and back again
@@ -47,7 +60,7 @@ bin/90-set-session.sh labwc       #    ...and back again
 Recovery if niri fails at boot: ssh in, or Ctrl+Alt+F1..F6, then
 `bin/90-set-session.sh labwc && sudo systemctl restart lightdm`.
 
-Individual steps, if you would rather go one at a time:
+Individual steps, if you'd rather go one at a time:
 
 | Script | What it does |
 |---|---|
@@ -74,17 +87,17 @@ Individual steps, if you would rather go one at a time:
 
 ## The three from-source builds, and why
 
-Raspberry Pi OS trixie packages the *entire* niri ecosystem — foot, fuzzel,
-waybar, swaybg, mako, cliphist, gtklock, seatd, xwayland — but **not niri
-itself**. Verified 2026-08-31 against trixie, trixie-updates, trixie-backports
-(temporarily enabled to check) and archive.raspberrypi.com. It missed the trixie
-freeze. Same for `xwayland-satellite` and MSHV.
+Raspberry Pi OS trixie packages the *entire* niri ecosystem — foot, fuzzel, waybar,
+swaybg, mako, cliphist, gtklock, seatd, xwayland — but **not niri itself**. Checked
+2026-08-31 against trixie, trixie-updates, trixie-backports (temporarily enabled to
+look) and archive.raspberrypi.com. It missed the trixie freeze. Same story for
+`xwayland-satellite` and MSHV.
 
 **The Rust trap:** trixie ships rustc/cargo **1.85**. niri v26.04 declares
-`rust-version = "1.87"`, so the distro toolchain is **too old** and fails with a
-confusing error rather than a clean MSRV message. `10-build-niri.sh` installs
-rustup for this reason. `xwayland-satellite` v0.8.2 pins exactly 1.85.0 and
-builds fine with Debian's own toolchain.
+`rust-version = "1.87"`, so the distro toolchain is too old and fails with a confusing
+error rather than a clean MSRV message. That's the only reason `10-build-niri.sh`
+installs rustup. `xwayland-satellite` v0.8.2 pins exactly 1.85.0 and builds fine with
+Debian's own toolchain.
 
 ## Optional extras
 
@@ -95,11 +108,11 @@ bin/50-doomsday-extras.sh time     # start here — see docs/CONTENT.md
 
 ## Editing config after deployment
 
-`deploy-config.sh` symlinks `~/.config/{niri,waybar,foot}` into the repo checkout
-**on the Pi**, which is a copy of this one. Edit here, then:
+`deploy-config.sh` symlinks `~/.config/{niri,waybar,foot}` into the repo checkout **on
+the Pi**, which is a copy of this one. Edit here, then:
 
 ```sh
-bin/sync-to-pi.sh    # rsync/tar across, validate the KDL, live-reload niri
+bin/sync-to-pi.sh    # rsync across, validate the KDL, live-reload niri
 ```
 
 ## Health checks
@@ -110,60 +123,56 @@ bin/verify-post-reboot.sh        # run after any kernel change
 bin/70-thermal-tune.sh measure   # 5-min sustained-load thermal profile
 ```
 
-## Read next
+## The enclosure
 
-- `DESIGN.md` — the reasoning. §6 is the thermal story, start to finish.
-- `docs/CASE.md` — the enclosure. **Where the active work is.**
-- `docs/design/*.scad` — the parts, with the cross-part assertions that gate them
-  (`docs/design/build.sh` builds and checks all sixteen).
-  *`faceplate.svg` is superseded and wrong — CASE §13.*
-- `docs/INVENTORY.md` — full baseline capture.
-- `docs/CONTENT.md` — offline content gaps (medical, maps, repair) and the
-  GPS-time problem that silently breaks FT8 off-grid.
+The computer is a JUNEBOX 8" module — the Pi 5, the NVMe and the heatsink all live inside
+the display's backboard enclosure, which takes 12 V in and mounts on VESA 75. So the
+build is three objects (module, keyboard, battery) behind a printed faceplate.
 
-## Where this was left — 2026-09-02
-
-**The software deck is done.** It boots into niri (`autologin-session=niri`).
-niri 26.04, xwayland-satellite 0.8.2 and MSHV 2.76.7 are built and installed;
-configs are symlinked and validated. Every window rule is verified against real
-app-ids from `niri msg windows` — no guesses remain.
-
-**Thermal: SOLVED.** An active cooler under the X1001 took the deck from 1500 MHz
-sustained (throttled, 80.1 °C at idle) to the **full 2400 MHz, closed case,
-peaking at 76.8 °C with zero throttle bits** (DESIGN §6.8). The fan appears as
-`cooling_device0` and ramps 3602 -> 9950 rpm. 75 °C is a fan-speed trip point,
-not a throttle point; throttling starts at 85 °C. Do NOT cap `arm_freq` —
-measured, does not help (DESIGN §6.4).
+The faceplate rides the Pelican's twelve moulded ribs at 75 mm, held by nothing but the
+case walls and two TPU preload strips. **Nothing is drilled, bonded or fastened to the
+shell**, so it's still a waterproof box when it's shut.
 
 ```sh
-bin/60-local-ai.sh                   # llama-server; was refused at 96.6C
-bin/70-thermal-tune.sh measure 300   # re-measure any time; expect 2400MHz flat
+docs/design/build.sh              # every part to STL
+docs/design/check-stl.py *.stl    # bbox, bed fit, z=0, solids, facet count
+docs/design/check-all-pairs.sh    # each part against the union of all others
+docs/design/features.py x.stl 0.5 # what's actually in a finished STL
 ```
 
-**FT8 software: DECIDED — MSHV** (DESIGN §3). JTDX is a WSJT-X fork, so it
-duplicates the fallback rather than adding one; `sudo apt remove jtdx` plus
-dropping its (verified-working) rules, when confirmed.
+Read [docs/CASE.md](docs/CASE.md) for the design, and
+[docs/LESSONS.md](docs/LESSONS.md) for the eight faults that were worth writing down
+(every one of them was found by looking at something, not by an assertion, which is
+itself the lesson).
 
-**The case is the open work** (`docs/CASE.md`). As of **2026-09-06** the Pelican
-1400 is **in hand and surveyed**, every part is bought, and the deck is
-**printing**. The JUNEBOX module is the whole computer (Pi + NVMe inside its
-backboard, 12 V in, VESA 75/100, own fan), so the build is module + keyboard +
-LiFePO4 pack.
+## Read next
 
-Printed and checked: three connector coupons, the joint coupon, and the module
-plinth. Ready to print: the whole faceplate except the right rail, plus the floor
-tray, battery blocks and terminal shroud. Blocked: the right rail (waiting on the
-RJ45's ear spacing) and the Powerpole retainer (needs four measurements off a
-housing). See **CASE.md § Build status** for the live list.
+- [DESIGN.md](DESIGN.md) — the software reasoning. §4 is the thermal story start to finish.
+- [docs/CASE.md](docs/CASE.md) — the enclosure, measured and built.
+- [docs/LESSONS.md](docs/LESSONS.md) — what went wrong and what generalises.
+- [docs/INVENTORY.md](docs/INVENTORY.md) — full baseline capture of the machine.
+- [docs/CONTENT.md](docs/CONTENT.md) — offline content gaps (medical, maps, repair) and
+  the GPS-time problem that silently breaks FT8 off-grid.
 
-| Open | Blocks | Notes |
-|---|---|---|
-| ~~The 1400's **real flat floor width**~~ | ~~CAD, faceplate rails~~ | **RESOLVED 2026-09-04.** The catalog 300 mm was wrong twice over: the interior at the rib shelf is **305 × 231.4**, and the plate rides that shelf rather than the floor. Plate is **304.5 × 230.5**. CASE §6. |
-| RTC cell (ML2020) | off-grid timekeeping | `J5`/`BATT` is EMPTY. Charging stays **disabled** until a known-rechargeable cell is fitted. |
-| QLG2 GPS | sub-second time for FT8 | **Jumper it to 3.3V logic first** — 5V default will damage a Pi GPIO. `bin/50-doomsday-extras.sh time`. |
+## Known-open
 
-**Free win, not yet taken:** `mariadbd` is enabled and burns 7-11% CPU at idle
-with no user databases on the machine. `systemctl disable --now mariadb`.
+Small stuff, none of it blocking:
 
-**If niri ever fails to come up:** there is no greeter to fall back to. ssh in,
-or Ctrl+Alt+F1..F6, then `bin/90-set-session.sh labwc && sudo systemctl restart lightdm`.
+| Item | Notes |
+|---|---|
+| Keyboard retention in the lid | It travels in the lid and nothing holds it there. Cut foam pocket or a strap. |
+| Tilt foot | Never drawn. The deck works flat; a foot would make long sessions nicer. |
+| Compile-load temperature | The 74 °C figure is a synthetic spin loop, which `70-thermal-tune.sh` warns understates real load. A compile is the case worth measuring. |
+| RTC cell (ML2020) | `J5`/`BATT` is empty. Charging stays **disabled** until a known-rechargeable cell is fitted. |
+| QLG2 GPS | **Jumper it to 3.3 V logic first** — the 5 V default will damage a Pi GPIO. `bin/50-doomsday-extras.sh time`. |
+| `mariadbd` | Enabled, burning 7–11% CPU at idle, with no user databases on the machine. `systemctl disable --now mariadb`. |
+
+**If niri ever fails to come up:** there's no greeter to fall back to. ssh in, or
+Ctrl+Alt+F1..F6, then `bin/90-set-session.sh labwc && sudo systemctl restart lightdm`.
+
+## License
+
+[MIT](LICENSE). The OpenSCAD models are covered too — print them, cut them up, change
+the shell they fit. If you adapt the faceplate for a different case, the numbers you'll
+want to change first are `CASE_W`, `CASE_D`, `SHELF_H` and `CORNER_R` in
+`docs/design/deck.scad`; everything else derives from those.

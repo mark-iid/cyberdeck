@@ -57,7 +57,7 @@ time)
     warn "   USB carries polling jitter; a PPS edge on a GPIO does not."
     warn "   1. JUMPER THE QLG2 TO 3.3V FIRST (see warning above)"
     warn "   2. wire 1PPS -> Pi GPIO18, and GND -> GND"
-    warn "   3. add to the NVMe config.txt (DESIGN §7):"
+    warn "   3. add to the NVMe config.txt (DESIGN §5):"
     warn "        dtoverlay=pps-gpio,gpiopin=18"
     warn "   4. reboot; check with:  sudo ppstest /dev/pps0"
     warn "   5. /etc/chrony/chrony.conf:"

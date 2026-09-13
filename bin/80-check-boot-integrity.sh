@@ -2,7 +2,7 @@
 # Assert the boot configuration is UNAMBIGUOUS. Run after any disk change,
 # any clone/backup operation, and before trusting a kernel update.
 #
-# WHY THIS EXISTS (DESIGN §7): a 238GB SD card was found to be a byte-identical
+# WHY THIS EXISTS (DESIGN §5): a 238GB SD card was found to be a byte-identical
 # clone of the NVMe — same UUIDs AND same PARTUUIDs on both partitions. Since
 # /etc/fstab mounts /boot/firmware by PARTUUID and the kernel takes
 # root=PARTUUID, BOTH selectors matched two devices and the winner changed
@@ -47,7 +47,7 @@ for sel in $selectors; do
     elif [ "$n" -eq 0 ]; then
         bad "$key=$val matches NO device"
     else
-        bad "$key=$val matches $n devices — AMBIGUOUS. This is the DESIGN §7 bug."
+        bad "$key=$val matches $n devices — AMBIGUOUS. This is the DESIGN §5 bug."
         $BLKID -t "$key=$val" -o device 2>/dev/null | sed 's/^/         /'
     fi
 done

@@ -1,19 +1,19 @@
 #!/usr/bin/env bash
 # Flipper Zero support on the deck.
 #
-# The operator already maintains a well-developed flipper repo on their NAS:
-# ~8800 .ir files, ~960 .nfc, an SD-card backup, plus hand-written references
-# (badusb ducky cheatsheet, cc1101 SubGHz guide, GPIO pinout, nRF24 sweep notes,
-# app and script inventories). Credentials are deliberately excluded from it.
+# This installs qflipper and clones an EXISTING flipper repo onto the deck. It
+# deliberately downloads nothing from upstream — if you already keep a curated
+# collection (.ir, .nfc, .sub, notes), a second copy fetched here would only
+# diverge from it.
 #
-# NOTHING is re-downloaded from upstream here — that work is done and would only
-# create a second, diverging copy. The actual gap was that all of it lived on the
-# workstation and the NAS, and NONE of it was on the deck. A go-box that cannot
-# reach the NAS is exactly the situation the deck exists for.
+# Set REMOTE to your own repo. The point is that a go-box which can't reach the
+# server holding all your reference material is exactly the situation the deck
+# exists for, so the material has to live ON the deck.
 
 source "$(dirname "$0")/lib.sh"
 need_sudo
 
+# Override REMOTE to point at your own collection.
 REMOTE="${REMOTE:-ssh://git@nas1.crosscreek:30143/mark/flipper.git}"
 DEST="${DEST:-$HOME/src/flipper}"
 
@@ -29,9 +29,9 @@ if [ -d "$DEST/.git" ]; then
 else
     log "Cloning the flipper repo to $DEST"
     git clone "$REMOTE" "$DEST" 2>&1 | tail -3 \
-        || die "Clone failed. The deck reaches nas1.crosscreek:30143, so this is
-almost certainly ssh key auth. Copy a key, or pull from the workstation:
-  rsync -a mark@<workstation>:~/src/flipper/ $DEST/"
+        || die "Clone failed. If the host is reachable this is almost certainly ssh
+key auth. Copy a key over, or rsync from a machine that already has the repo:
+  rsync -a you@workstation:~/src/flipper/ $DEST/"
 fi
 
 if [ -d "$DEST" ]; then

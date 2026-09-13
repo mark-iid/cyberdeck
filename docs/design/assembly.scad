@@ -1,10 +1,10 @@
 // THE ASSEMBLY, with every part where it actually goes - and the checks that
 // only exist once it does.
 //
-// WHY: every part in this build is drawn at the origin, because that is what a
-// printer wants. Nothing has ever represented a part in its INSTALLED position,
-// so every question about how two parts meet has been answered in someone's
-// head. That is where all of these came from:
+// WHY: every part is drawn at the origin, because that is what a printer wants.
+// Until this file existed, nothing represented a part in its INSTALLED position,
+// so every question about how two parts meet got answered in my head instead.
+// Five faults came from exactly that:
 //
 //   tile screws placed in the wrong coordinate frame   (cut nothing)
 //   tray bolts inside tray windows                     (held nothing)
@@ -12,9 +12,9 @@
 //   screen-tile lap coplanar with the rails            (would not seat)
 //   ledge inset the wrong way round                    (covers the screen)
 //
-// All five are interference or support questions, and all five are trivial to
-// see once the parts are in place. Assertions could not catch them because an
-// assertion compares numbers to numbers; these are solids meeting solids.
+// All five are interference or support questions, and all five are obvious once
+// the parts are in place. No assertion could catch them: an assertion compares
+// numbers to numbers, and these are solids meeting solids.
 //
 // Everything below is in PLATE coordinates: z = 0 is the rib shelf at 75 mm.
 

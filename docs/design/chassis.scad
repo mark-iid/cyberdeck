@@ -1,12 +1,12 @@
 // cyberdeck — floor chassis: module plinth (tray and cradle to follow).
 //
-// The module's screen must finish level with the rib shelf at 75 mm (CASE.md S12).
+// The module's screen must finish level with the rib shelf at 75 mm (CASE.md S7).
 // Module is 44 mm thick (measured) and the plinth does NOT stand on the floor -
 // it bolts down onto the 4 mm floor tray, which is what ties the two tray halves
 // together. So the stack is 4 + plinth + 44 = 75.
 //
 // Deliberately a skeleton, not a block. The module's vents are on its BACK face,
-// which points down here, and the operator has cut further vents into that cover.
+// which points down here, and I have cut further vents into that cover.
 // So the plinth touches only the four VESA bosses and ties them together with a
 // low rib ring, leaving 25 mm of open plenum directly under the vented face.
 //
@@ -19,11 +19,11 @@ PART = "plinth";
 
 // 26.5, not 31 - the tray eats 4 mm, and 0.5 more is deliberate.
 //
-// CORRECTED 2026-09-05. The first value, 30.5, came from 75 - 44 - 0.5 and
-// silently assumed the plinth sat on the case FLOOR. It does not: it sits on
-// the tray, and 4 + 30.5 + 44 = 78.5 would have stood the module 3.5 mm proud
-// of the rib shelf and lifted the plate off all twelve ribs - the exact failure
-// the 0.5 bias below exists to prevent.
+// The plinth sits on the TRAY, not on the case floor. Compute it from the floor
+// and you get 30.5, which makes the stack 4 + 30.5 + 44 = 78.5 - standing the
+// module 3.5 mm above the rib shelf and lifting the plate off all twelve ribs.
+// That is the exact failure the 0.5 bias below exists to prevent, so getting the
+// datum wrong defeats the very thing guarding it.
 //
 // Not printer compensation: the calibration bar remeasured at 6.05 for a drawn
 // 6.00, so Z is accurate. The bias is against OVER-CONSTRAINT. The plate is
@@ -77,7 +77,7 @@ if (PART == "plinth") plinth();
 
 // ---------------------------------------------------------------------------
 // Floor tray. Sits in the flat 270 x 200 floor; the ~17 mm fillet traps it on
-// all four sides, so nothing fastens to the shell (CASE.md S1, S12).
+// all four sides, so nothing fastens to the shell (CASE.md S1, S7).
 //
 // Two halves split at x=0, each 132.5 x 195 - inside the 215 bed. They are not
 // joined to each other: the PLINTH bridges the seam and bolts into both, and
@@ -87,13 +87,13 @@ if (PART == "plinth") plinth();
 // module's vents face down into a 30.5 mm plenum and the tray must not wall it
 // off. It also saves most of the plastic and most of the print time.
 // ---------------------------------------------------------------------------
-// TRAY_W and TRAY_D are DERIVED in deck.scad from the floor they sit on. They
-// were re-declared here as literals, and OpenSCAD takes the last assignment in
-// a file's scope - so the literal won for the whole of chassis.scad, including
-// for deck.scad's own asserts about it, while plate.scad saw the derived value.
-// Two files quietly disagreeing about one number: the exact fault the shared
-// file exists to prevent. Proven by forcing FLOOR_W to 400 - the derivation
-// moved, this file did not.
+// TRAY_W and TRAY_D are DERIVED in deck.scad from the floor they sit on. Do NOT
+// re-declare them here. OpenSCAD takes the last assignment in a file's scope, so
+// a literal here wins for the whole of chassis.scad - including for deck.scad's
+// own asserts about it - while plate.scad still sees the derived value. Two
+// files quietly disagreeing about one number is the exact fault the shared file
+// exists to prevent. (Test it by forcing FLOOR_W to 400: the derivation moves
+// and a re-declared literal does not.)
 RIB    = 12;       // TRAY_T is declared up with the plinth, which stands on it
 
 // Plinth and cradle bolts come from deck.scad in CASE coordinates.
@@ -135,16 +135,15 @@ module tray_half() {
         for (w = TRAY_WINDOWS) tray_window(w[0], w[1], w[2], w[3]);
         // EVERY bolt, folded onto x >= 0 with abs() - not filtered to x >= 0.
         //
-        // The filter was written when the pattern was symmetric, so mirroring
-        // one half reproduced the other. CRADLE_BOLT stopped being symmetric
-        // when the shroud moved to the terminal side: the block bolts at +57.5
-        // and the shroud at -77.5. Filtering dropped the shroud's holes, and
-        // mirroring then put a useless pair at -57.5 instead. The tray had no
-        // holes for the shroud at all. check-holes.scad caught it.
+        // FOLD with abs(), never filter by sign. CRADLE_BOLT is NOT
+        // symmetric - the block bolts at +57.5 and the shroud at -77.5 - so a
+        // `>= 0` filter drops the shroud's holes and mirroring then puts a
+        // useless pair at -57.5 instead, leaving the tray with no shroud holes
+        // at all.
         //
         // Folding gives both halves all three x positions, so two per half go
-        // unused. Four spare ⌀3.6 holes in a skeletal tray costs nothing;
-        // guessing which half needs which cost an afternoon.
+        // unused. Four spare ⌀3.6 holes in a skeletal tray cost nothing;
+        // guessing which half needs which costs an afternoon.
         // Each gets a hex nut trap in the UNDERSIDE so nothing protrudes below
         // the tray - it has to sit flat on the case floor or the whole stack
         // rises (deck.scad).
@@ -160,8 +159,8 @@ module tray_half() {
 // ---------------------------------------------------------------------------
 // Battery retention - TWO END BLOCKS, not a tray.
 //
-// REDRAWN 2026-09-05. The first version was a four-walled tray with a floor,
-// and it did not fit and was not needed:
+// A four-walled tray with a floor is the obvious shape and it is wrong here,
+// on all three axes:
 //
 //   Depth. Behind the module's back edge (+27.25) the flat floor runs to +100,
 //   so the battery zone is 72.75 mm. The pack is 70. A cradle with front and
@@ -177,7 +176,7 @@ module tray_half() {
 //   with 2 mm to the rim. On the tray alone it tops out at 94.
 //
 // So: two blocks capturing the 106 mm axis, where nothing else constrains it.
-// The plate's back well catches the pack again at 81-94 mm (S13 #0).
+// The plate's back well catches the pack again at 81-94 mm (S7).
 // ---------------------------------------------------------------------------
 // Everything dimensional comes from deck.scad, including CRADLE_BOLT, which is
 // DERIVED from these blocks rather than typed - the previous pattern disagreed
@@ -202,14 +201,14 @@ module cradle_block() {
 
 // Terminal shroud - the other end block, grown into a closed box.
 //
-// RESTORED 2026-09-05. S11 specifies "a printed cover over the terminals" and
+// CASE.md S7 specifies "a printed cover over the terminals" and
 // names loose antenna elements beside bare LiFePO4 posts as a fire risk. The
 // four-walled cradle carried that cover; replacing it with two open blocks
 // dropped it silently, and nothing recorded that it had gone.
 //
-// It must run the full height of Zone A, and that is not caution - the operator
-// reports the posts on what is the pack's TOP face upright, "on the right and
-// left", and laid on its side that dimension becomes the VERTICAL one. The two
+// It must run the full height of Zone A, and that is not caution. The posts are on
+// what is the pack's TOP face upright, one on the right and one on the left, so
+// laid on its side that dimension becomes the VERTICAL one. The two
 // posts are at different heights, spread over most of the 90 mm. There is no
 // short cover that covers both.
 //

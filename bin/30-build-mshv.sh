@@ -44,7 +44,7 @@ cd "$MSHV_DIR"
 # An earlier version of this script tried to sed those defines and printed
 # "Could not confirm MSHV_QT5 is set in src/config.h" on every single run — a
 # warning about a file that was already correct. Removed rather than left to
-# train the operator to ignore warnings.
+# train you to ignore warnings.
 
 # --- Replace the bundled static fftw with Debian's ---------------------------
 # THE BUILD FAILS WITHOUT THIS. The .pro ships a PREBUILT STATIC archive:

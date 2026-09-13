@@ -3,25 +3,24 @@
 // WHY THIS FILE EXISTS
 // -------------------
 // check-stl.py checks a part in isolation: bounding box, bed fit, z=0 seating,
-// count of solids. Every error it has caught was that kind. Every error it has
-// MISSED was a RELATIONSHIP BETWEEN TWO PARTS:
+// count of solids. Every fault it has caught was that kind. Every fault it has
+// MISSED was a RELATIONSHIP BETWEEN TWO PARTS - a sum spanning two files that
+// nobody added up. (../LESSONS.md has the list, and it is longer than you'd
+// like.)
 //
-//   2026-09-05  plinth 30.5 tall, computed as 75 - 44 - 0.5, forgetting the
-//               4 mm tray it stands on. Stack came to 78.5 against a 75 shelf.
-//   2026-09-05  plinth's tray bolts at x=0, tray's at x=+-20. Never compared.
-//               Two of them would have landed in the seam between tray halves.
-//   2026-09-05  battery height measured from the floor, not from the cradle
-//               floor on top of the tray. Off by 8 mm.
-//
-// All three are sums that nobody added up. So the numbers that two parts must
-// agree on live HERE, once, and the agreements are assert()ed. An assertion
-// that fails stops OpenSCAD dead - the STL is never written. That is the point:
-// a wrong part should be unprintable, not merely printed and then noticed.
+// So the numbers two parts must agree on live HERE, once, and the agreements
+// are assert()ed. A failing assertion stops OpenSCAD dead and the STL is never
+// written, which is the point: a wrong part should be unprintable, not merely
+// printed and then noticed.
 //
 // RULE: if a number appears in two files, it belongs in this one.
 // RULE: if two parts must add up, write the assert before drawing either.
+// RULE: assert against something INDEPENDENT. An assertion that rearranges its
+//       own definition cannot fail. Three below are labelled TAUTOLOGY (plus one
+//       in plate.scad) because deleting them would only mean someone writes them
+//       again; they are documentation, not checks.
 
-// --- The case. Measured 2026-09-04, cross-checked against Pelican CAD (S6) ---
+// --- The case. Measured 2026-09-04, cross-checked against Pelican CAD (S3) ---
 SHELF_H   = 75;      // rib tops - what the plate lands on
 BASE_H    = 100;     // floor to rim
 CASE_W    = 305;     // interior at the shelf
@@ -36,16 +35,16 @@ BED       = 215;     // Ender 3 usable
 RIB_OVERLAP_W = 304.5/2 - (CASE_W/2 - RIB_PROUD);   // 1.75
 RIB_OVERLAP_D = 230.5/2 - (CASE_D/2 - RIB_PROUD);   // 1.55
 
-// --- The module. Measured 2026-09-04 (S13 #3) -------------------------------
+// --- The module. Measured 2026-09-04 ---------------------------------------
 MOD_W = 200; MOD_D = 137.5; MOD_T = 44;
 MOD_FRONT = -110.25;
 MOD_CY    = MOD_FRONT + MOD_D/2;      // -41.5
-VESA      = 75;                       // M4, centred (S13 #3b)
+VESA      = 75;                       // M4, centred (S7)
 
 // --- The battery. Vendor + operator, 90 x 70 x 106 incl. terminals ----------
 BATT_W = 106; BATT_D = 70; BATT_H = 90;
 
-// Terminals, from the operator: on what is the TOP face in the pack's natural
+// Terminals, measured: on what is the TOP face in the pack's natural
 // upright orientation, set toward the FRONT, one left and one right, standing
 // 8 mm up from that face.
 //
@@ -67,11 +66,11 @@ BATT_W = 106; BATT_D = 70; BATT_H = 90;
 // the only one that guarantees nothing touches them.
 BATT_BODY_W = 100;
 BATT_TERM_W = 8;                 // posts at rest; they flex to 6 under load
-// Posts alone are not the envelope. S11 already budgets "~15-20 mm for the
+// Posts alone are not the envelope. S7 already budgets "~15-20 mm for the
 // posts + Powerpole lugs + cable bend"; the shroud has to contain all of it.
 BATT_WIRE_W = 20;
 // Terminals to the LEFT: the left rail carries the rocker and the Powerpole
-// inlet (S8), so this is the short side for the power run.
+// inlet (S5), so this is the short side for the power run.
 BATT_TERM_SIDE = -1;
 BATT_X0 = -BATT_BODY_W/2 - BATT_WIRE_W;      // -70, terminal side
 BATT_X1 =  BATT_BODY_W/2;                    // +50
@@ -85,14 +84,14 @@ BATT_BACK  = FLOOR_D/2;              // 100 - hard against where the fillet star
 BATT_FRONT = BATT_BACK - BATT_D;     // 30
 MOD_BACK   = MOD_FRONT + MOD_D;      // 27.25
 
-// --- Plate section (S12) ----------------------------------------------------
+// --- Plate section (S4) ----------------------------------------------------
 // 230.5, not 229. Same oversize bias as the width, and for the same reason -
 // but the depth had never been given it. At 229 in a 231.4 opening the plate
 // can slide 2.4 mm, and shoved to one wall its far edge stops 0.4 mm SHORT of
 // the rib it is supposed to land on: zero guaranteed bearing on that side.
-// 229 was sized against the operator's 230 tape measurement rather than the
-// 231.4 from Pelican's CAD, and nothing reconciled the two. At 230.5 the
-// guaranteed bearing is 1.1 mm and clearance 0.9. Sand if tight (S6).
+// 229 was sized against a 230 tape measurement rather than the 231.4 from
+// Pelican's CAD, and nothing reconciled the two. Trust the CAD over the tape. At 230.5 the
+// guaranteed bearing is 1.1 mm and clearance 0.9. Sand if tight (S3).
 PLATE_W = 304.5; PLATE_D = 230.5;
 FRAME_W = 12; FRAME_WF = 8;          // front member narrowed for the battery
 CORNER_R = 18;                       // matches the shell's interior corner
@@ -126,7 +125,7 @@ NUT_AF    = 5.5 + 0.4;   // M3 hex across flats, plus clearance
 NUT_POCK  = 2.6;         // 2.4 nut + 0.2, leaving TRAY_T - 2.6 = 1.4 of tray
 PLINTH_BIAS = 0.5;   // drawn short on purpose, see chassis.scad
 PLINTH_H    = SHELF_H - MOD_T - TRAY_T - PLINTH_BIAS;   // 26.5
-// The gap the foam tape on the module's top face has to close. S12 quotes 0.5,
+// The gap the foam tape on the module's top face has to close. S4 quotes 0.5,
 // which is the frame-to-module figure. The TILES are what the module actually
 // carries, and they sit LEDGE_H higher than the frame's underside, so the real
 // gap is 2.0. Buy 2 mm tape, not 0.5.
@@ -144,7 +143,7 @@ FOAM_T      = LEDGE_H + PLINTH_BIAS;                    // 2.0 nominal, 1.8 meas
 // Only consequence: the foam tape closes ~1.8 rather than 2.0. 2 mm tape still
 // works - it compresses, which is the point of using tape and not a shim.
 
-// --- Plate preload, S14 #4 ---------------------------------------------------
+// --- Plate preload, S8 ---------------------------------------------------
 // The keyboard used to be the spacer that let the lid foam press the plate onto
 // its ribs. It moved to the lid, so something has to take its place. TPU, not
 // cut foam: the height is repeatable and the stiffness is a slicer setting.
@@ -165,7 +164,7 @@ SPACER_L = 190;                      // clear of the R18 corners at +-97.25
 assert(SPACER_H >= BASE_H - PLATE_TOP, "preload strip is shorter than the recess");
 assert(SPACER_L/2 <= PLATE_D/2 - CORNER_R - 2, "preload strip runs into the corner radius");
 
-// --- Panel connectors. Vendor-published openings where they exist (S3) ------
+// --- Panel connectors. Vendor-published openings where they exist (S5) ------
 SMA_D    = 6.7;      // test-fitted 2026-09-04
 
 // --- Anderson PP15-45 bonded pair, measured 2026-09-07 -----------------------
@@ -225,9 +224,9 @@ assert(AUDIO_WEB + AUDIO_NUT <= AUDIO_THREAD,
        "audio jack has no thread left for its nut");
 assert(AUDIO_RB_D > 12.45, "audio relief will not pass the jack body");
 
-// --- Fasteners. ruthex RX-M3x5.7, hole published on the bag (S13 #10) -------
+// --- Fasteners. ruthex RX-M3x5.7, hole published on the bag (S9) -------
 INSERT_LEN = 5.7;
-INSERT_D   = 4.2;    // -> 4.0 as printed on this machine (S6 offset)
+INSERT_D   = 4.2;    // -> 4.0 as printed on this machine (S5 offset)
 INSERT_H   = 6.7;    // vendor minimum blind depth
 INSERT_SKIN = 1.0;   // material left over a blind seat, so nothing shows
 BOSS_H     = 1.7;    // local thickening that buys the depth
@@ -264,7 +263,7 @@ TILE_SCREW = concat(
 
 // Frame joints. Members butt at the centre of every side, four screws per joint,
 // pulled up from below by a splice. 14 and 26 from the joint, as the coupon.
-// NO FRONT SEATS. That joint is bonded (S14), so they were never going to be
+// NO FRONT SEATS. That joint is bonded (S4), so they were never going to be
 // used - and they are not merely surplus: their bosses hang 1.7 below the frame
 // at y -111.25, and the module's top face is 0.5 below it, reaching forward to
 // y -110.25. The bosses sat 1.2 mm INSIDE the module. The assembly check found
@@ -296,7 +295,7 @@ BLOCK_BOLT  = [for (y = [-1, 1])
 SHROUD_BOLT = [for (y = [-1, 1])
     [BATT_TERM_SIDE*(CR_SHROUD_X + CR_WALL + CR_FLANGE/2), CR_CY + y*(BATT_D/2 - 10)]];
 CRADLE_BOLT = concat(BLOCK_BOLT, SHROUD_BOLT);
-// Zone A is everything outboard of the pack, and S11 calls loose metal beside
+// Zone A is everything outboard of the pack, and S7 calls loose metal beside
 // bare terminals "a fire, not an inconvenience". The shroud closes the terminal
 // end up to the underside of the back tile - above that the pack is in the lid
 // recess, where nothing loose rides.
@@ -308,7 +307,7 @@ CRADLE_BOLT = concat(BLOCK_BOLT, SHROUD_BOLT);
 // the terminals are spread over that whole height, so it should be.
 //
 // The tall wall therefore moves inboard to sit 0.5 inside the well edge. Its
-// cavity becomes 17 mm rather than 20 - still inside S11's "15-20 mm for the
+// cavity becomes 17 mm rather than 20 - still inside S7's "15-20 mm for the
 // posts + Powerpole lugs + cable bend".
 //
 // The FLANGE still reaches out to the bolt at 77.5, because the tray is
@@ -319,7 +318,7 @@ CR_SHROUD_H = BATT_H;                         // 90, the pack's full height
 assert(CR_WALL_X <= abs(WELL_X0),
        "shroud wall stands outside the battery well and will foul the plate");
 assert(CR_WALL_X - CR_WALL - CR_BLOCK_X >= 15,
-       "shroud cavity is under S11's 15 mm for posts, lugs and cable bend");
+       "shroud cavity is under S7's 15 mm for posts, lugs and cable bend");
 
 // ============================================================================
 // ASSERTIONS. Each one is a sum that has already been got wrong, or could be.

@@ -1,8 +1,8 @@
 // cyberdeck — faceplate frame + tiles.
 //
-// Rests on the Pelican 1400's twelve moulded rib tops at 75 mm (CASE.md S6, S12).
+// Rests on the Pelican 1400's twelve moulded rib tops at 75 mm (CASE.md S3, S4).
 // Nothing fastens to the shell. Sizes are all measured, not catalog:
-//   interior at the shelf 305.0 x 231.4, corner R ~18, ribs 2 mm proud at 0/+-74.5
+//   interior at the shelf 305.0 x 231.4, corner R ~18, ribs standing 2 mm off the wall at 0/+-74.5
 //   module 200 x 137.5 x 51, VESA 75 centred, active area 173 x 118 centred
 //
 // Ender 3, ~215 x 215 usable. Every part here is checked against that.
@@ -37,7 +37,7 @@ PART = "all";
 
 // Module shifted FORWARD, front edge at -110.25, so its back edge lands at
 // +27.25 and leaves 72.75 mm of floor behind it for the battery standing on
-// its 70 x 106 base (S13 #0). Only the 173 x 118 active area must stay inside
+// its 70 x 106 base (S7). Only the 173 x 118 active area must stay inside
 // the opening; the module's front bezel tucks under the narrowed front member.
 // MOD_*, BATT_*, WIN_* and TILE_GAP from deck.scad.
 
@@ -143,15 +143,15 @@ module member(front = false) {
 // hole: 5.7 long, knurl OD 4.6, install into a *4.0* hole *6.7 deep minimum*,
 // with at least 1.6 mm of wall around it.
 //
-// Drawn 4.2 prints at 4.0 on this machine (S6 offset), so the diameter was
+// Drawn 4.2 prints at 4.0 on this machine (S5 offset), so the diameter was
 // right by luck. The DEPTH was not: 5 mm of hole for a 5.7 mm insert leaves it
-// standing 0.7 proud, or pressed home by splitting the 1 mm skin on the
+// sticking 0.7 up out of the seat, or pressed home by splitting the 1 mm skin
 // visible face. "It fits" is the hole accepting the insert, which is not the
 // same as the insert being seated in enough material.
 //
 // 6.7 of blind hole plus 1 mm of skin needs 7.7 mm of material and the member
 // is 6. Rather than thicken the whole frame - which costs plate height, and
-// S11 has only 3.5 mm of headroom under the rim - each hole gets a local boss
+// S7 has only 3.5 mm of headroom under the rim - each hole gets a local boss
 // on the UNDERSIDE, where there is 75 mm of nothing. The splice is
 // counterbored to swallow the boss and still clamp flat.
 // INSERT_D/H and BOSS_D/H come from deck.scad, which assert()s that the seat
@@ -168,10 +168,9 @@ module insert_bore() {
 
 // Splice bar, screwed up into the rim's underside either side of a joint.
 //
-// HOW IT MEETS THE RIBS - corrected 2026-09-07 after the operator asked, which
-// is the only reason it was ever checked.
+// HOW IT MEETS THE RIBS. Worth reading before moving anything here.
 //
-// The frame sits ON the rib tops at 75. The ribs are fins standing 2 mm proud of
+// The frame sits ON the rib tops at 75. The ribs are fins standing 2 mm off
 // the wall, so BELOW 75 the rib is solid material in the outermost 2 mm of the
 // opening. The splice hangs below 75, and the plate's edge reaches 1.75 mm past
 // a rib's inner face - so at every joint the splice's OUTER EDGE runs straight
@@ -222,15 +221,15 @@ module splice() {
 // Spans the opening front back to just past the module, with the window over
 // the active area - which is centred on the module, not on the plate.
 TILE_BACK = MOD_FRONT + MOD_D + TILE_GAP;   // +28.25
-// Trapped under the rails by a thin lap. CORRECTED 2026-09-09.
+// Trapped under the rails by a thin lap, and the lap goes in the tile's TOP.
 //
-// The first version put the lap in the tile's BOTTOM 1.2 mm, coplanar with the
-// body. That was wrong, and the reason is that tiles are DRAWN at z 0..TILE_T
+// Putting it in the BOTTOM 1.2 mm, coplanar with the body, looks right and is
+// not: tiles are DRAWN at z 0..TILE_T
 // but INSTALLED at z LEDGE_H..FRAME_H - they sit on the ledge. So the rail's
 // underside is not 1.5 above the screen tile's underside; the two are
 // COPLANAR, both resting on the same ledge. A lap in the bottom layer lands in
-// the rail's own space and holds the tile up. The operator found it as a tile
-// that would not sit flat.
+// the rail's own space and holds the tile up - which shows up at assembly as a
+// tile that will not sit flat along the front edge.
 //
 // The free space is BELOW that plane: under the rail's inner cantilever, from
 // x 101 out to the ledge at 130.25, there is nothing between z 0 and 1.5. So
@@ -238,7 +237,7 @@ TILE_BACK = MOD_FRONT + MOD_D + TILE_GAP;   // +28.25
 //
 // It also has to stop short of the FRONT ledge, which does occupy z 0..1.5
 // across the opening - a lap running the full depth would foul it, which is
-// precisely where the tile was sitting proud.
+// precisely where the tile was standing high.
 LAP_W = 5;
 LAP_T = 1.2;
 assert(LAP_T < LEDGE_H, "screen tile lap is thicker than the gap under the rail");
@@ -270,16 +269,16 @@ module screen_tile() {
     }
 }
 
-// Back channel tile, with the well the battery stands proud through. The pack
+// Back channel tile, with the well the battery comes up through. The pack
 // tops out at 90 against a plate top of 81, so it projects ~9 mm - which is why
-// the keyboard cannot lie here and returns to the lid (S11).
+// the keyboard cannot lie here and returns to the lid (S7).
 // Two fillers with the battery well open between them. One full-width tile
 // would be 280.5 mm and will not print - check-stl.py caught it. Splitting
 // around the well also means the well needs no bridging.
 // The well follows the pack ENVELOPE, which is off-centre: body -50..+50 plus
 // 6 mm of terminal on one end. A centred well would foul the terminals.
 // WELL_X0/WELL_X1 are in deck.scad - the frame's ledge needs them too.
-// Vent grille. S14 #7: the module's vents face DOWN into the plenum, and the
+// Vent grille. S7: the module's vents face DOWN into the plenum, and the
 // plenum's back is wide open to the back channel across the full 200 x 26.5 -
 // but the back channel itself was capped by these tiles, with nothing but the
 // ring around the battery to breathe through. Slots here complete the path:
@@ -316,7 +315,8 @@ module back_tile(side) {
 }
 
 // Rail tile blank. Connector cutouts are NOT here yet - the keystone is
-// unresolved (S8 #8) and the A/B selector is not bought, so two of the four
+// unresolved (it never latches into a printed plate - ../LESSONS.md #8) and the
+// A/B selector is not bought, so two of the four
 // have no dimensions. This exists to pin the usable width.
 RAIL_D = TILE_BACK - OPEN_FRONT;                // matches the screen tile
 module rail_blank() {
@@ -324,12 +324,12 @@ module rail_blank() {
 }
 
 // Left rail tile — power/RF. One switch now does master AND source select
-// (CASE.md S5), so this carries three cutouts, not four:
+// (CASE.md S6), so this carries three cutouts, not four:
 //   rocker 28.7 x 21.2 (21.2 across the rail, 9 mm of tile each side)
 //   Powerpole retainer pocket 16.2 x 8.5
 //   SMA 6.7
-// The keyboard covers the inboard 14 mm of this tile, so the SMA at 9.7 mm
-// proud is placed OUTBOARD. The rocker at 2.0 mm proud sits on the keep-out
+// The keyboard covers the inboard 14 mm of this tile, so the SMA, which stands
+// 9.7 mm above the plate, is placed OUTBOARD. The rocker at 2.0 mm sits on the keep-out
 // line; its 35 x 25.3 bezel is broad enough to bear a keyboard without harm.
 // APIELE DPDT ON-OFF-ON, vendor drawing 2026-09-05. Panel opening 28.5 x 21,
 // bezel 35 x 25.3 +-0.3, body 27.5 deep, terminals 6.3 x 0.8 on 10.3 centres,
@@ -365,7 +365,7 @@ LEFT_FEATURES = [
     ["Powerpole", -20, "pp",     PP_W,    PP_H],
     // 21 ACROSS the rail, 28.5 along. An earlier revision had this the other
     // way up, putting 28.7 across a 39.25 tile - 5.27 mm of material each side,
-    // which S3 had already written down as "too thin". The doc said one thing
+    // which S5 had already written down as "too thin". The doc said one thing
     // and the geometry did the other, and nothing compared them.
     ["rocker",     30, "rebate", RK_L, RK_W, RK_WEB, RK_BEZ_W, RK_BEZ_L],
 ];
@@ -395,14 +395,14 @@ RJ_W = RJ_BODY_W + 0.2 + 0.3;     // 16.2 - print offset plus 0.3 clearance
 RJ_L = RJ_BODY_L + 0.2 + 0.3;     // 16.0
 RJ_EAR = 27.5;                    // hole centres, measured (was 31, a guess)
 RJ_EAR_T = 7;                     // ear thickness - sets the screw length
-// EARS GO BEHIND THE PLATE. Confirmed with the operator 2026-09-07, and it is
-// what sets the aperture: mounted from behind, only the socket nose passes
+// EARS GO BEHIND THE PLATE, and that is what sets the aperture: mounted from
+// behind, only the socket nose passes
 // through, so the hole is the nose's 15.7 x 15.5. Mounted from the FRONT the
 // wider rear body would have to pass instead - about 22 x 22 - and the ears and
 // screw heads would sit on the show face.
 //
 // Behind wins twice: a 22 hole leaves 8.6 mm of tile each side against 11.8,
-// and the front stays clean. It is also what S3 has specified all along.
+// and the front stays clean. It is also what S5 has specified all along.
 // Ears are THREADED (operator 2026-09-07), so no nut: M3 x 12 countersunk,
 // 4.5 through the tile and ~7 of engagement in the ear.
 //
@@ -494,8 +494,8 @@ module feature(f) {
 // The opening the tiles drop into has ROUNDED corners - radius CORNER_R minus
 // FRAME_W, so 6. Four of the five tiles reach one of those corners and were
 // drawn as plain rectangles with square corners, which foul the frame's fillet
-// and hold the tile up. Found by the operator fitting a printed back tile,
-// 2026-09-07.
+// and hold the tile up. Four of the five tiles were affected, and it is only
+// visible when you offer a printed tile into a printed frame.
 //
 // Rather than round each tile by hand, every tile is intersected with the
 // OPENING'S OWN PROFILE - the same rr() call frame_full() uses. A tile cannot
@@ -622,7 +622,7 @@ module front_strap() {
     }
 }
 
-// Plate preload strip - print TWO, in TPU (S14 #4).
+// Plate preload strip - print TWO, in TPU (S8).
 //
 // It replaces the keyboard as the thing the lid foam presses on. Sits on a SIDE
 // frame member, whose 12 mm band runs from the opening edge out to the plate

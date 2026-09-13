@@ -1,21 +1,13 @@
-#!/home/mark/venv/bin/python
+#!/usr/bin/env python3
 """Local GGUF chat REPL for the cyberdeck.
 
-Replaces ~/ai.py and ~/codeai.py, which were near-identical and carried four
-real bugs:
+Runs a quantised model entirely offline. Needs llama-cpp-python; on the deck that
+lives in a venv, so either activate it or run this with that interpreter.
 
-  1. MODEL_INIT (the system prompt) was defined and then NEVER USED. Both
-     scripts advertised a persona they did not apply.
-  2. Both pointed at the 3B model, so the 4.1GB Mistral-7B was dead weight.
-  3. MODEL_PATH was RELATIVE ("./..."), so they only ran from $HOME.
-  4. n_ctx defaulted to 512 against a 2048+ train context, which llama.cpp
-     warned about on every start.
-
-They also had to be run with ~/venv/bin/python; run with the system python they
-fail with ModuleNotFoundError, which is what made them look broken.
-The shebang below fixes that permanently.
-
-Usage:  ask-local.py [-m mistral|orca] [-c CTX] [-s "system prompt"]
+Models live under MODEL_DIR as absolute paths (a relative path here means the
+script only works from $HOME, which is a trap worth avoiding). n_ctx is set
+explicitly rather than left at the 512 default, which llama.cpp warns about on
+every start against a 2048+ train context.
 """
 import argparse
 import os

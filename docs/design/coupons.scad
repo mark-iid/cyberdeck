@@ -1,11 +1,16 @@
 // cyberdeck — connector test coupons.
 //
-// WHY: filament shrinkage and slop vary by printer, and two of the ordered parts
-// (the USB unit, the keystone) retain themselves by SNAPPING to the panel. Their
-// cutouts are not published — the vendor sheets give the bezel, which must
-// overhang the hole to seat, so it can never be the hole. Guessing and finding
-// out six hours into a faceplate print is the expensive way. These are
-// 20-minute prints that turn every unknown into a test fit.
+// WHY: filament shrinkage and slop vary by printer, and some panel-mount parts
+// retain themselves by SNAPPING to the panel. Their cutouts are not published —
+// the vendor sheets give the BEZEL, which must overhang the hole to seat, so it
+// can never be the hole. Guessing and then finding out six hours into a faceplate
+// print is the expensive way. These are 20-minute prints that turn an unknown
+// into a test fit.
+//
+// Not every part is worth a coupon. Where a vendor publishes the panel opening
+// (the rocker did) you need the printer offset and nothing else. And a part that
+// grips the panel's BACK face cannot be solved by resizing the hole at all —
+// see ../LESSONS.md #8, which cost two coupons to work out.
 //
 // Print in the SAME filament, nozzle and layer height as the real plate. A
 // coupon printed in another material tells you about that material.
@@ -13,7 +18,7 @@
 // OpenSCAD on this machine is a FLATPAK, not on PATH. From the repo root:
 //
 //   mkdir -p build/coupons
-//   for p in usb_size usb_thick rail keycarrier; do
+//   for p in usb_size usb_thick rail rocker; do
 //     flatpak run --filesystem=host org.openscad.OpenSCAD \
 //       -o "$PWD/build/coupons/$p.stl" -D "PART=\"$p\"" "$PWD/docs/design/coupons.scad"
 //   done
@@ -22,14 +27,13 @@
 // relative or /tmp output path. build/ is gitignored; STLs are regenerable.
 // Plain `openscad ...` works wherever it is a normal PATH binary.
 //
-// Verified 2026-09-04: all four render manifold (CGAL "Simple: yes"), bboxes
-// 146x50x4.5, 146x50x4.5, 170x75x4.5, 140x78x4.5, each originating at 0,0,0.
+// All render manifold (CGAL "Simple: yes"), each originating at 0,0,0.
 //
-// Then write the winning numbers into CASE.md §3 and cut faceplate.svg to them.
-// This is a measuring tool, not a part.
+// Then write the winning numbers into deck.scad, which is where every opening
+// the real parts use comes from. This is a measuring tool, not a part.
 
 PART    = "all";
-PLATE_T = 4.5;    // intended faceplate thickness (§3 thin-panel note)
+PLATE_T = 4.5;    // intended faceplate thickness (CASE.md S5, thin-panel note)
 ENGRAVE = 0.6;
 $fn     = 96;
 
@@ -40,7 +44,7 @@ module lbl(s, sz=3.2) {
 }
 
 // Opening + local rebate. The rebate thins the plate to `t` around the hole so
-// the snap tabs have something they can actually close over (§3 thin-panel rule).
+// the snap tabs have something they can actually close over (CASE.md S5).
 module snap_hole(cx, cy, w, l, t, margin=4) {
     translate([cx - w/2 - margin, cy - l/2 - margin, t])
         cube([w + 2*margin, l + 2*margin, PLATE_T]);
@@ -85,10 +89,13 @@ module usb_thick() {
 // Rail — the four sizes now VERIFIED from vendor sheets. Narrow ladders, only
 // wide enough to absorb this printer's offset.
 // ---------------------------------------------------------------------------
-SMA   = [6.3, 6.5, 6.7];                      // §3 ⌀6.5 ±0.1, wants to be snug
+// The SMA and SWITCH ladders are the ones that mattered: they independently
+// landed on the SAME +0.2 offset (6.7 for a 6.5 part, 16.2 for a 16.0 one),
+// which is what made it systematic shrinkage rather than two coincidences. That
+// is why nothing else on the plate needed its own experiment.
+SMA   = [6.3, 6.5, 6.7];                      // ⌀6.5 ±0.1, wants to be snug
 SW    = [15.8, 16.0, 16.2, 16.4];             // ⌀16.0 mounting hole
-KEY_W = [14.3, 14.6, 14.9]; KEY_L = 16.2;     // keystone 14.6 x 16.2
-PP    = [[15.6,7.9],[16.0,8.3],[16.4,8.7]];   // PP15-45 bonded pair, §8 #7
+PP    = [[15.6,7.9],[16.0,8.3],[16.4,8.7]];   // PP15-45 bonded pair
 
 module rail() {
     difference() {
@@ -103,10 +110,6 @@ module rail() {
             translate([90 + 22*i, 34, 0]) lbl(str(SW[i]), 2.8);
         }
         translate([123, 68, 0]) lbl("SWITCH ⌀16", 3.4);
-        for (i = [0:len(KEY_W)-1]) {
-            snap_hole(20 + 28*i, 18, KEY_W[i], KEY_L, 2.0);
-            translate([20 + 28*i, 2.5, 0]) lbl(str(KEY_W[i]), 2.8);
-        }
         for (i = [0:len(PP)-1]) {
             translate([110 + 20*i - PP[i][0]/2, 18 - PP[i][1]/2, -1])
                 cube([PP[i][0], PP[i][1], PLATE_T + 2]);
@@ -116,47 +119,11 @@ module rail() {
 }
 
 // ---------------------------------------------------------------------------
-// Keystone carrier — THIRD pass, and the first built on how the part actually
-// works. A keystone jack does NOT pass through its opening. It is inserted from
-// BEHIND the panel; only its nose shows through, and the hook and spring grip
-// the panel's BACK FACE around the opening. So the panel must be thin at the
-// opening and OPEN BEHIND IT — the exact opposite of snap_hole's relief pocket.
-// That is why two ladders of that shape could never have worked, at any rung:
-// there was nowhere for a 32.6 mm-deep body to be.
-//
-// Opening is the vendor sheet's 14.6 x 16.2 plus this printer's +0.2 (S3).
-// The one real unknown is the panel thickness the hook and spring clamp, so
-// that is all this ladders. Three zones on a common spine, nothing behind.
-// ---------------------------------------------------------------------------
-// DO NOT PRINT AS DRAWN. These came from the vendor sheet + the printer offset,
-// not from calipers on a real wall plate, and the keystone spec fixes the face
-// (14.5 x 16.0) while leaving plate thickness to whatever ABS plates happen to
-// be. An opening that is too LARGE also fails to latch - the cantilever gets
-// nothing to bite. Buy a 1-port plate, measure its opening and thickness, and
-// cut these to those numbers. See CASE.md S8 #8.
-KC_W = 14.8; KC_L = 16.4;
-KC_T = [2.0, 2.4, 2.8];
-
-module keycarrier() {
-    zw = 34; zl = 40; n = len(KC_T);
-    union() {
-        cube([zw*n, 5, 1.6]);                       // spine, clear of the openings
-        for (i = [0:n-1]) translate([zw*i, 0, 0]) difference() {
-            cube([zw, zl, KC_T[i]]);
-            translate([zw/2 - KC_W/2, 26 - KC_L/2, -1])
-                cube([KC_W, KC_L, KC_T[i] + 2]);
-            translate([zw/2, 10, KC_T[i] - ENGRAVE]) linear_extrude(ENGRAVE + 0.4)
-                text(str(KC_T[i]), size=4, halign="center", valign="center",
-                     font="DejaVu Sans:style=Bold");
-        }
-    }
-}
-
-// ---------------------------------------------------------------------------
-// Rocker — DPDT ON-OFF-ON, master + source selector in one (CASE.md S5).
+// Rocker — DPDT ON-OFF-ON, master + source selector in one (CASE.md S6).
 // Same retention family as the USB: the body passes THROUGH the opening and
 // two spring tabs snap out behind, so snap_hole's relief pocket is right here
-// (unlike the keystone, which sits behind the panel and defeated it twice).
+// (unlike a keystone jack, which grips the panel's back face and defeats this
+// whole shape of coupon - ../LESSONS.md #8).
 //
 // The opening is published - 28.5 x 21, +0.2 for this printer - so only one
 // axis is unknown: the web the tabs close over. The vendor drawing dimensions
@@ -180,7 +147,6 @@ module rocker() {
 if      (PART == "usb_size")  usb_size();
 else if (PART == "usb_thick") usb_thick();
 else if (PART == "rail")      rail();
-else if (PART == "keycarrier") keycarrier();
-else if (PART == "rocker")     rocker();
+else if (PART == "rocker")    rocker();
 else { usb_size(); translate([0,55,0]) usb_thick(); translate([0,110,0]) rail();
-       translate([0,195,0]) keycarrier(); }
+       translate([0,195,0]) rocker(); }

@@ -1,19 +1,20 @@
 # Offline content
 
-**Purpose:** this deck is a doomsday device *and* a radio go-box companion, which
-is why the ham stack and the offline reference library are both treated as
-payload rather than extras.
+This deck is a doomsday device *and* a radio go-box companion, which is why the ham stack
+and the reference library are both treated as payload rather than extras. 123 GB of it
+when I started, 49 books now, ~273 GB still free.
 
-**Read it with `Mod+B`** — qutebrowser against kiwix-serve on :8080. Press `f`
-for link hints. See DESIGN §9 for why not kiwix-desktop.
+**Read it with `Mod+B`** — qutebrowser against kiwix-serve on :8080, press `f` for link
+hints. [DESIGN §7](../DESIGN.md) explains why not kiwix-desktop.
 
-## Fetched 2026-09-02 (bin/51-fetch-content.sh)
+## What's on it
 
-Library went 42 -> **49 books**. Medical was the largest gap and is now covered
-from three angles: WikiMed (encyclopaedic), WikEM (emergency clinician), FAS
-Military Medicine (austere field conditions).
+Started from 42 ZIMs / 123 GB. **Medical was the largest single gap** (there was no
+medical reference at all) and it's now covered from three angles: WikiMed for the
+encyclopaedic view, WikEM for the emergency clinician's, and FAS Military Medicine for
+austere field conditions where the first two assume a hospital.
 
-| Added | Size |
+| Added 2026-09-02 | Size |
 |---|---|
 | WikiMed Medical Encyclopedia | 2.06 GB |
 | WikEM | ~0.5 GB |
@@ -23,96 +24,106 @@ Military Medicine (austere field conditions).
 | Appropedia | 0.54 GB |
 | TruePrepper | 1.33 GB |
 
-273 GB still free.
+Already present: full Wikipedia with images (`_maxi`, 2023-05), wikibooks, wikiversity,
+rationalwiki, five StackExchange dumps (ham, electronics, security, DIY, 3D printing),
+`zimgit-knots`, `zimgit-food-preparation`, and about 30 Khan Academy video sets.
 
-# Remaining gaps
+Plus, from `55-fetch-computing.sh`: 2026 StackExchange refreshes (the deck's were 2023),
+full Python docs, the Arch wiki, and the entire ~231-file devdocs collection for ~0.57 GB.
+That last one is the best value-per-byte on the machine by a wide margin.
 
-Assessed 2026-08-31 against the 42 ZIMs / 123 GB already in `~/kiwix-share`.
-Free space: **287 GB**, so most of this fits comfortably.
+**Maps are covered too** (`54-maps.sh`): a whole-US OSM extract at 11.3 GB plus
+mkgmap/osmium/gdal, so a Garmin `.img` for *any* region can be built offline without
+network. TIGER2025 shapefiles for ten southwestern-PA counties feed Xastir, and there's a
+prebuilt SW-PA Garmin map for QMapShack.
 
-Browse and download: <https://library.kiwix.org> · `kiwix-manage` to add to the library.
+One trap worth repeating, because it wasted an evening: **the formats aren't
+interchangeable.** QMapShack wants Garmin `.img` and will not read Mapsforge `.map`.
+Xastir wants shapefiles. Fetching the wrong one gets you a viewer with nothing in it.
 
-## First: the "survival manuals" are not actually on this machine
+## `~/Bookshelf` is 13 MB, and that's the whole survival-manual collection
 
-`~/Bookshelf` is **13 MB** — three PDFs: the Raspberry Pi Beginner's Guide and
-two C programming books. Whatever survival manual collection was intended here,
-it is not present. Everything genuinely survival-oriented is inside the ZIMs
-(`zimgit-knots`, `zimgit-food-preparation`) and there are only two of those.
+Three PDFs: the Raspberry Pi Beginner's Guide and two C programming books. Whatever
+manual collection I thought was on here, it isn't. Everything genuinely
+survival-oriented lives inside the ZIMs.
 
-## Priority gaps
+Worth knowing because it's the sort of thing you'd only discover when you needed it.
+
+## Still missing
+
+Browse and download at <https://library.kiwix.org>, then `kiwix-manage` to add to the
+library so both front-ends see it.
 
 | Priority | ZIM | Why |
 |---|---|---|
-| **1** | `wikipedia_en_medicine_maxi` (WikiMed) | **There is no medical reference on this deck at all.** Largest single gap by a wide margin. |
-| **1** | `zimgit-medicine_en` | Prepper-oriented practical medicine; complements WikiMed's clinical framing. |
-| **2** | `zimgit-post-disaster_en` | Water purification, sanitation, shelter. The gap between "knots" and "food prep". |
-| **2** | `ifixit_en_all` | Repair guides with photos. You have DIY StackExchange but not iFixit; they are not substitutes. |
 | **3** | `wikihow_en_maxi` | Practical step-by-step how-to. Broad, shallow, useful. |
-| **3** | `appropedia_en_all` | Appropriate technology — low-tech water, power, agriculture, construction. |
 | **4** | `gutenberg_en_all` | ~60k public domain books. Morale and reference both. |
 | **4** | `wikispecies` / foraging refs | Plant and animal identification. |
 | **5** | `wikivoyage_en_all_maxi` | Geographic and practical regional detail Wikipedia omits. |
 
-## Maps — the other thing Wikipedia does not cover
+Nothing here is urgent. The high-priority gaps (medical, post-disaster, repair,
+appropriate technology) are all closed.
 
-No offline mapping exists on this deck. A survival machine that cannot answer
-"where am I, what is around me, how do I get there" has a real hole.
+## The one gap that isn't content: time
 
-- Viewers: `qmapshack` (best offline support), `viking`, `marble` —
-  `bin/50-doomsday-extras.sh maps` installs them.
-- **Data is the part that matters and must be fetched in advance.** Get an
-  OpenStreetMap regional extract from <https://download.geofabrik.de> for your
-  state/region. Budget a few GB.
-- Pair with a USB GPS — see the `time` tier, which you want anyway.
+This is the gap that *silently* breaks a core function, which is why it's on this list at
+all. **FT8 needs sub-second time.** The deck gets that from NTP over the internet. No
+internet, no NTP, the clock drifts, and FT8 stops decoding within days — with no error
+message, just a waterfall full of nothing.
 
-## Time — two parts, both cheap
+Two parts, both cheap.
 
-### Part 1: RTC backup cell — connector present, currently EMPTY
+### Part 1: the RTC cell, and why the connector is deliberately empty
 
-The Pi 5 has a built-in RTC (`rtc0: rpi-rtc`, confirmed) and a `J5`/`BATT`
-2-pin JST-SH connector beside the USB-C input. Without a cell, an off-grid deck
-boots with no idea what time it is.
+The Pi 5 has a built-in RTC (`rtc0: rpi-rtc`) and a `J5`/`BATT` 2-pin JST-SH connector
+beside the USB-C input. Without a cell, an off-grid deck boots with no idea what time it
+is.
 
-**Status 2026-08-31: no cell fitted, and trickle charging is DISABLED.**
+**No cell is fitted and trickle charging is disabled, on purpose.** I briefly fitted a
+salvaged cell — `2016.07.11` date code, an OEM part number, hand-taped with soldered
+leads, chemistry unidentifiable. Added `dtparam=rtc_bbat_vchg`, then immediately reverted
+it: charging an unknown cell risks venting if it turns out to be a CR/BR primary or a
+3.6 V lithium thionyl chloride rather than a rechargeable ML/VL type. Charging a
+non-rechargeable coin cell is a genuine hazard, not a theoretical one.
 
-A salvaged cell was briefly fitted and then removed. It carried a `2016.07.11`
-date code and an OEM part number, hand-taped with soldered leads — chemistry
-unidentifiable. `dtparam=rtc_bbat_vchg` was added and then **immediately
-reverted**: charging an unknown cell risks venting if it turns out to be a
-CR/BR primary or a 3.6V lithium thionyl chloride rather than a rechargeable
-ML/VL type. Charging a non-rechargeable coin cell is a genuine hazard, not a
-theoretical one.
-
-**Buy the actual Raspberry Pi RTC Battery (~£5).** It is an ML2020
-rechargeable, ships with the correct 2-pin JST plug and an adhesive pad, and is
-the only cell it is safe to enable charging on. Then, and only then:
+**Buy the actual Raspberry Pi RTC Battery (~£5).** It's an ML2020 rechargeable, ships with
+the correct 2-pin JST plug and an adhesive pad, and it's the only cell it's safe to enable
+charging on. Then, and only then:
 
     dtparam=rtc_bbat_vchg=3000000     # 3.0V; charger is CC 3mA, limits 1.3-4.4V
 
-written to the **NVMe** config.txt (DESIGN §7). Verify with
-`cat /sys/class/rtc/rtc0/charging_voltage` — 0 means disabled.
+written to the **NVMe's** `config.txt` — see [DESIGN §5](../DESIGN.md) for why that needs
+saying. Verify with `cat /sys/class/rtc/rtc0/charging_voltage`, where 0 means disabled.
 
-Note the `battery_voltage` sysfs reading is not a trustworthy health check: it
-was observed fluctuating (5982, then 6837) in units that do not correspond to a
-3V cell. **The only real test is a full power-off** — unplug, wait, boot with
-the network disconnected, and see whether the clock is right.
+Don't trust the `battery_voltage` sysfs reading as a health check. I watched it fluctuate
+between 5982 and 6837, in units that don't correspond to a 3 V cell in any obvious way.
+**The only real test is a full power-off**: unplug, wait, boot with the network
+disconnected, and see whether the clock is right.
 
-### Part 2: GPS discipline — see `bin/50-doomsday-extras.sh time`
+### Part 2: GPS discipline
 
-Not content, but it belongs on this list because it is the one gap that
-silently breaks a core function. FT8 needs sub-second time. This deck gets
-that from **NTP over the internet**. No internet, no NTP, clock drifts, FT8
-stops decoding within days. A USB GPS + `gpsd` + `chrony` fixes it, and both
-daemons are already installed.
+A USB GPS plus `gpsd` and `chrony` fixes the drift properly, and both daemons are already
+installed. `bin/50-doomsday-extras.sh time`.
 
-## Local AI — currently broken
+If you use a QLG2, **jumper it to 3.3 V logic first.** The 5 V default will damage a Pi
+GPIO.
 
-`~/mistral-7b-instruct-v0.3-q4_k_m.gguf` and `~/q4_0-orca-mini-3b.gguf` are
-present but `llama_cpp` is not installed, so `ai.py` / `codeai.py` both raise
-`ModuleNotFoundError`. This is the deck's *actual* offline AI story — Claude
-Code needs the internet and is a workstation tool, not a survival one.
+## Local AI
 
-Worth doing properly: build `llama.cpp` with a `llama-server` systemd unit, so
-the 7B Mistral is reachable from a browser alongside Kiwix. On 8 GB of RAM a
-Q4_K_M 7B is comfortable. **Do this after fitting a fan** (DESIGN §6) —
-inference is sustained all-core load.
+`llama-server` on `127.0.0.1:8081`, via `bin/60-local-ai.sh`, so the 7B Mistral is
+reachable from the same browser as Kiwix. On 8 GB a Q4_K_M 7B is comfortable. This is the
+deck's *actual* offline AI story — Claude Code needs the internet and is a workstation
+tool, not a survival one.
+
+Two things I got wrong here and it's worth recording both:
+
+- **I logged this as "broken" on a `ModuleNotFoundError`, and it wasn't.** `~/venv` had a
+  working `llama_cpp_python` 0.3.16 the whole time; I'd run `ai.py` with the system
+  python. The real faults were smaller: the system prompt was defined and never used, both
+  scripts pointed at the 3B so the 4.1 GB Mistral was dead weight, the model path was
+  relative so they only ran from `$HOME`, and `n_ctx` defaulted to 512 against a 2048+
+  train context.
+- **"Do this after fitting a fan" is now satisfied**, and it was a real blocker — one
+  short inference run hit 96.6 °C on the fanless machine. With the active cooler fitted,
+  7B inference sits at 82.3 °C and brushes the 85 °C soft limit without throttling hard
+  ([DESIGN §4](../DESIGN.md)).

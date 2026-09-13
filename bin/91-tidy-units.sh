@@ -14,7 +14,7 @@ source "$(dirname "$0")/lib.sh"
 need_sudo
 
 # --- 1. mako.service: the waybar duplicate, missed the first time -------------
-# Same pattern as waybar (DESIGN §8): Debian ships mako.service enabled, and
+# Same pattern as waybar (DESIGN §6): Debian ships mako.service enabled, and
 # enabled GLOBALLY via /etc/systemd/user/graphical-session.target.wants/. niri
 # also spawns mako from config.kdl, so the systemd copy loses the race for the
 # D-Bus name and fails. One mako runs; the unit just fails noisily beside it.
