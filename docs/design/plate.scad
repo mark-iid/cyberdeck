@@ -109,6 +109,16 @@ module frame_full() {
             translate([t[0], t[1], LEDGE_H - INSERT_H]) cylinder(d=INSERT_D, h=INSERT_H);
         // joint seats: bored UP from below, so nothing shows on the finished top
         for (j = JOINT_SEAT) translate([j[0], j[1], 0]) insert_bore();
+        // Clearance for the Powerpole retainer's OUTBOARD bolt, which passes
+        // through the ledge on its way down. The rail tile already has the hole
+        // at tile-local (-13, -20); this lets the bolt continue.
+        //
+        // Drawn on both sides because the front members are one part mirrored.
+        // The right-hand one is unused - a ⌀3.6 hole in a 10 mm ledge, 20 mm
+        // from the nearest ledge screw, under a rail with no Powerpole in it.
+        for (sx = [-1, 1])
+            translate([sx*(RAIL_CX + PP_EAR/2), RAIL_CY - 20, -1])
+                cylinder(d=M3_CLEAR, h=LEDGE_H + 2);
     }
 }
 
@@ -563,38 +573,22 @@ module pp_retainer() {
         // pin, through both walls and the housing between them
         translate([0, 0, PP_A - TILE_T]) rotate([90, 0, 0])
             cylinder(d=PP_PIN + 0.2, h=od + 2, center=true);
-        // ONE insert seat, inboard only. The outboard one at plate x -133.625
-        // sits inside the frame's ledge (-140.25..-130.25), so a screw there
-        // cannot reach this part - the ledge is between them. It was also
-        // 1.6 mm from the rail tile's own ledge screw at -135.25.
-        //
-        // PP_EAR = 26 was sized against the rail's 39.25 width and never
-        // against what is UNDERNEATH the rail. Found by the assembly sweep:
-        // 6.375 x 14.8 x 1.5 = 141.53 mm3 of this part inside member_FL's
-        // ledge, matching the measured overlap exactly.
-        // THROUGH HOLE AND A NUT, not a heat-set insert (operator, 2026-09-11).
-        //
-        // Better here for three reasons. An insert in a 10 mm block relies on
-        // melted plastic gripping brass; a nut clamps the tile and the retainer
-        // into one joint and cannot pull out. It also deletes the only insert
-        // in the build that had to be melted into a small loose part. And it
-        // removes the fault this replaced - the seat had been bored from the
-        // BOTTOM face, so a screw coming down through the tile met 4.3 mm of
-        // solid plastic and never reached the insert at all.
-        //
-        // Hex pocket in the underside so the nut is captive and only the screw
-        // turns - the joint is behind the plate and there is no room for two
-        // tools. Same trick as the tray's chassis nuts.
-        translate([PP_EAR/2, 0, -1]) cylinder(d=M3_CLEAR, h=PP_DEPTH + 2);
-        translate([PP_EAR/2, 0, -1])
-            cylinder(d=NUT_AF/cos(30), h=NUT_POCK + 1, $fn=6);
-        // ledge relief: the outboard end loses its top LEDGE_H so the frame's
-        // ledge can pass over it. On the printed part this is a file job -
-        // 6.4 x 14.8 x 1.5 off one top corner.
+        // TWO through-bolts with captive nuts, both INBOARD, straddling the
+        // pocket along the rail. See deck.scad for why the outboard position is
+        // unusable and why a nut beats a heat-set insert here.
+        for (x = [-PP_EAR/2, PP_EAR/2]) {
+            translate([x, 0, -1]) cylinder(d=M3_CLEAR, h=PP_DEPTH + 2);
+            translate([x, 0, -1]) cylinder(d=NUT_AF/cos(30), h=NUT_POCK + 1, $fn=6);
+        }
+        // Ledge relief: the outboard end loses its top LEDGE_H so the frame's
+        // ledge passes over it. PP_EAR = 26 was sized against the rail's 39.25
+        // width and never against what is UNDERNEATH the rail - the assembly
+        // sweep found 141.53 mm3 of this part inside member_FL's ledge.
         translate([-ow/2 - 1, -od/2 - 1, PP_DEPTH - LEDGE_H])
             cube([ow/2 - 9.625 + 1, od + 2, LEDGE_H + 1]);
     }
 }
+
 
 // Front joint strap - BONDED, not bolted, and the reason is arithmetic.
 //

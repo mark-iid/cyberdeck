@@ -403,27 +403,25 @@ nuts.
 
 Build inserts drop **28 → 27**.
 
-**One screw is structurally sufficient, and the reason is that the tile takes both
-directions:**
+**Two bolts, one at each existing hole in the printed left rail** — tile-local (±13, −20),
+either side of the Powerpole slot. The retainer keeps its original 32 × 14.8 × 10.
 
-| Load | Path |
-|---|---|
-| **pulling a plug out** (+z) | pin → retainer → pressed **up into the tile**. Compression against the tile; the screw is barely loaded. |
-| **pushing a plug in** (−z) | retainer pushed down; the **bolt** takes it in tension, reacted by the nut against the whole underside. |
-| the 13 mm moment | force at the pocket (x −120.625), screw at −107.625 — the retainer rotates about the screw and its outboard end swings **up into the tile**, which reacts it. |
-| rotation in-plane | the connector body is keyed in **both** pockets — the tile's and the retainer's. |
+The outboard bolt passes **through the frame's ledge** on its way down. That was rejected
+once on the grounds that it sat 1.6 mm from the rail tile's own ledge screw — which
+compared the two in *x* and ignored that they are **20 mm apart in y**. The ledge screws on
+that side are at plate y −95, −39.5, +15, +45, +85; the retainer is at −59.5. No conflict,
+and a ⌀3.6 hole in a 10 mm ledge leaves 3.4 mm either side.
 
-A PP15-45 pair inserts at roughly **22–67 N**. An M3 bolt through a nut is good for
-kilonewtons before the plastic yields, and the bolt never sees the extraction load at
-all — that one goes straight into the tile.
+**The clearance hole is drawn into the member**, at plate (±133.625, −59.5) through the
+ledge, so it comes out of the printer exactly located rather than being drilled. It is on
+both sides because the front members are one part mirrored; the right-hand one is unused
+and harmless — a small hole in a ledge 20 mm from the nearest screw, under a rail with no
+Powerpole in it.
 
-**What one screw does cost:** the retainer can rock slightly about the screw before the
-tile picks the load up, so it will feel less solid than two would.
+    screw run, both bolts:  M3 x 16, nut captive in the retainer's underside
 
-**A second screw is possible but not cheap.** The pocket occupies tile-local ±8.35, so a
-second fastener cannot sit beside the first — it would have to be offset in *y*, which
-means a longer retainer (reprint) and a new hole drilled in the rail. Not worth it for a
-load the tile already carries.
+Interference re-checked after the change: retainer, member_FL, left rail and screen tile
+all 0.00.
 
 ### ✅ The shroud shields properly now — full pack height, 2026-09-11
 

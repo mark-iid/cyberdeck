@@ -184,6 +184,17 @@ PP_SLIP = 0.3;       // pocket clearance on top of the +0.2 print offset
 PP_WALL = 3;
 PP_DEPTH = 10;       // retainer body behind the tile
 PP_EAR  = 26;        // screw centres, across the rail
+// TWO bolts, at BOTH existing hole positions in the printed left rail.
+//
+// The outboard one passes through the frame's ledge on its way down. That was
+// rejected earlier on the grounds that it sat 1.6 mm from the rail tile's own
+// ledge screw - which compared the two in x and ignored that they are 20 mm
+// apart in y. The ledge screws on that side are at plate y -95, -39.5, +15,
+// +45 and +85; the retainer is at -59.5. There is no conflict.
+//
+// So the retainer keeps its original size and position and simply gains a
+// second bolt. The clearance hole through the ledge is drawn into the member
+// rather than drilled, since the members are being reprinted anyway.
 assert(PP_A > TILE_T + 3,
        "Powerpole pin lands too close behind the tile to leave a shoulder");
 assert(PP_A - TILE_T + PP_WALL <= PP_DEPTH + PP_WALL,
