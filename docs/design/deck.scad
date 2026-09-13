@@ -289,13 +289,26 @@ CRADLE_BOLT = concat(BLOCK_BOLT, SHROUD_BOLT);
 // bare terminals "a fire, not an inconvenience". The shroud closes the terminal
 // end up to the underside of the back tile - above that the pack is in the lid
 // recess, where nothing loose rides.
-// 70, not 74.5. The shroud STANDS ON THE TRAY, so its height is measured from
-// case z = TRAY_T, not from the floor - and everything above the rib shelf at
-// 75 belongs to the plate. 74.5 put its top at case 78.5, which is 3.5 mm
-// inside the plate: 25 mm3 into the left member's ledge and 350 mm3 into the
-// back-left tile. Exactly the plinth's fault, which also forgot the tray.
-CR_SHROUD_H = SHELF_H - TRAY_T - 1;           // 70, top lands at case 74
-assert(TRAY_T + CR_SHROUD_H < SHELF_H, "shroud reaches above the rib shelf");
+// FULL PACK HEIGHT, 2026-09-11. It was capped at 70 to stay under the rib
+// shelf - correct while the shroud stood at x -73.5, where the plate's ledge
+// and back tile are. But between the well's edge at -71 and the pack at -50.5
+// there is NO PLATE AT ANY HEIGHT: the well is open and the ledge is cut. A
+// shroud that lives inside the well can be as tall as the pack it covers, and
+// the terminals are spread over that whole height, so it should be.
+//
+// The tall wall therefore moves inboard to sit 0.5 inside the well edge. Its
+// cavity becomes 17 mm rather than 20 - still inside S11's "15-20 mm for the
+// posts + Powerpole lugs + cable bend".
+//
+// The FLANGE still reaches out to the bolt at 77.5, because the tray is
+// already printed with holes there. It lives at z 0..4, far below the plate,
+// so it may pass under the back tile freely.
+CR_WALL_X   = abs(WELL_X0) - 0.5;             // 70.5, outer face of the tall wall
+CR_SHROUD_H = BATT_H;                         // 90, the pack's full height
+assert(CR_WALL_X <= abs(WELL_X0),
+       "shroud wall stands outside the battery well and will foul the plate");
+assert(CR_WALL_X - CR_WALL - CR_BLOCK_X >= 15,
+       "shroud cavity is under S11's 15 mm for posts, lugs and cable bend");
 
 // ============================================================================
 // ASSERTIONS. Each one is a sum that has already been got wrong, or could be.

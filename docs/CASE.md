@@ -384,7 +384,31 @@ shroud's cavity, and now this. All four are a part checked against its own defin
 rather than against the thing it has to meet. The frame's corner radius has been in
 `CORNER_R` since the first day and the tiles simply never referred to it.
 
-### ⚠️ The shroud does not shield anything — corrected 2026-09-07
+### ✅ The shroud shields properly now — full pack height, 2026-09-11
+
+It was capped at 70 to stay under the rib shelf. That was right while it stood at
+x −73.5, where the plate's ledge and back tile are — but **between the well's edge at −71
+and the pack at −50.5 there is no plate at any height.** The well is open and the ledge is
+cut. A shroud living inside the well can be as tall as the pack it covers, and the
+terminals are spread over that whole height, so it should be.
+
+| | Was | Now |
+|---|---|---|
+| height | 70 (top at case 74) | **90** — the pack's full height, top at case 94 |
+| outer wall | x −73.5, under the plate | **x −70.5**, 0.5 inside the well |
+| cavity | 20 mm | **17 mm** — still inside §11's 15–20 for posts, lugs and cable bend |
+| lid | deleted | **restored** — the box now covers something |
+
+The **flange** still reaches out to the bolts at ±77.5, because the tray is already printed
+with holes there. It sits at z 0…4, far below the plate, so it passes under the back tile
+freely. Interference re-checked after the change: shroud, battery and both back tiles all
+0.00.
+
+**This costs a reprint** — 31 × 70 × 90 against the printed 31 × 70 × 74.5. The earlier
+advice to cut 4.5 mm off the top is withdrawn; that part is now the wrong shape, not the
+wrong length.
+
+### The earlier version, and why it did not shield — 2026-09-07
 
 It is named for a job it was never geometrically able to do:
 

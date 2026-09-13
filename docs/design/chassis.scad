@@ -216,22 +216,27 @@ module cradle_block() {
 // Closed outboard, both ends and top; open toward the pack; wire out through a
 // notch at the FRONT bottom, following the posts, which sit toward the front.
 module shroud() {
-    xi = BATT_TERM_SIDE > 0 ?  CR_BLOCK_X   : -CR_BLOCK_X;         // inboard
-    xo = BATT_TERM_SIDE > 0 ?  CR_SHROUD_X  : -CR_SHROUD_X;        // outboard
-    x0 = min(xi, xo + (BATT_TERM_SIDE > 0 ? 0 : -CR_WALL));
-    x1 = max(xi, xo + (BATT_TERM_SIDE > 0 ? CR_WALL : 0));
-    fx = BATT_TERM_SIDE > 0 ? x0 : x0 - CR_FLANGE;
+    // Full pack height, living inside the battery well. Closed outboard, on
+    // both ends and on top; open toward the pack, with the wire out low at the
+    // front. The lid is back now that the box actually covers the terminals.
+    xi = BATT_TERM_SIDE > 0 ?  CR_BLOCK_X : -CR_BLOCK_X;          // against the body
+    xo = BATT_TERM_SIDE > 0 ?  CR_WALL_X  : -CR_WALL_X;           // outer wall face
+    x0 = min(xi, xo); x1 = max(xi, xo);
+    fx = BATT_TERM_SIDE > 0 ? CR_BLOCK_X : -CR_SHROUD_X - CR_WALL - CR_FLANGE;
+    fw = CR_SHROUD_X + CR_WALL + CR_FLANGE - CR_BLOCK_X;
     difference() {
         union() {
-            translate([BATT_TERM_SIDE > 0 ? xo : xo - CR_WALL, CR_CY - CR_LEN/2, 0])
-                cube([CR_WALL, CR_LEN, CR_SHROUD_H]);                    // outboard
+            // outboard wall, full height
+            translate([BATT_TERM_SIDE > 0 ? xo - CR_WALL : xo, CR_CY - CR_LEN/2, 0])
+                cube([CR_WALL, CR_LEN, CR_SHROUD_H]);
+            // end walls, inside the pack's own depth - there is no floor spare
             for (y = [CR_CY - CR_LEN/2, CR_CY + CR_LEN/2 - CR_WALL])
                 translate([x0, y, 0]) cube([x1 - x0, CR_WALL, CR_SHROUD_H]);
-            // No lid. It existed to close a box for a shielding job the part
-            // cannot do (S14), and it was the top 3 mm of the 3.5 that stood
-            // inside the plate.
-            translate([fx, CR_CY - CR_LEN/2, 0])
-                cube([x1 - x0 + CR_FLANGE, CR_LEN, TRAY_T]);             // flange
+            // lid
+            translate([x0, CR_CY - CR_LEN/2, CR_SHROUD_H - CR_WALL])
+                cube([x1 - x0, CR_LEN, CR_WALL]);
+            // bolt flange, reaching out to the tray's existing holes at 77.5
+            translate([fx, CR_CY - CR_LEN/2, 0]) cube([fw, CR_LEN, TRAY_T]);
         }
         // wire exit, low and toward the FRONT, where the posts are
         translate([x0 - 1, CR_CY - CR_LEN/2 + 6, TRAY_T + 4])
