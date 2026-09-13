@@ -992,7 +992,9 @@ The self-contained 12 V module removes the two hardest parts of a go-box build:
   dongle does not compete for these** — it runs off a Pi port free inside the module
   (operator, 2026-09-04), which is what makes the SMA bulkhead's internal jumper work.
   No hub is needed, but the margin is exactly zero: any further internal USB device
-  needs one.
+  needs one. **Confirmed at first assembly**: adding a 500 GB drive made five devices
+  for four ports, and it was dropped rather than adding a hub. The four are touch,
+  RTL-SDR, and the dual panel unit's two pigtails.
 - **One switch kills the whole deck.** The left-rail master switch sits on the 12 V
   feed *upstream* of the module, so it cuts screen, Pi, SSD and fan together. No
   partial-power states to reason about.
@@ -1462,6 +1464,13 @@ DONE:
   screen**, not a single strip: power/AV down the left, data down the right.
   - *LEFT edge (display board):* `AUDIO` (3.5 mm), `HDMI` (full-size), `USB Type-C`,
     and `DC 12V` — a **barrel jack**.
+  - ⚠️ **That Type-C is the TOUCHSCREEN's link, and it is a device port, not a host.**
+    It must be cabled to one of the Pi's USB-A ports on the right edge or there is no
+    touch at all — the panel shows a picture over HDMI regardless, so a working display
+    with dead touch means exactly this cable. Nothing can be plugged *into* it: it is
+    upstream, so a drive or a dongle there will never enumerate. **First assembly,
+    2026-09-12: a 500 GB drive was plugged into it and touch was dead until the drive
+    came out and the link went back to a Pi USB-A.**
   - *RIGHT edge (Pi):* **2× USB-A** (USB-3 blue stack), **Gigabit Ethernet** (RJ45),
     the Pi's USB-C, and the NVMe/fan.
   - *Also on the module, and missing from this list until 2026-09-04:* an **OSD control
