@@ -18,6 +18,33 @@ and cross-checked against Pelican's own CAD (§6).
 
 ## ✅ BUILT — 2026-09-12
 
+### Thermal: MEASURED, and the enclosure costs nothing
+
+The one number this document argued about and never had. §14 #7 raised a real concern —
+the module's vents face down into a plenum, both of them, and no airflow path was ever
+designed. **The measurement says it does not matter.**
+
+    baseline  51.6 C
+    t=30      67.0 C   2400 MHz   0x0
+    t=120     70.8 C   2400 MHz   0x0
+    t=210     74.1 C   2400 MHz   0x0
+    t=300     73.6 C   2400 MHz   0x0
+
+**Full 2.4 GHz throughout, zero throttle bits, plateaued at ~74 C from t=210.** It reached
+steady state rather than climbing, which is the signature that distinguishes a breathing
+enclosure from a sealed one.
+
+**Like for like: the same synthetic test measured 76.8 C before the deck existed**
+(DESIGN §6.8). The deck runs **2–3 C cooler** than the bare setup on a desk.
+
+⚠️ **This is the synthetic spin loop, which `70-thermal-tune.sh` warns understates real
+load** — the same script records compile at ~85 C and LLM inference at 82.3 C on the bare
+setup. Scaling the 2–3 C improvement across suggests ~82 and ~80 in the deck, both under
+the 85 C soft limit, but **compiling is the case worth measuring directly** before
+treating it as settled.
+
+
+
 Assembled, closed, and running. Kiwix serving the 123 GB library on the panel; touch,
 display, SDR and power all live. Photographed in the case with the plate in, the battery
 standing through its well, and both vent grilles open to the back channel.
