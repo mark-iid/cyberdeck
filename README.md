@@ -8,6 +8,8 @@
 ![Thermal](docs/badges/thermal.svg)
 ![Case](docs/badges/case.svg)
 
+![The deck, rendered from the assembly model](docs/images/hero.png)
+
 A Raspberry Pi 5 in a Pelican 1400, running niri: 1280×800 touchscreen, wired USB
 keyboard, no mouse, 512 GB NVMe, 123 GB of offline reference material, and a ham radio
 stack. Built to work with no network and no mains.
@@ -138,7 +140,18 @@ docs/design/build.sh              # every part to STL
 docs/design/check-stl.py *.stl    # bbox, bed fit, z=0, solids, facet count
 docs/design/check-all-pairs.sh    # each part against the union of all others
 docs/design/features.py x.stl 0.5 # what's actually in a finished STL
+
+docs/design/export-parts.sh       # then: build/venv/bin/python docs/design/render.py
 ```
+
+The renders on this page come out of `render.py`, which reads the same placements
+`assembly.scad` uses for its interference checks — so a picture here can't quietly
+disagree with the thing that was verified. (It rasterises in software: OpenSCAD's own
+PNG export wants an offscreen GL context, which a headless box doesn't have.)
+
+![Exploded view](docs/images/exploded.png)
+
+![The faceplate, and what lands where](docs/images/plate.png)
 
 Read [docs/CASE.md](docs/CASE.md) for the design, and
 [docs/LESSONS.md](docs/LESSONS.md) for the eight faults that were worth writing down

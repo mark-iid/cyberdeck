@@ -135,6 +135,8 @@ escaping needs 2 mm of sideways travel and the wall stops it at 1.
 
 ### The vertical budget
 
+![The vertical stack](images/stack.png)
+
     100 ──── case rim ───────────────────────────
              19 mm recess (preload strips live here)
      81 ──── plate top face ────────────────────
