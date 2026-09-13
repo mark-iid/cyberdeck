@@ -86,7 +86,7 @@ it: charging an unknown cell risks venting if it turns out to be a CR/BR primary
 3.6 V lithium thionyl chloride rather than a rechargeable ML/VL type. Charging a
 non-rechargeable coin cell is a genuine hazard, not a theoretical one.
 
-**Buy the actual Raspberry Pi RTC Battery (~£5).** It's an ML2020 rechargeable, ships with
+**Buy the actual Raspberry Pi RTC Battery (~$5).** It's an ML2020 rechargeable, ships with
 the correct 2-pin JST plug and an adhesive pad, and it's the only cell it's safe to enable
 charging on. Then, and only then:
 

@@ -311,7 +311,7 @@ and this one is the difference between running off the pack and running off shor
 
 The alternative was an ideal-diode ORing board (Super PWRgate or similar). It switches
 over without a break *and* charges the pack while running, which is genuinely better on
-both counts — and it's £100+ and a pack-of-cards-sized board that needs a home on the
+both counts — and it's $100+ and a pack-of-cards-sized board that needs a home on the
 floor tray with thermal margin around it. Not worth it for a box with one load.
 
 Other consequences of the single feed:
