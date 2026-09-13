@@ -384,6 +384,40 @@ shroud's cavity, and now this. All four are a part checked against its own defin
 rather than against the thing it has to meet. The frame's corner radius has been in
 `CORNER_R` since the first day and the tiles simply never referred to it.
 
+### Powerpole retainer — seat on the wrong face, and why one screw is enough
+
+**The insert seat was bored from the bottom.** The retainer spans z 0…10 in its own frame
+and installs at `LEDGE_H − PP_DEPTH`, so its **z=10 face is the tile's underside**. The
+seat was cut from z −1 upward, opening on the z=0 face — pointing down into the case. A
+screw coming down through the tile met **4.3 mm of solid plastic** and never reached the
+insert. Now bored from the top face, 3.3 mm of material left beneath it.
+
+*On the printed retainer: drill ⌀4.2 down from the top face at the inboard seat. It will
+break into the old wrong-way seat and become a through hole, which ruthex explicitly
+allows.*
+
+**One screw is structurally sufficient, and the reason is that the tile takes both
+directions:**
+
+| Load | Path |
+|---|---|
+| **pulling a plug out** (+z) | pin → retainer → pressed **up into the tile**. Compression against the tile; the screw is barely loaded. |
+| **pushing a plug in** (−z) | retainer pushed down; the screw takes it in tension. |
+| the 13 mm moment | force at the pocket (x −120.625), screw at −107.625 — the retainer rotates about the screw and its outboard end swings **up into the tile**, which reacts it. |
+| rotation in-plane | the connector body is keyed in **both** pockets — the tile's and the retainer's. |
+
+A PP15-45 pair inserts at roughly **22–67 N**. An M3 in a ruthex insert in PETG pulls out
+at several hundred. The margin is large, and the screw never sees the extraction load at
+all — that one goes straight into the tile.
+
+**What one screw does cost:** the retainer can rock slightly about the screw before the
+tile picks the load up, so it will feel less solid than two would.
+
+**A second screw is possible but not cheap.** The pocket occupies tile-local ±8.35, so a
+second fastener cannot sit beside the first — it would have to be offset in *y*, which
+means a longer retainer (reprint) and a new hole drilled in the rail. Not worth it for a
+load the tile already carries.
+
 ### ✅ The shroud shields properly now — full pack height, 2026-09-11
 
 It was capped at 70 to stay under the rib shelf. That was right while it stood at

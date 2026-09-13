@@ -572,7 +572,12 @@ module pp_retainer() {
         // against what is UNDERNEATH the rail. Found by the assembly sweep:
         // 6.375 x 14.8 x 1.5 = 141.53 mm3 of this part inside member_FL's
         // ledge, matching the measured overlap exactly.
-        translate([PP_EAR/2, 0, -1]) cylinder(d=INSERT_D, h=INSERT_H + 1);
+        // Bored from the TOP face - the one that meets the tile. It was bored
+        // from z=-1, i.e. from the BOTTOM, so a screw coming down through the
+        // tile met 4.3 mm of solid plastic and never reached the insert.
+        // Caught by the operator looking at the part, 2026-09-11.
+        translate([PP_EAR/2, 0, PP_DEPTH - INSERT_H])
+            cylinder(d=INSERT_D, h=INSERT_H + 1);
         // ledge relief: the outboard end loses its top LEDGE_H so the frame's
         // ledge can pass over it. On the printed part this is a file job -
         // 6.4 x 14.8 x 1.5 off one top corner.
