@@ -572,12 +572,22 @@ module pp_retainer() {
         // against what is UNDERNEATH the rail. Found by the assembly sweep:
         // 6.375 x 14.8 x 1.5 = 141.53 mm3 of this part inside member_FL's
         // ledge, matching the measured overlap exactly.
-        // Bored from the TOP face - the one that meets the tile. It was bored
-        // from z=-1, i.e. from the BOTTOM, so a screw coming down through the
-        // tile met 4.3 mm of solid plastic and never reached the insert.
-        // Caught by the operator looking at the part, 2026-09-11.
-        translate([PP_EAR/2, 0, PP_DEPTH - INSERT_H])
-            cylinder(d=INSERT_D, h=INSERT_H + 1);
+        // THROUGH HOLE AND A NUT, not a heat-set insert (operator, 2026-09-11).
+        //
+        // Better here for three reasons. An insert in a 10 mm block relies on
+        // melted plastic gripping brass; a nut clamps the tile and the retainer
+        // into one joint and cannot pull out. It also deletes the only insert
+        // in the build that had to be melted into a small loose part. And it
+        // removes the fault this replaced - the seat had been bored from the
+        // BOTTOM face, so a screw coming down through the tile met 4.3 mm of
+        // solid plastic and never reached the insert at all.
+        //
+        // Hex pocket in the underside so the nut is captive and only the screw
+        // turns - the joint is behind the plate and there is no room for two
+        // tools. Same trick as the tray's chassis nuts.
+        translate([PP_EAR/2, 0, -1]) cylinder(d=M3_CLEAR, h=PP_DEPTH + 2);
+        translate([PP_EAR/2, 0, -1])
+            cylinder(d=NUT_AF/cos(30), h=NUT_POCK + 1, $fn=6);
         // ledge relief: the outboard end loses its top LEDGE_H so the frame's
         // ledge can pass over it. On the printed part this is a file job -
         // 6.4 x 14.8 x 1.5 off one top corner.
