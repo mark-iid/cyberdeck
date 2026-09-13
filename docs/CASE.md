@@ -16,6 +16,15 @@ space is tight; the deck is fully functional without it. The
 operator has a 3D printer, and the shell is a **Pelican 1400** — in hand, surveyed
 and cross-checked against Pelican's own CAD (§6).
 
+## ✅ BUILT — 2026-09-12
+
+Assembled, closed, and running. Kiwix serving the 123 GB library on the panel; touch,
+display, SDR and power all live. Photographed in the case with the plate in, the battery
+standing through its well, and both vent grilles open to the back channel.
+
+Everything below this line is the record of getting there, and several sections describe
+states the deck has since moved past. Treat the build status as history from here on.
+
 ## Build status — 2026-09-06
 
 **Everything is bought and everything has arrived.** The RJ45 extension landed
