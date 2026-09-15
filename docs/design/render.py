@@ -75,6 +75,30 @@ CALLOUTS = {
 }
 
 
+MAX_W = 1200          # source for WP; the theme column is 940, srcset does the rest
+
+
+def save_png(img, name):
+    """Write a palette PNG, sized for a web page rather than for a monitor.
+
+    Two things happen here. The long edge is capped at MAX_W, because a 1500 px
+    drawing in an 700 px column is just bytes the reader pays for and the
+    browser throws away. And it is quantised to 256 colours: these are
+    flat-shaded renders, so the only reason they carry thousands of colours is
+    antialiasing from the supersample downscale. No dither, and it is visually
+    identical at about a third of the size.
+    """
+    if img.width > MAX_W:
+        img = img.resize((MAX_W, round(img.height * MAX_W / img.width)),
+                         Image.LANCZOS)
+    q = img.convert("RGB").quantize(colors=256, method=Image.MEDIANCUT,
+                                    dither=Image.NONE)
+    OUT.mkdir(parents=True, exist_ok=True)
+    out = OUT / f"{name}.png"
+    q.save(out, "PNG", optimize=True)
+    return out
+
+
 def load_stl(p):
     b = p.read_bytes()
     if b[:5] == b"solid" and b"facet" in b[:2000]:
@@ -194,10 +218,10 @@ def render(name, parts, yaw, pitch, size=(1600, 1200), explode=0.0, margin=0.07)
         img = img.crop((max(0, l-pad), max(0, t-pad),
                         min(img.width, r+pad), min(img.height, b+pad)))
 
-    OUT.mkdir(parents=True, exist_ok=True)
-    out = OUT / f"{name}.png"
-    img.save(out, optimize=True)
-    print(f"  {out.relative_to(ROOT)}  {len(tri)} tris  {out.stat().st_size//1024} KB")
+    out = save_png(img, name)
+    w, h = Image.open(out).size
+    print(f"  {out.relative_to(ROOT)}  {len(tri)} tris  "
+          f"{out.stat().st_size//1024} KB  {w}x{h}")
 
 
 def stack_diagram(name="stack", size=(1500, 1080)):
@@ -264,10 +288,9 @@ def stack_diagram(name="stack", size=(1500, 1080)):
            font=f, fill=(110, 118, 132), anchor="la")
 
     img = img.resize((W, H), Image.LANCZOS)
-    OUT.mkdir(parents=True, exist_ok=True)
-    out = OUT / f"{name}.png"
-    img.save(out, optimize=True)
-    print(f"  {out.relative_to(ROOT)}  {out.stat().st_size//1024} KB")
+    out = save_png(img, name)
+    w, h = Image.open(out).size
+    print(f"  {out.relative_to(ROOT)}  {out.stat().st_size//1024} KB  {w}x{h}")
 
 
 ALL     = list(SPEC)

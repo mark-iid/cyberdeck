@@ -1,6 +1,6 @@
 # Badges
 
-Vendored so the README renders with **no network**. The deck is the machine most
+Vendored so the README renders with no network. The deck is the machine most
 likely to be reading it, and it is the machine least likely to be online.
 
 Each file is self-contained: the only `http` string in them is the SVG XML
@@ -11,7 +11,7 @@ render time.
 ## Two of these carry live state
 
 `thermal.svg` and `case.svg` assert facts that will go stale. Regenerate them
-when the fact changes — a badge is the most visible line in the README and the
+when the fact changes, a badge is the most visible line in the README and the
 easiest to forget.
 
 ## Regenerating
@@ -32,15 +32,15 @@ fetch case.svg       'case-Pelican%201400%20built-2E7D32'
 
 Format is `<label>-<message>-<colour>`. URL-encode both text fields: `%20` for
 space, `%C2%B7` for the `·` separator. A literal `-` in either field must be
-doubled (`--`), and `_` means a space in the shorthand form — which is why every
+doubled (`--`), and `_` means a space in the shorthand form, which is why every
 space here is spelled `%20` instead.
 
 ## Why static, and why vendored
 
-Static because there's no CI to report on — provisioning happens on the deck, not
+Static because there's no CI to report on, provisioning happens on the deck, not
 in a runner, so a build-status badge would be reporting on nothing.
 
-Vendored because **the deck is the machine most likely to be reading this README
-and the machine least likely to be online.** A `img.shields.io` URL renders as a
+Vendored because the deck is the machine most likely to be reading this README
+and the machine least likely to be online. A `img.shields.io` URL renders as a
 broken-image box in a local markdown viewer with no network, which is precisely
 the situation this whole repo exists for. The files here render offline.
