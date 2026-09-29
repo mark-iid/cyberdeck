@@ -56,11 +56,26 @@ KIWIX = "http://127.0.0.1:8080"
 #
 # `unit` is what makes a dead service actionable rather than just honest. A tile
 # for something that is down but has a known unit offers to START it, which is
-# the whole point for Local AI: bin/60-local-ai.sh deliberately left
-# llama-server disabled ("not a sensible default" on a fanless Pi) and the
-# cooler that retired that argument went in on 2026-09-02. Rather than spend
-# ~4.5 GB of 7.9 permanently on a 7B that gets used occasionally, the tile
-# starts it on demand.
+# the whole point for Local AI.
+#
+# bin/60-local-ai.sh deliberately left llama-server disabled, on the grounds
+# that a 7B at boot is "not a sensible default" on a fanless throttled Pi. The
+# cooler that retired THAT argument went in on 2026-09-02, so the original
+# reason is dead and a better one was measured on 2026-09-29 by starting it and
+# watching:
+#
+#   idle CPU   30% of one core, continuously, answering nothing
+#   memory     5.24 GiB RSS, and `free` available fell from 7.3 to 2.8 GiB
+#   start-up   the port answers about 2 s after systemctl returns
+#
+# The CPU figure is the one that matters, on a deck that runs about six hours on
+# its LiFePO4 pack and throttles when it gets warm. That is battery and thermal
+# headroom spent on an idle model. It is the same shape of finding as the
+# mariadbd item in the README, and the answer is the same: do not run it when
+# you are not using it.
+#
+# Two seconds to start is cheap enough that on-demand is simply better than at
+# boot, so the tile does that.
 SERVICES = [
     {"key": "kiwix", "name": "ZIM library", "port": 8080, "path": "/",
      "note": "kiwix-serve, the offline encyclopedia stack",
@@ -364,10 +379,10 @@ function start(key, el){
     body: JSON.stringify({service:key})
   }).then(function(r){ return r.json(); }).then(function(j){
     if (!j.ok) { sub.textContent = 'failed: ' + j.error; return; }
-    // systemctl returns as soon as the unit is ACTIVE, which for llama-server is
-    // well before the port answers: it still has ~4.5 GB of model to read off
-    // the NVMe. So poll the port rather than trusting the exit status, and give
-    // it a generous window.
+    // systemctl returns as soon as the unit is ACTIVE, which is not the same as
+    // ready: llama-server still has a 7B to map off the NVMe, measured at about
+    // 2 s on this machine but load-dependent. So poll the PORT rather than
+    // trusting the exit status, and give it a generous window.
     var tries = 0;
     (function poll(){
       if (++tries > 45) { sub.textContent = 'unit started, port still quiet'; return; }
