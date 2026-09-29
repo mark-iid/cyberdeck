@@ -35,7 +35,10 @@ Nothing here reformats, reinstalls, or replaces Raspberry Pi OS.
 - Everything built from source installs under `/usr/local`, which no distro package
   owns. `apt` stays consistent.
 - `apt` steps only ever add packages. Nothing is removed or replaced.
-- Configs are symlinked into `~/.config/{niri,waybar,foot}`, all new directories.
+- Configs are symlinked into `~/.config/{niri,waybar,foot,mako}`, all new directories,
+  plus the single file `~/.config/qutebrowser/config.py`. That one is a file link and
+  not a directory link on purpose: qutebrowser keeps its own bookmarks and quickmarks
+  in that directory and they are left exactly where they are.
   `~/.config/labwc` and `~/.config/wf-panel-pi` are never touched.
 - Your ZIMs, `~/.config/WSJT-X.ini`, gqrx, gnuradio, and pat configs are untouched.
 
@@ -113,7 +116,7 @@ bin/50-doomsday-extras.sh time     # start here, see docs/CONTENT.md
 
 ## Editing config after deployment
 
-`deploy-config.sh` symlinks `~/.config/{niri,waybar,foot}` into the repo checkout on
+`deploy-config.sh` symlinks `~/.config/{niri,waybar,foot,mako}` into the repo checkout on
 the Pi, which is a copy of this one. Edit here, then:
 
 ```sh
