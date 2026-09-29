@@ -1,7 +1,7 @@
 # Offline content
 
 This deck is a doomsday device *and* a radio go-box companion, which is why the ham stack
-and the reference library are both treated as payload rather than extras. 123 GB of it
+and the reference library are both treated as payload rather than extras. 193 GB of it
 when I started, 49 books now, ~273 GB still free.
 
 Read it with `Mod+B`, qutebrowser against kiwix-serve on :8080, press `f` for link

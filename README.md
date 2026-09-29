@@ -11,7 +11,7 @@
 ![The deck, rendered from the assembly model](docs/images/hero.png)
 
 A Raspberry Pi 5 in a Pelican 1400, running niri: 1280×800 touchscreen, wired USB
-keyboard, no mouse, 512 GB NVMe, 123 GB of offline reference material, and a ham radio
+keyboard, no mouse, 512 GB NVMe, 193 GB of offline reference material, and a ham radio
 stack. Built to work with no network and no mains.
 
 It's finished and it runs. Full 2.4 GHz sustained with the case closed, ~74 °C under
@@ -79,6 +79,7 @@ Individual steps, if you'd rather go one at a time:
 | `bin/55-fetch-computing.sh` | computing/reference ZIM tier |
 | `bin/56-flipper.sh` | qflipper + clone the existing flipper repo onto the deck |
 | `bin/57-gps-time.sh` | QLG2 GPS on the GPIO header: UART, 1PPS, gpsd, chrony (DESIGN §9) |
+| `bin/58-landing-page.sh` | the launcher page on `127.0.0.1:8000`: every local resource, tappable |
 | `bin/60-local-ai.sh` | `llama-server` on `127.0.0.1` + `files/ai/ask-local.py` |
 | `bin/70-thermal-tune.sh` | `measure [secs]`, sustained-load thermal profile |
 | `bin/80-check-boot-integrity.sh` | run after ANY disk/clone change |

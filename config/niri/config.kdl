@@ -162,6 +162,16 @@ spawn-at-startup "nm-applet" "--indicator"
 // Wallpaper, if one exists. Absent file -> swaybg exits, desktop is plain.
 spawn-at-startup "sh" "-c" "swaybg -i \"$HOME/Pictures/wallpaper.jpg\" -m fill || true"
 
+// The launcher page (bin/58-landing-page.sh, deckpage.service on :8000), opened
+// at boot onto the "web" workspace declared below. This is the deck's answer to
+// having no mouse and, half the time, no keyboard: every local resource, every
+// installed radio app and 300 ZIMs, as targets a finger can hit.
+//
+// Costs about 200 MB resident out of 7.9 GB, of which 6.0 GB was free when this
+// was measured, so a browser that is always there is affordable now in a way it
+// would not have been on a 2 GB Pi.
+spawn-at-startup "qutebrowser" "http://127.0.0.1:8000"
+
 // ---------------------------------------------------------------------------
 // NAMED WORKSPACE for the launcher page (bin/58-landing-page.sh, served on
 // :8000). qutebrowser is spawned at startup and pinned here, so the deck boots
@@ -291,7 +301,7 @@ window-rule {
 }
 
 // --- Reference material -----------------------------------------------------
-// kiwix-desktop holds 123GB of ZIMs and is the deck's actual purpose as much as
+// kiwix-desktop holds 193GB of ZIMs and is the deck's actual purpose as much as
 // the radio is. Full width, its own workspace by habit.
 window-rule {
     match app-id=r#"^(?i).*kiwix.*$"#
@@ -369,11 +379,16 @@ binds {
     // Tab-cycling past every preceding one; qutebrowser's link hints (press f,
     // type the letter) make that two keystrokes. On a deck with no mouse that is
     // the difference between usable and not.
-    Mod+B hotkey-overlay-title="Kiwix library — 42 ZIMs (f = link hints)" {
+    Mod+B hotkey-overlay-title="Kiwix library, 300 ZIMs (f = link hints)" {
         spawn "qutebrowser" "http://127.0.0.1:8080";
     }
     Mod+A hotkey-overlay-title="Local AI — 7B Mistral, offline" {
         spawn "qutebrowser" "http://127.0.0.1:8081";
+    }
+    // The way back to the launcher if it has been closed. Mod+1 alone only
+    // moves to the workspace, which is no help once the window is gone.
+    Mod+W hotkey-overlay-title="Launcher page (every local resource, tappable)" {
+        spawn "qutebrowser" "http://127.0.0.1:8000";
     }
     // kiwix-desktop stays installed and is still in fuzzel (Mod+D) if wanted.
     Mod+M hotkey-overlay-title="MSHV — FT8/FT4, primary (waterfall: Ctrl+W)" { spawn "mshv"; }

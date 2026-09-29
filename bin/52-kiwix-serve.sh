@@ -13,7 +13,7 @@
 # is labelled with a letter; type it to follow. That turns the most common action
 # from O(number of links) keystrokes into two or three.
 #
-# It also unifies the deck: one keyboard-driven browser reaches BOTH the 123GB
+# It also unifies the deck: one keyboard-driven browser reaches BOTH the 193GB
 # ZIM library (:8080) and the local 7B model (:8081). kiwix-desktop stays
 # installed; this is an addition, not a replacement.
 
@@ -51,7 +51,7 @@ Type=simple
 ExecStart=/usr/bin/kiwix-serve --port ${PORT} --address 127.0.0.1 ${SERVE_ARGS}
 Restart=on-failure
 RestartSec=5
-# Indexing 123GB of ZIMs should not fight the desktop for CPU.
+# Indexing 193GB of ZIMs should not fight the desktop for CPU.
 Nice=5
 
 [Install]
