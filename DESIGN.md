@@ -519,7 +519,161 @@ complete or fails cleanly.
 
 ---
 
-## §9 Still open
+## §9 GPS time and position
+
+FT8 needs the clock accurate to well under a second, and off-grid there is no NTP to
+get that from. The clock drifts, decodes stop, and nothing reports an error — a
+waterfall full of nothing is the only symptom. [docs/CONTENT.md](docs/CONTENT.md) makes
+the case; this section is the build.
+
+Two tiers, and the first is not a lesser version of the second. A USB GPS plus `gpsd`
+and `chrony` gets tens of milliseconds, which is comfortably inside what FT8 needs, and
+it needs no wiring and carries no risk. Tier 2 — the receiver on the GPIO header, with
+its 1PPS edge on a GPIO — buys microseconds instead. That is not better FT8, it is a
+different class of clock. Fitted here because the hardware was already on the bench.
+
+`bin/57-gps-time.sh install`, then reboot, then `bin/57-gps-time.sh check`.
+
+### Parts
+
+| Part | Notes |
+|---|---|
+| QRP Labs QLG2 GNSS receiver | E108-GN01 module (GK9501), NMEA 9600 8N1, 0.1 s 1PPS. Needs its logic level changed before it can touch a Pi — see below. |
+| Active patch antenna, magnetic mount, 2 m coax | Supplied with the QLG2. The magnet is the ground plane as well as the mount, so it wants a ferrous surface, not a windowsill. |
+| SMA bulkhead F–F | Right rail, ⌀6.7 drawn (docs/CASE.md §5). Same part as the left rail's, so no second coupon. |
+| 4 × jumper wire, F–F | QLG2 4-pin header to the Pi GPIO header. |
+
+### Wiring
+
+Count the **outer** row of the Pi header — the even-numbered pins — from the left:
+
+| Wire | QLG2 | Pi pin | Position | Function |
+|---|---|---|---|---|
+| 5V+ | +5V | 2 | 1st | |
+| Gnd | Gnd | 6 | 3rd | |
+| TXD | Serial data out | 10 | 5th | GPIO15 / RXD0 |
+| 1pps | 1PPS | 12 | 6th | GPIO18 |
+
+The Pi's TX is deliberately not wired. Nothing needs to talk to the QLG2, and leaving
+it off means there is no direction in which a level mismatch can matter.
+
+**Pin 14 is ground and it is the very next pin after 12.** Being one position out puts
+the QLG2's 1PPS push-pull output into a dead short. That happened here. It is
+recoverable — the short is on one output pin, and the Pi cannot be hurt by anything
+tied to its own ground plane — but count twice: 10 is 5th, 12 is 6th, 14 is 7th.
+
+### The QLG2 is a 5 V part until you change it
+
+Its 1PPS and serial outputs are 5 V by default, for QRP Labs' own kits. A Pi GPIO is
+3.3 V only. Cut the UPPER (5 V) trace on **JP2** (PPS level) and **JP5** (SER level) and
+jumper each centre pad to its LOWER pad, which is 2.8 V straight off the GNSS module.
+
+2.8 V is fine: the Pi's input-high threshold is about 0.7 × 3.3 = 2.31 V, so there is
+roughly half a volt of margin.
+
+Two things that make this easy to get wrong:
+
+- **LOWER is the pad nearest the board edge.** The traces are on the underside, so
+  flipping the board mirrors left and right — but not near-edge versus far-edge. Use the
+  edge, not "up".
+- **JP8's polarity is inverted.** On JP8 the UPPER position is the 2.8 V one. Do not
+  pattern-match the three level jumpers onto each other.
+
+Then meter the 4-pin header *before* connecting anything to the Pi. TxD and 1pps must
+read ~2.8 V. If either reads 5 V, stop.
+
+### Three Pi-5 traps, one of which fails silently
+
+**`/dev/serial0` is not the header UART.** On a Pi 5 it symlinks to `ttyAMA10`, the
+separate debug connector. A config naming `serial0` reads a port with nothing on it.
+Use `/dev/ttyAMA0` by name. Enabling it is `dtparam=uart0=on`, *not* `enable_uart=1` —
+`raspi-config nonint do_serial_hw 0` picks the right one via its own board test, which
+is why the script shells out to it rather than writing the line itself.
+
+**`/dev/pps0` is not stable, and this is the one that costs a day.** The Pi 5's Ethernet
+PHY registers a PPS device for its PTP clock, so there are two, and which one gets
+`pps0` is decided by probe order. Measured 2026-09-28: `ptp0` held `pps0` before a
+reboot and `pps1` after it, with the GPIO capture taking the other each time. So
+`refclock PPS /dev/pps0` points chrony at the network card about half the time — and it
+fails *silently*, because chrony simply never gets a sample from it. The fix is a udev
+rule matching the capture device by its device-tree name:
+
+    SUBSYSTEM=="pps", ATTR{name}=="pps@12.-1", SYMLINK+="pps-gps"
+
+Note `pps@12`, not `pps@18`. Device-tree node addresses are hex, and GPIO18 is 0x12.
+Writing the decimal number makes the rule never match, `/dev/pps-gps` never appear, and
+the whole thing look like a bad overlay.
+
+**A −18 s offset is not a misconfiguration.** It is the GPS-to-UTC leap second offset,
+currently exactly 18 seconds, showing because the receiver has not yet downloaded the
+UTC parameters from the navigation message. That needs a sustained fix — up to 12.5
+minutes of continuous lock. It clears itself.
+
+### Daemon layout
+
+`gpsd` gets the UART only. `chrony` opens `/dev/pps-gps` itself as a refclock, so gpsd
+never needs the PPS device and it is deliberately absent from `DEVICES`.
+
+`gpsd.socket` has to be **disabled**, not merely unused. Socket activation waits for a
+client, which is the exact opposite of what `-n` asks for, and with the socket enabled
+chrony's shared-memory segment stays empty until something else connects. `-b` is there
+because the Pi's TX is not wired: read-only stops gpsd writing probe strings into a line
+that goes nowhere.
+
+    refclock SHM 0 refid NMEA offset 0.2 delay 0.2 noselect
+    refclock PPS /dev/pps-gps lock NMEA refid PPS prefer
+
+NMEA only numbers the seconds; PPS does the disciplining. `noselect` keeps the sentences
+out of the selection — they are the coarse reference PPS locks onto, nothing more. Retune
+`offset` from `chronyc sourcestats` once it has run a while; at 9600 baud the sentence
+lag is significant.
+
+### What it measures
+
+Measured 2026-09-28, with chrony having selected PPS as the system reference:
+
+    #? NMEA    0  4  200  127   -42ms[  -42ms] +/- 100ms
+    #* PPS     0  4  200  121   -380ns[-3486ns] +/- 352ns
+
+−380 ns against ±352 ns of estimated error. The `#*` is the part that matters: chrony
+picked the GPS over the pool.
+
+Fixes are intermittent at this location because the sky view is poor, and that is
+environmental, not a fault. Four satellites at SNR 22–32 is the marginal baseline seen
+indoors here; 6+ at 35+ is what a solid lock wants.
+
+### The first board was dead, and proving it took longer than the build
+
+Worth recording because the failure looked exactly like bad rework, and the reasoning
+that separated them generalises.
+
+Symptoms: both QLG2 outputs sat statically high and never transitioned. No NMEA at any
+of six baud rates, with the UART interrupt never firing once — not a framing problem, no
+edges at all. No 1PPS under interrupt-driven `ppstest`, which cannot miss a 100 ms pulse.
+
+What made it ambiguous is that the board's own status LEDs read the same node the Pi
+did, so "module silent" and "break between module and header" produced identical
+evidence. Three things settled it:
+
+- A forced GPIO pull-down, with an unconnected pin as a control, showed both lines
+  *actively driven* rather than floating. The control went low; these did not.
+- Continuity on JP2 and JP5 was correct in both directions — centre-to-lower closed,
+  centre-to-upper open — so the rework was sound.
+- The SMA measured 7 kΩ centre-to-ground and 3.3 V of antenna bias, so the module had
+  every rail it needed and the feed was not shorted.
+
+Powered, correctly jumpered, correctly wired, and producing nothing. Swapping the module
+fixed it on the first try, which is the only test that was ever going to be conclusive.
+
+The lesson is ordering, not electronics: **prove a module works before you modify it.**
+The first board was cut before it had ever been seen working, which made every
+subsequent symptom ambiguous between a dead part and a bad cut. `57-gps-time.sh` says to
+power the board on stock, with only 5 V and ground connected and no signal wires, and
+confirm the yellow LED flickers and the green flashes — then cut.
+
+---
+
+## §10 Still open
 
 - No audio capture device. Only `vc4hdmi0`/`vc4hdmi1` (HDMI playback). The radio
   interface presumably appears when connected, confirm that before relying on FT8 in the
@@ -531,8 +685,10 @@ complete or fails cleanly.
   machine. `systemctl disable --now mariadb` is free heat and free RAM.
 - RTC cell. `J5`/`BATT` is empty and charging stays disabled until a
   known-rechargeable ML2020 is fitted (§4).
-- QLG2 GPS for sub-second FT8 timing. Jumper it to 3.3 V logic first, the 5 V
-  default will damage a Pi GPIO. `bin/50-doomsday-extras.sh time`.
+- GPS antenna siting. §9 is built, wired and measured — chrony selects PPS at −380 ns —
+  but fixes are intermittent where the deck normally sits, because the sky view is poor.
+  The supplied antenna wants open sky *and* a ferrous ground plane, and the deck offers
+  neither. Nothing to fix in software; it needs somewhere better to sit.
 - Compile-load temperature inside the enclosure. §4's numbers are from the bare setup
   on a desk; the deck measured 2–3 °C cooler on the synthetic test, but a compile is the
   case worth measuring directly (docs/CASE.md §11).

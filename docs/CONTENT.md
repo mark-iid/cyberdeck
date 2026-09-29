@@ -103,10 +103,20 @@ disconnected, and see whether the clock is right.
 ### Part 2: GPS discipline
 
 A USB GPS plus `gpsd` and `chrony` fixes the drift properly, and both daemons are already
-installed. `bin/50-doomsday-extras.sh time`.
+installed. `bin/50-doomsday-extras.sh time`. That path needs no wiring and carries no
+risk, and tens of milliseconds is comfortably inside what FT8 needs.
 
-If you use a QLG2, jumper it to 3.3 V logic first. The 5 V default will damage a Pi
-GPIO.
+**This is now built**, one tier further up: a QRP Labs QLG2 on the GPIO header, with its
+1PPS edge on GPIO18. `bin/57-gps-time.sh`, and [DESIGN §9](../DESIGN.md) for the whole
+story. Measured 2026-09-28, chrony selects PPS as the system reference at −380 ns.
+
+It also answers the other question a survival deck should be able to answer, which the
+maps section can't: *where am I*. The same NMEA stream carries position, and `cgps`
+shows it live.
+
+If you use a QLG2, change its logic level before it touches a Pi — cut the UPPER (5 V)
+trace on JP2 and JP5 and jumper each to LOWER, which is 2.8 V. The 5 V default will
+damage a Pi GPIO.
 
 ## Local AI
 

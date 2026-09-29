@@ -87,4 +87,4 @@ I first recorded this as "BROKEN" on a `ModuleNotFoundError`, and that was wrong
 the error came from running `~/ai.py` with the *system* python instead of
 `~/venv/bin/python`. The venv was fine the whole time. Replaced by
 `files/ai/ask-local.py` (installed as `ask-local`), and `llama-server` is the real
-upgrade. DESIGN §9.
+upgrade. DESIGN §10.

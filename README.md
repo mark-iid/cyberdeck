@@ -78,6 +78,7 @@ Individual steps, if you'd rather go one at a time:
 | `bin/54-maps.sh` | TIGER shapefiles for Xastir + an offline-built Garmin `.img` |
 | `bin/55-fetch-computing.sh` | computing/reference ZIM tier |
 | `bin/56-flipper.sh` | qflipper + clone the existing flipper repo onto the deck |
+| `bin/57-gps-time.sh` | QLG2 GPS on the GPIO header: UART, 1PPS, gpsd, chrony (DESIGN §9) |
 | `bin/60-local-ai.sh` | `llama-server` on `127.0.0.1` + `files/ai/ask-local.py` |
 | `bin/70-thermal-tune.sh` | `measure [secs]`, sustained-load thermal profile |
 | `bin/80-check-boot-integrity.sh` | run after ANY disk/clone change |
@@ -177,7 +178,7 @@ Small stuff, none of it blocking:
 | Tilt foot | Never drawn. The deck works flat; a foot would make long sessions nicer. |
 | Compile-load temperature | The 74 °C figure is a synthetic spin loop, which `70-thermal-tune.sh` warns understates real load. A compile is the case worth measuring. |
 | RTC cell (ML2020) | `J5`/`BATT` is empty. Charging stays disabled until a known-rechargeable cell is fitted. |
-| QLG2 GPS | Jumper it to 3.3 V logic first, the 5 V default will damage a Pi GPIO. `bin/50-doomsday-extras.sh time`. |
+| GPS antenna siting | The GPS is built and disciplining the clock (DESIGN §9), but fixes are intermittent indoors. The antenna wants open sky and a ferrous ground plane. |
 | `mariadbd` | Enabled, burning 7–11% CPU at idle, with no user databases on the machine. `systemctl disable --now mariadb`. |
 
 If niri ever fails to come up: there's no greeter to fall back to. ssh in, or
