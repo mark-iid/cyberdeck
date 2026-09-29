@@ -89,6 +89,25 @@ PLACES = [
     ("~/Pictures/Screenshots", "Screenshots"),
 ]
 
+# Clean shutdown, because the only physical power control on this deck is the
+# DPDT rocker on the left rail (docs/CASE.md), and that is a hard 12 V cut to the
+# Pi, the NVMe, the screen and the fan at once. There is no reachable button that
+# halts anything: the Pi 5's own power key is inside the JUNEBOX enclosure, and
+# under niri it would do nothing anyway, since both niri and the Pi desktop's
+# leftover `rpi-gui-nop` autostart hold blocking handle-power-key inhibitors.
+#
+# So without a keyboard there was no way to stop this machine safely. These two
+# tiles are it. logind answers "challenge" for CanPowerOff from outside an active
+# seat session, which on a deck with no keyboard means an unanswerable polkit
+# prompt, so these go through sudo, which is already NOPASSWD: ALL for this user
+# and is verified to work from a user unit with no tty.
+POWER = {
+    "reboot":   (["systemctl", "reboot"],   "Reboot",
+                 "comes back up into niri"),
+    "poweroff": (["systemctl", "poweroff"], "Shut down",
+                 "halts, THEN flip the rocker to OFF"),
+}
+
 # --- Probes ------------------------------------------------------------------
 
 def listening(port):
@@ -284,9 +303,38 @@ h2::before{content:'\\25BA  '}
 .tile:focus-visible,.book:focus-visible{outline:3px solid var(--cyan);outline-offset:-3px}
 .book .n{color:var(--muted);font-size:13px;white-space:nowrap}
 .empty{padding:10px;color:var(--warn)}
+/* Armed, waiting for the second tap. Red is one of the three semantic colours
+   and this is the one place on the page that has earned it. */
+.tile.arm{background:var(--err);color:var(--white)}
+.tile.arm .t,.tile.arm .s{color:var(--white)}
 """
 
 JS = """
+var armed = {};
+function power(key, el){
+  var sub = el.querySelector('.s');
+  if (!armed[key]) {
+    // TWO TAPS, ALWAYS. A mis-tap that halts the deck costs a walk to the case
+    // and a rocker cycle, so arming is explicit and expires on its own.
+    armed[key] = true;
+    el.classList.add('arm');
+    var was = sub.textContent;
+    sub.textContent = 'TAP AGAIN TO CONFIRM';
+    setTimeout(function(){
+      armed[key] = false; el.classList.remove('arm'); sub.textContent = was;
+    }, 5000);
+    return;
+  }
+  armed[key] = false;
+  sub.textContent = 'going down...';
+  // The reply never arrives: the server is inside the thing being stopped.
+  // Errors here are expected and mean it worked.
+  fetch('/power', {
+    method:'POST',
+    headers:{'Content-Type':'application/json','X-Deck-Launch':'1'},
+    body: JSON.stringify({action:key, confirm:true})
+  }).catch(function(){});
+}
 function launch(key, el){
   var was = el.querySelector('.s').textContent;
   el.querySelector('.s').textContent = 'starting...';
@@ -390,6 +438,14 @@ def render():
             parts.append(tile(label, path, href=url))
         parts.append('</div>')
 
+    # LAST on the page, deliberately. Halting the deck is the one irreversible
+    # thing here, and putting it below everything else means reaching it is a
+    # decision rather than an accident. The two taps are the other half.
+    parts.append('<h2>Power</h2><div class="grid">')
+    for key, (_argv, label, note) in POWER.items():
+        parts.append(tile(label, note, onclick="power('%s',this)" % key))
+    parts.append('</div>')
+
     msg, cls = clock_status()
     parts.append('<div class="bar"><span>%s</span>'
                  '<span>Mod+O overview</span><span>Mod+1 here</span>'
@@ -454,24 +510,41 @@ class Handler(BaseHTTPRequestHandler):
         else:
             self._send(404, "not found", "text/plain; charset=utf-8")
 
-    def do_POST(self):
-        if self.path.split("?", 1)[0] != "/spawn":
-            self._send(404, '{"ok":false,"error":"not found"}', "application/json")
-            return
+    def _guarded(self):
+        """Shared gate for every POST. Returns False having already replied.
 
-        # See the module docstring. A ZIM article is third-party HTML in this
-        # same browser, and a plain <form> POST from one would otherwise reach
-        # this endpoint. A custom header cannot be set cross-origin without a
-        # preflight, and this server answers no OPTIONS, so requiring it is the
-        # whole defence. The Origin check catches the same thing from fetch().
+        See the module docstring. A ZIM article is third-party HTML in this same
+        browser, and a plain <form> POST from one would otherwise reach these
+        endpoints. A custom header cannot be set cross-origin without a preflight,
+        and this server answers no OPTIONS, so requiring it is the whole defence.
+        The Origin check catches the same thing from fetch(). This matters more
+        now that one of the endpoints turns the machine off.
+        """
         if self.headers.get("X-Deck-Launch") != "1":
             self._send(403, '{"ok":false,"error":"missing launch header"}',
                        "application/json")
-            return
+            return False
         origin = self.headers.get("Origin")
         if origin and origin not in ("http://%s:%d" % (HOST, PORT),
                                      "http://localhost:%d" % PORT):
             self._send(403, '{"ok":false,"error":"bad origin"}', "application/json")
+            return False
+        return True
+
+    def _body(self):
+        n = int(self.headers.get("Content-Length", "0"))
+        return json.loads(self.rfile.read(min(n, 4096)) or b"{}")
+
+    def do_POST(self):
+        path = self.path.split("?", 1)[0]
+        if path == "/power":
+            self.do_power()
+            return
+        if path != "/spawn":
+            self._send(404, '{"ok":false,"error":"not found"}', "application/json")
+            return
+
+        if not self._guarded():
             return
 
         try:
@@ -502,6 +575,42 @@ class Handler(BaseHTTPRequestHandler):
                 "application/json")
             return
         self._send(200, '{"ok":true}', "application/json")
+
+
+    def do_power(self):
+        if not self._guarded():
+            return
+        try:
+            body = self._body()
+        except (ValueError, OSError):
+            self._send(400, '{"ok":false,"error":"bad request"}', "application/json")
+            return
+
+        # confirm is required by the server too, not only by the two taps in the
+        # page. A single stray POST should never be enough to halt the deck.
+        if body.get("confirm") is not True:
+            self._send(400, '{"ok":false,"error":"not confirmed"}', "application/json")
+            return
+
+        entry = POWER.get(body.get("action", ""))
+        if not entry:
+            self._send(400, '{"ok":false,"error":"unknown action"}', "application/json")
+            return
+
+        argv, label, _note = entry
+        # Reply BEFORE acting. systemctl poweroff takes the server down with it,
+        # so a response written afterwards would never be sent and the page would
+        # only ever see a network error.
+        self._send(200, json.dumps({"ok": True, "action": label}), "application/json")
+        try:
+            self.wfile.flush()
+        except OSError:
+            pass
+        try:
+            subprocess.Popen(["sudo", "-n"] + argv,
+                             stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        except (OSError, subprocess.SubprocessError):
+            pass
 
 
 def main():
