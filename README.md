@@ -184,7 +184,6 @@ Small stuff, none of it blocking:
 | Compile-load temperature | The 74 °C figure is a synthetic spin loop, which `70-thermal-tune.sh` warns understates real load. A compile is the case worth measuring. |
 | RTC cell (ML2020) | `J5`/`BATT` is empty. Charging stays disabled until a known-rechargeable cell is fitted. |
 | GPS antenna siting | The GPS is built and disciplining the clock (DESIGN §9), but fixes are intermittent indoors. The antenna wants open sky and a ferrous ground plane. |
-| `mariadbd` | Enabled, burning 7–11% CPU at idle, with no user databases on the machine. `systemctl disable --now mariadb`. |
 
 If niri ever fails to come up: there's no greeter to fall back to. ssh in, or
 Ctrl+Alt+F1..F6, then `bin/90-set-session.sh labwc && sudo systemctl restart lightdm`.

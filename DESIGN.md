@@ -706,8 +706,20 @@ confirm the yellow LED flickers and the green flashes — then cut.
 - No audio capture device. Only `vc4hdmi0`/`vc4hdmi1` (HDMI playback). The radio
   interface presumably appears when connected, confirm that before relying on FT8 in the
   field.
-- `mariadbd` is enabled and burns 7–11% CPU at idle with no user databases on the
-  machine. `systemctl disable --now mariadb` is free heat and free RAM.
+- ~~`mariadbd` is enabled and burns 7–11% CPU at idle~~ RESOLVED. The service is
+  `disabled` and `inactive` as of 2026-09-29, so that CPU is back. Recording the
+  cause, which was never written down and is the part worth keeping: **cqrlog**
+  depends on `mariadb-server`, and cqrlog is the only installed package that
+  does. It was never configured or run (there is no `~/.config/cqrlog` at all),
+  so the database it pulled in was idling for a logger that had never been
+  opened. `/var/lib/mysql` holds 143 MB of `mysql`, `performance_schema` and
+  `sys`, which is the stock set with nothing of ours in it.
+
+  Disabling the service does not break cqrlog if it is ever wanted: cqrlog does
+  not use the system instance. Its binary carries `--datadir=` and
+  `/usr/bin/mysqld_safe`, because it starts its OWN mysqld against a datadir
+  under `~/.config/cqrlog`. So the system service and the logger are unrelated,
+  which is exactly why turning one off cost nothing.
 - RTC cell. `J5`/`BATT` is empty and charging stays disabled until a
   known-rechargeable ML2020 is fitted (§4).
 - GPS antenna siting. §9 is built, wired and measured — chrony selects PPS at −380 ns —
