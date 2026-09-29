@@ -362,8 +362,14 @@ def render():
                             ("gutenberg", "Project Gutenberg"),
                             ("preppers", "Preppers")):
             if len(groups.get(name, [])) > 1:
+                # FRAGMENT, not query string. kiwix-serve's welcome page reads
+                # its filters out of window.location.hash (its index.js defines
+                # `class FragmentParams extends URLSearchParams` and pushes
+                # `#tag=...` when you click a tag), so /catalog/v2/entries?tag=
+                # is the raw OPDS feed and a browser shows it as XML source.
+                # That is exactly what it did on the deck on 2026-09-29.
                 parts.append(tile(label, "%d books" % len(groups[name]),
-                                  href=KIWIX + "/catalog/v2/entries?tag=" + name))
+                                  href=KIWIX + "/#tag=" + name))
         parts.append('</div>')
 
         singles = sorted((b for b in books if "devdocs" not in b["tags"]),

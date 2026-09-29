@@ -33,11 +33,29 @@ fi
     exit 1
 }
 
+# ONE FINGER ONLY, and that is a hardware finding rather than a preference.
+# Multi-finger gestures were tried on the panel on 2026-09-29 and did not work:
+# two and three contacts get taken as a PINCH by whatever is on screen (this is
+# a browser most of the time, and QtWebEngine treats any second contact as zoom)
+# long before lisgd decides a swipe happened. lisgd also wants the contacts to
+# travel nearly parallel, so any drift apart registers as a pinch and not a
+# swipe. The net effect of the three-finger bindings was accidental zoom.
+#
+# niri's own 3-finger and 4-finger gestures are unaffected and still correct;
+# they run on libinput pointer gesture events off a TOUCHPAD and never see this
+# path. See the gestures comment in config/niri/config.kdl.
+#
+# What is left is the two that work, and they work because they are anchored to
+# an edge: one contact, starting somewhere nothing else is listening.
+#
+# If you want the columns on a gesture too, the same edge trick is available and
+# is the only shape worth trying on this panel:
+#     -g "1,LR,L,*,R,deck-niri focus-column-left" \
+#     -g "1,RL,R,*,R,deck-niri focus-column-right"
+# Left off by default because lisgd does not grab the device, so those fire IN
+# ADDITION to whatever the page underneath does with a drag from the edge.
+#
 # -g nfingers,gesture,edge,distance,actmode,command
 exec lisgd -d "$DEVICE" \
     -g "1,DU,B,*,R,deck-osk" \
-    -g "1,UD,T,*,R,deck-niri toggle-overview" \
-    -g "3,DU,*,*,R,deck-niri focus-workspace-down" \
-    -g "3,UD,*,*,R,deck-niri focus-workspace-up" \
-    -g "3,LR,*,*,R,deck-niri focus-column-left" \
-    -g "3,RL,*,*,R,deck-niri focus-column-right"
+    -g "1,UD,T,*,R,deck-niri toggle-overview"
