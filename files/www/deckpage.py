@@ -162,8 +162,21 @@ def clock_status():
         return "clock: chronyc unavailable", "warn"
     refid = re.search(r"Reference ID\s*:\s*(\S+)(?:\s*\((.*?)\))?", out)
     stratum = re.search(r"Stratum\s*:\s*(\d+)", out)
-    if not refid:
-        return "clock: not synchronised", "err"
+    leap = re.search(r"Leap status\s*:\s*(.+)", out)
+    # Caught on the panel after the 2026-09-29 reboot, which is the only way it
+    # would have been caught: for the first half minute chrony answers with
+    # refid 00000000, stratum 0 and "Leap status: Not synchronised", and the
+    # code below happily reported that as a healthy network source. An unsynced
+    # clock is the one state this line exists to make visible, so it is checked
+    # first and by three signals, not by whether the regex matched.
+    unsynced = (
+        not refid
+        or refid.group(1) in ("00000000", "0.0.0.0")
+        or (stratum and stratum.group(1) == "0")
+        or (leap and "not synchronised" in leap.group(1).strip().lower())
+    )
+    if unsynced:
+        return "clock: NOT SYNCHRONISED", "err"
     name = (refid.group(2) or refid.group(1)).strip()
     s = stratum.group(1) if stratum else "?"
     if "PPS" in name.upper():
