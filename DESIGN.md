@@ -299,7 +299,7 @@ registers it as a real `cooling_device` with automatic on/off. Write that to the
 
 ---
 
-## §5 Duplicate UUIDs on the SD card
+## §5 Boot: duplicate UUIDs, and the bootloader EEPROM
 
 Found 2026-08-31, and it's a data-integrity hazard rather than a performance one.
 
@@ -356,6 +356,34 @@ gzip compressed, so the version string is never there in plaintext.
 It now compares the image byte-for-byte against `/boot/vmlinuz-$(uname -r)` from the
 installed `linux-image` package. Exact, and no decompression needed. A check that
 produces false alarms is worse than no check, because it trains you to ignore it.
+
+### The bootloader EEPROM
+
+Done 2026-09-28, as its own step after a validated kernel reboot, because a bootloader
+failure on a box that boots from NVMe is the one failure with no software recovery path.
+2025-05-08 → 2026-09-25, a sixteen-month jump.
+
+What matters is the config, not the image. The EEPROM holds `BOOT_ORDER=0xf146` — read
+right to left, that's NVMe, then USB, then SD, then retry — and losing it means a machine
+that comes up looking for an SD card that isn't there. Capture it before flashing:
+
+    sudo rpi-eeprom-config > eeprom-config.pre-update.txt
+
+`rpi-eeprom-update -a` does preserve it, and did here, but "it usually preserves it" is
+not a recovery plan. Diff it afterwards rather than eyeballing it.
+
+Two things worth knowing about the Pi 5 specifically:
+
+- It flashes **immediately** over SPI via `flashrom`, and reports `VERIFY: SUCCESS`. It
+  does not stage a `pieeprom.upd` for the next boot the way earlier models did, so there
+  is no window in which you can inspect what's about to be written.
+- `rpi-eeprom-update` still says "UPDATE AVAILABLE" after a successful flash, because it
+  compares against the *running* bootloader. That is not a failed update. It reads "up to
+  date" after the reboot.
+
+If it ever does go wrong, the recovery is Raspberry Pi Imager's bootloader rescue SD
+image — which is the one situation where the SD slot this section pulled a card out of
+earns its keep.
 
 ---
 
@@ -678,9 +706,6 @@ confirm the yellow LED flickers and the green flashes — then cut.
 - No audio capture device. Only `vc4hdmi0`/`vc4hdmi1` (HDMI playback). The radio
   interface presumably appears when connected, confirm that before relying on FT8 in the
   field.
-- EEPROM update is available (`rpi-eeprom-update`), and it matters because this box
-  boots from NVMe. Do it as its *own* step, after the kernel reboot is validated, so a
-  failure is attributable to one change.
 - `mariadbd` is enabled and burns 7–11% CPU at idle with no user databases on the
   machine. `systemctl disable --now mariadb` is free heat and free RAM.
 - RTC cell. `J5`/`BATT` is empty and charging stays disabled until a
