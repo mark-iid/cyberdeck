@@ -26,6 +26,26 @@ Two halves to this repo:
   decisions in [docs/CASE.md](docs/CASE.md). Fifteen printed parts, no holes drilled in
   the shell.
 
+## The home screen
+
+![The launcher page, on the deck's own panel](docs/images/launcher.png)
+
+The deck boots into this. It is a page served locally on `127.0.0.1:8000` by
+`bin/58-landing-page.sh`, opened at startup and pinned to the `web` workspace,
+and it exists because a touchscreen with no mouse and often no keyboard had no
+way into anything: every route was a keybind.
+
+Nothing on it is typed by hand. Services are probed at render time, so a stopped
+one reads `[X] down` rather than offering a link that fails after you commit a
+finger to it, and where a unit is known the tile offers to start it instead. The
+book list comes from kiwix-serve's own catalogue on `:8080`, which is how the
+count on it stays right. The launch tiles run through `niri msg action spawn`
+against a fixed allowlist, and the shut-down tiles at the bottom exist because
+the only physical power control is a rocker that cuts 12 V to everything at once.
+
+Sized for the panel rather than for a browser: 1280 px across 220 mm is
+5.8 px/mm, so nothing tappable is under 56 px, which is about 9.6 mm of glass.
+
 ## This is additive. It is not a reinstall.
 
 Nothing here reformats, reinstalls, or replaces Raspberry Pi OS.
