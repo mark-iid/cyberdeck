@@ -73,6 +73,7 @@ Individual steps, if you'd rather go one at a time:
 | `bin/10-build-niri.sh` | niri `v26.04` from source (needs rustup, see below) |
 | `bin/20-build-xwayland-satellite.sh` | X11 bridge `v0.8.2`, builds with Debian's rustc |
 | `bin/30-build-mshv.sh` | MSHV FT8/FT4, pinned commit, `MSHV_Slarm64_PI.pro` |
+| `bin/35-build-qlog.sh` | QLog `v0.53.0` from source, Qt6 (no aarch64 binaries exist upstream) |
 | `bin/40-install-claude-code.sh` | Claude Code under `~/.local/share/claude` |
 | `bin/50-doomsday-extras.sh` | tiered offline extras, run bare to list the tiers |
 | `bin/51-fetch-content.sh` | fetch ZIMs, register them in the kiwix library |
@@ -93,13 +94,14 @@ Individual steps, if you'd rather go one at a time:
 | `bin/sync-to-pi.sh` | push this repo to the deck, validate the KDL, live-reload |
 | `bin/verify-post-reboot.sh` | run after any kernel change |
 
-## The three from-source builds, and why
+## The four from-source builds, and why
 
 Raspberry Pi OS trixie packages the *entire* niri ecosystem (foot, fuzzel, waybar,
 swaybg, mako, cliphist, gtklock, seatd, xwayland) but not niri itself. Checked
 2026-08-31 against trixie, trixie-updates, trixie-backports (temporarily enabled to
 look) and archive.raspberrypi.com. It missed the trixie freeze. Same story for
-`xwayland-satellite` and MSHV.
+`xwayland-satellite`, MSHV and QLog. QLog is packaged in Debian *forky* but not in
+trixie, and upstream's own binaries are x86_64 only, so aarch64 has to build it.
 
 The Rust trap: trixie ships rustc/cargo 1.85. niri v26.04 declares
 `rust-version = "1.87"`, so the distro toolchain is too old and fails with a confusing

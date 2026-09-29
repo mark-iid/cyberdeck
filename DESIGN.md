@@ -718,8 +718,9 @@ confirm the yellow LED flickers and the green flashes — then cut.
   logger that had never been opened. The datadir held `mysql`,
   `performance_schema` and `sys` and nothing else.
 
-  Three loggers remain (`klog`, `tucnak`, `xlog`) and none of them wants a SQL
-  server; they are all file or SQLite backed. `libmariadb3` and `mariadb-common`
+  `xlog` went with it on the same day. The loggers now are **QLog** (built from
+  source, `bin/35-build-qlog.sh`), with `klog` and `tucnak` still installed. None
+  of them wants a SQL server; QLog is SQLite backed and the others are files. `libmariadb3` and `mariadb-common`
   stay behind on purpose, because `libreoffice-sdbc-mysql` links against the
   client library. That is a library, not a service, and costs nothing.
 - RTC cell. `J5`/`BATT` is empty and charging stays disabled until a

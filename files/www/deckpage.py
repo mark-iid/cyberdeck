@@ -105,7 +105,7 @@ LAUNCH = {
     "xastir":   (["xastir"],        "xastir",      "APRS and maps"),
     "gpredict": (["gpredict"],      "gpredict",    "satellite tracking"),
     "qmapshack":(["qmapshack"],     "QMapShack",   "offline Garmin maps"),
-    "klog":     (["klog"],          "KLog",        "logging"),
+    "qlog":     (["qlog"],          "QLog",        "logging, awards, QSL"),
     "tqsl":     (["tqsl"],          "TQSL",        "LoTW signing"),
     "kiwix":    (["kiwix-desktop"], "Kiwix",       "the desktop reader"),
     "term":     (["foot"],          "Terminal",    "foot"),

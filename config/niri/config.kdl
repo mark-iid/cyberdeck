@@ -308,6 +308,38 @@ window-rule {
     open-floating false
 }
 
+// QLog (bin/35-build-qlog.sh), the logger this deck uses. app-id is "QLog",
+// capital Q and L, VERIFIED with `niri msg windows` on 2026-09-29 and not
+// guessed from the binary name, which is lowercase.
+//
+// The main window is the good news and it is worth recording because the
+// obvious prior was wrong: measured at 1272x768, the FULL default layout fits
+// on this panel with nothing clipped, logbook table, QSO entry, the detail
+// tabs, the clock dock and the grid-square map all visible at once. Unlike
+// WSJT-X (§3) there is nothing to work around here.
+window-rule {
+    match app-id=r#"^QLog$"#
+    open-floating false
+    default-column-width { proportion 1.0; }
+}
+
+// Its Settings dialog is the WSJT-X problem again, measured rather than feared:
+// 800x882 against 768 px of usable height, so it overflows the bottom by about
+// 114 px and takes its buttons with it. First run opens it automatically.
+//
+// It DOES float, which is the part that differs from WSJT-X. The generic
+// ^(Settings|...) rule further down already catches it, because QLog sets the
+// title at map time where Qt's own dialog in WSJT-X sets it afterwards. That is
+// the same late-title behaviour documented up at the WSJT-X rules, landing on
+// the other side of the line for once.
+//
+// Escape closes it. Mod+Space and a drag move it if a button is out of reach.
+window-rule {
+    match app-id=r#"^QLog$"# title=r#"^Settings"#
+    open-floating true
+    default-window-height { fixed 760; }
+}
+
 // --- Reference material -----------------------------------------------------
 // kiwix-desktop holds 193GB of ZIMs and is the deck's actual purpose as much as
 // the radio is. Full width, its own workspace by habit.

@@ -34,7 +34,7 @@ warn "  gpredict -> Edit -> Update TLE data -> From local files -> $TLE_DIR"
 warn "After that, satellites appear and gpredict tracks them offline."
 
 # --- 2. cty.dat — DXCC country file -------------------------------------------
-# Three loggers are installed (klog, tucnak, xlog) and they resolve a
+# Three loggers are installed (qlog, klog, tucnak) and they resolve a
 # callsign to a DXCC entity using cty.dat. The only copy on this machine was
 # buried in the MSHV BUILD TREE — scratch space that gets deleted (see the
 # llama-server RPATH lesson in §5). Put a copy somewhere stable.
