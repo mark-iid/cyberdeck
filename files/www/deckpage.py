@@ -50,15 +50,32 @@ PORT = int(os.environ.get("DECKPAGE_PORT", "8000"))
 KIWIX = "http://127.0.0.1:8080"
 
 # --- What is on this machine -------------------------------------------------
-# Ports verified listening on 2026-09-29 with `ss -ltnp`. Anything here that is
-# down renders as down; nothing is assumed to be running.
+# Ports and unit scopes verified on 2026-09-29 with `ss -ltnp` and
+# `systemctl list-unit-files`. Anything here that is down renders as down;
+# nothing is assumed to be running.
+#
+# `unit` is what makes a dead service actionable rather than just honest. A tile
+# for something that is down but has a known unit offers to START it, which is
+# the whole point for Local AI: bin/60-local-ai.sh deliberately left
+# llama-server disabled ("not a sensible default" on a fanless Pi) and the
+# cooler that retired that argument went in on 2026-09-02. Rather than spend
+# ~4.5 GB of 7.9 permanently on a 7B that gets used occasionally, the tile
+# starts it on demand.
 SERVICES = [
-    ("ZIM library",   8080, "/",       "kiwix-serve, the offline encyclopedia stack"),
-    ("Local AI",      8081, "/",       "llama-server, 7B Mistral, fully offline"),
-    ("APRS / DAPNET", 9333, "/",       "a2d portal"),
-    ("Printing",       631, "/",       "CUPS"),
-    ("gpsd",          2947, None,      "GPS and 1PPS, feeds chrony"),
+    {"key": "kiwix", "name": "ZIM library", "port": 8080, "path": "/",
+     "note": "kiwix-serve, the offline encyclopedia stack",
+     "unit": ("user", "kiwix-serve.service")},
+    {"key": "ai", "name": "Local AI", "port": 8081, "path": "/",
+     "note": "llama-server, 7B Mistral, fully offline",
+     "unit": ("user", "llama-server.service")},
+    {"key": "a2d", "name": "APRS / DAPNET", "port": 9333, "path": "/",
+     "note": "a2d portal", "unit": ("system", "a2d.service")},
+    {"key": "cups", "name": "Printing", "port": 631, "path": "/",
+     "note": "CUPS", "unit": ("system", "cups.service")},
+    {"key": "gpsd", "name": "gpsd", "port": 2947, "path": None,
+     "note": "GPS and 1PPS, feeds chrony", "unit": ("system", "gpsd.service")},
 ]
+SERVICE_BY_KEY = {d["key"]: d for d in SERVICES}
 
 # Launchable apps. Filtered by shutil.which at render time, so a tile never
 # offers something that is not installed. Keys are opaque ids sent by the page;
@@ -218,11 +235,14 @@ def launchable():
 
 def status():
     rows = []
-    for name, port, path, note in SERVICES:
-        up = listening(port)
+    for d in SERVICES:
+        up = listening(d["port"])
         rows.append({
-            "name": name, "port": port, "note": note, "up": up,
-            "url": ("http://%s:%d%s" % (HOST, port, path)) if (path and up) else None,
+            "key": d["key"], "name": d["name"], "port": d["port"],
+            "note": d["note"], "up": up,
+            "startable": bool(d.get("unit")) and not up,
+            "url": ("http://%s:%d%s" % (HOST, d["port"], d["path"]))
+                   if (d["path"] and up) else None,
         })
     return rows
 
@@ -335,6 +355,30 @@ function power(key, el){
     body: JSON.stringify({action:key, confirm:true})
   }).catch(function(){});
 }
+function start(key, el){
+  var sub = el.querySelector('.s');
+  sub.textContent = 'starting...';
+  fetch('/start', {
+    method:'POST',
+    headers:{'Content-Type':'application/json','X-Deck-Launch':'1'},
+    body: JSON.stringify({service:key})
+  }).then(function(r){ return r.json(); }).then(function(j){
+    if (!j.ok) { sub.textContent = 'failed: ' + j.error; return; }
+    // systemctl returns as soon as the unit is ACTIVE, which for llama-server is
+    // well before the port answers: it still has ~4.5 GB of model to read off
+    // the NVMe. So poll the port rather than trusting the exit status, and give
+    // it a generous window.
+    var tries = 0;
+    (function poll(){
+      if (++tries > 45) { sub.textContent = 'unit started, port still quiet'; return; }
+      sub.textContent = 'loading... ' + tries + 's';
+      fetch('/status.json').then(function(r){ return r.json(); }).then(function(st){
+        var svc = st.services.filter(function(x){ return x.key === key; })[0];
+        if (svc && svc.up) { location.reload(); } else { setTimeout(poll, 1000); }
+      }).catch(function(){ setTimeout(poll, 1000); });
+    })();
+  }).catch(function(e){ sub.textContent = 'failed: ' + e; });
+}
 function launch(key, el){
   var was = el.querySelector('.s').textContent;
   el.querySelector('.s').textContent = 'starting...';
@@ -371,13 +415,21 @@ def render():
     # Services
     parts.append('<h2>Running here</h2><div class="grid">')
     for s in status():
-        mark = '<span class="mark ok">[OK]</span>' if s["up"] else '<span class="mark err">[X]</span>'
-        sub = "%s  :%d  %s" % ("up" if s["up"] else "down", s["port"], s["note"])
+        mark = ('<span class="mark ok">[OK]</span>' if s["up"]
+                else '<span class="mark err">[X]</span>')
+        if s["startable"]:
+            sub = "down  :%d  TAP TO START" % s["port"]
+        else:
+            sub = "%s  :%d  %s" % ("up" if s["up"] else "down", s["port"], s["note"])
         t = '<span class="t">%s %s</span><span class="s">%s</span>' % (
             mark, html.escape(s["name"]), html.escape(sub))
         cls = "" if s["up"] else "down"
         if s["url"]:
             parts.append('<a class="tile nb %s" href="%s">%s</a>' % (cls, s["url"], t))
+        elif s["startable"]:
+            # A dead service with a unit is an offer, not a dead end.
+            parts.append('<button class="tile nb %s" onclick="start(\'%s\',this)">%s</button>'
+                         % (cls, s["key"], t))
         else:
             parts.append('<div class="tile nb %s">%s</div>' % (cls, t))
     parts.append('</div>')
@@ -540,6 +592,9 @@ class Handler(BaseHTTPRequestHandler):
         if path == "/power":
             self.do_power()
             return
+        if path == "/start":
+            self.do_start()
+            return
         if path != "/spawn":
             self._send(404, '{"ok":false,"error":"not found"}', "application/json")
             return
@@ -576,6 +631,40 @@ class Handler(BaseHTTPRequestHandler):
             return
         self._send(200, '{"ok":true}', "application/json")
 
+
+    def do_start(self):
+        if not self._guarded():
+            return
+        try:
+            key = self._body().get("service", "")
+        except (ValueError, OSError):
+            self._send(400, '{"ok":false,"error":"bad request"}', "application/json")
+            return
+        entry = SERVICE_BY_KEY.get(key)
+        unit = entry.get("unit") if entry else None
+        if not unit:
+            self._send(400, '{"ok":false,"error":"unknown service"}', "application/json")
+            return
+
+        scope, name = unit
+        # `start`, never `enable`. Whether a thing runs at boot is a decision
+        # someone made in a provisioning script with a reason attached, and a
+        # tile tapped once is not that decision. llama-server in particular is
+        # left disabled on purpose; this brings it up for now, not for good.
+        argv = (["systemctl", "--user", "start", name] if scope == "user"
+                else ["sudo", "-n", "systemctl", "start", name])
+        try:
+            r = subprocess.run(argv, capture_output=True, text=True, timeout=30)
+        except (OSError, subprocess.SubprocessError) as e:
+            self._send(500, json.dumps({"ok": False, "error": str(e)}),
+                       "application/json")
+            return
+        if r.returncode != 0:
+            self._send(500, json.dumps(
+                {"ok": False, "error": (r.stderr or r.stdout).strip()[:200]}),
+                "application/json")
+            return
+        self._send(200, '{"ok":true}', "application/json")
 
     def do_power(self):
         if not self._guarded():
