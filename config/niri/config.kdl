@@ -333,7 +333,19 @@ window-rule {
 // the same late-title behaviour documented up at the WSJT-X rules, landing on
 // the other side of the line for once.
 //
-// Escape closes it. Mod+Space and a drag move it if a button is out of reach.
+// Escape closes it, and that is the answer that always works.
+//
+// !! THE HEIGHT CAP BELOW IS UNVERIFIED, said out loud because this file has a
+// standing rule against decoration that looks like it does something. The
+// dialog's own constraints permit it: ui/SettingsDialog.ui declares geometry
+// 800x836, minimumSize 770x0 and maximumSize 800x16777215, so there is no
+// explicit minimum HEIGHT to fight. What is not known is whether the tab
+// pages' layouts impose an implicit one, which would clamp this silently. It
+// could not be triggered to find out, because QLog gives Settings no keyboard
+// shortcut (ui/MainWindow.ui) and it is reachable only through the menu.
+//
+// So: open Settings once, run `niri msg windows`, and either delete this rule
+// or delete this comment.
 window-rule {
     match app-id=r#"^QLog$"# title=r#"^Settings"#
     open-floating true
