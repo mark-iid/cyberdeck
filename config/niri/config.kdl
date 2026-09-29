@@ -40,6 +40,42 @@ input {
     }
 }
 
+// GESTURES (verified 2026-09-29 against this build's OWN source tree at
+// ~/.cache/cyberdeck-build/niri, v26.04, not against the wiki). The split
+// below is the thing to know before adding any more gesture config here:
+//
+//   TOUCHPAD  -> libinput POINTER gesture events, which niri handles itself in
+//                src/input/mod.rs (on_gesture_swipe_begin/update):
+//                  3-finger vertical   = switch workspaces
+//                  3-finger horizontal = scroll columns
+//                  4-finger            = the Overview
+//                `natural-scroll` in the touchpad block above inverts these too
+//                (the handler negates both deltas when it is set), so 3-finger
+//                down goes to the workspace above, the way macOS does it.
+//                NONE of this is reachable today: `libinput list-devices` on
+//                2026-09-29 showed only "TSTP MTouch", the HDMI jacks, the power
+//                button and the RTL-SDR. The Perixx is not plugged in.
+//
+//   TOUCHSCREEN -> emits none of those events, ever. Not a niri limitation to
+//                work around in this file: libinput only synthesises pointer
+//                gestures for touchpads. The panel itself is willing, being a
+//                10-point MT-B device (ABS_MT_SLOT max 9, read off
+//                /dev/input/event4), so the fingers are there and nothing
+//                consumes them. bin/59-touch-input.sh fills that gap with lisgd,
+//                which reads the touch device directly.
+//
+// HOT CORNERS ARE POINTER-ONLY, for the same reason and one more: the trigger
+// lives entirely in the pointer-motion path (`pointer_inside_hot_corner`,
+// src/input/mod.rs ~2389-2709) and the target is a 1x1 px rect at (0,0) that
+// only a clamped cursor can land on. A finger cannot hit it. Stated out loud
+// because niri defaults top-left ON when no corner is named, so a config that
+// says nothing here still HAS a hot corner, it just does not admit it.
+gestures {
+    hot-corners {
+        top-left
+    }
+}
+
 // DISPLAY — read off the machine 2026-08-31 via `wlr-randr`.
 //
 //   HDMI-A-1, "RTK CX101", 1280x800@60 preferred, physical 220x130mm (~148 DPI)
@@ -125,6 +161,20 @@ spawn-at-startup "nm-applet" "--indicator"
 
 // Wallpaper, if one exists. Absent file -> swaybg exits, desktop is plain.
 spawn-at-startup "sh" "-c" "swaybg -i \"$HOME/Pictures/wallpaper.jpg\" -m fill || true"
+
+// ---------------------------------------------------------------------------
+// NAMED WORKSPACE for the launcher page (bin/58-landing-page.sh, served on
+// :8000). qutebrowser is spawned at startup and pinned here, so the deck boots
+// showing every local resource it has, and the radio stack never shares a
+// workspace with a browser that wants all 1272 px.
+//
+// !! THIS SHIFTS THE WORKSPACE INDICES. Named workspaces are inserted at the
+// FRONT: Layout::ensure_named_workspace calls `mon.insert_workspace(ws, 0,
+// false)` (src/layout/mod.rs). So "web" IS workspace 1, and everything the
+// number row used to reach moved up by one. The Mod+1 bind below was changed to
+// address it BY NAME rather than by index, so this stays true no matter how
+// many named workspaces get added later.
+workspace "web"
 
 // ---------------------------------------------------------------------------
 // WINDOW RULES
@@ -263,6 +313,14 @@ window-rule {
 // 800 - 24px bar - 8px gaps = 768. Measured, foot (no rule) and qutebrowser
 // (with one) were both 1272x768 — the rule changed nothing and was deleted
 // rather than left as decoration that looks like it does something.
+//
+// It IS pinned to the "web" workspace though, which is a different claim: the
+// launcher page on :8000 is spawned at startup and should never land on top of
+// whatever radio app the number row is pointing at.
+window-rule {
+    match app-id=r#"^org\.qutebrowser\.qutebrowser$"#
+    open-on-workspace "web"
+}
 
 // Transient dialogs from anything above, matched on title because the app-id
 // belongs to the parent app. On an 800px panel these must float or they shove
@@ -323,6 +381,17 @@ binds {
 
     Mod+Q { close-window; }
 
+    // THE OVERVIEW IS THIS MACHINE'S TOUCH AFFORDANCE, and the reason is that
+    // touch works properly INSIDE it even though it cannot open it. Once open,
+    // src/input/touch_overview_grab.rs takes over: drag to scroll columns, drag
+    // vertically to change workspace, hold 500 ms then drag to move a window.
+    // Windows become thumbnails you can hit with a finger instead of the ~4 mm
+    // targets a 148 DPI panel otherwise gives you (1280 px across 220 mm is
+    // 5.8 px/mm, so the 24 px bar is 4.1 mm and a focus ring is a third of a
+    // millimetre). Opening it is the only part a bare touchscreen cannot do,
+    // which is what this bind and lisgd's bottom-edge swipe are both for.
+    Mod+O { toggle-overview; }
+
     Mod+Left  { focus-column-left; }
     Mod+Right { focus-column-right; }
     Mod+Up    { focus-window-up; }
@@ -337,11 +406,15 @@ binds {
     Mod+Shift+Up    { move-window-up; }
     Mod+Shift+Down  { move-window-down; }
 
-    Mod+1 { focus-workspace 1; }
+    // By name, not index: "web" is inserted at the front (see the workspace
+    // declaration above), so `focus-workspace 1` would still land here but would
+    // stop saying why. The other three stay numeric and now mean what used to be
+    // 1, 2 and 3.
+    Mod+1 { focus-workspace "web"; }
     Mod+2 { focus-workspace 2; }
     Mod+3 { focus-workspace 3; }
     Mod+4 { focus-workspace 4; }
-    Mod+Shift+1 { move-column-to-workspace 1; }
+    Mod+Shift+1 { move-column-to-workspace "web"; }
     Mod+Shift+2 { move-column-to-workspace 2; }
     Mod+Shift+3 { move-column-to-workspace 3; }
     Mod+Shift+4 { move-column-to-workspace 4; }
