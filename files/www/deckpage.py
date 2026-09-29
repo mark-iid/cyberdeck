@@ -345,7 +345,56 @@ h2::before{content:'\\25BA  '}
 """
 
 JS = """
-var armed = {};
+// --- Keep the page honest without a reload -----------------------------------
+// This page is a status display that only told the truth at the moment it was
+// fetched, and nothing made it fetch again. That caught both of us: a tab left
+// open from boot showed a KLog tile hours after it had become QLog, and showed
+// Local AI with no start offer after that had shipped. A status board that goes
+// stale is worse than no status board, because it is believed.
+//
+// So: poll /status.json. If no service changed up/down state, nothing on a tile
+// would render differently, and only the clock line needs touching. If one DID
+// change, the tile's KIND changes with it (a link becomes a start button, or the
+// reverse), which is more DOM surgery than it is worth doing correctly, so the
+// page reloads and keeps its scroll position.
+var busy = false;         // a start is in flight; its own poll will reload
+var armed = {};           // a power tile is waiting for its second tap
+
+function applyStatus(st){
+  var bar = document.getElementById('clockline');
+  if (bar && st.clock) bar.textContent = st.clock;
+
+  var changed = false;
+  (st.services || []).forEach(function(svc){
+    var el = document.querySelector('[data-svc="' + svc.key + '"]');
+    if (!el) return;
+    if (el.getAttribute('data-up') !== (svc.up ? '1' : '0')) changed = true;
+  });
+
+  // Never yank the page out from under a deliberate action.
+  if (!changed || busy) return;
+  if (Object.keys(armed).some(function(k){ return armed[k]; })) return;
+
+  try { sessionStorage.setItem('deck-scroll', String(window.scrollY)); } catch (e) {}
+  location.reload();
+}
+
+function pollStatus(){
+  fetch('/status.json').then(function(r){ return r.json(); })
+    .then(applyStatus).catch(function(){});
+}
+
+window.addEventListener('load', function(){
+  try {
+    var y = sessionStorage.getItem('deck-scroll');
+    if (y !== null) { window.scrollTo(0, parseInt(y, 10) || 0);
+                      sessionStorage.removeItem('deck-scroll'); }
+  } catch (e) {}
+  // 30 s. Long enough to cost nothing on a battery-powered deck, short enough
+  // that a service you started elsewhere shows up before you wonder why not.
+  setInterval(pollStatus, 30000);
+});
+
 function power(key, el){
   var sub = el.querySelector('.s');
   if (!armed[key]) {
@@ -372,27 +421,28 @@ function power(key, el){
 }
 function start(key, el){
   var sub = el.querySelector('.s');
+  busy = true;
   sub.textContent = 'starting...';
   fetch('/start', {
     method:'POST',
     headers:{'Content-Type':'application/json','X-Deck-Launch':'1'},
     body: JSON.stringify({service:key})
   }).then(function(r){ return r.json(); }).then(function(j){
-    if (!j.ok) { sub.textContent = 'failed: ' + j.error; return; }
+    if (!j.ok) { busy = false; sub.textContent = 'failed: ' + j.error; return; }
     // systemctl returns as soon as the unit is ACTIVE, which is not the same as
     // ready: llama-server still has a 7B to map off the NVMe, measured at about
     // 2 s on this machine but load-dependent. So poll the PORT rather than
     // trusting the exit status, and give it a generous window.
     var tries = 0;
     (function poll(){
-      if (++tries > 45) { sub.textContent = 'unit started, port still quiet'; return; }
+      if (++tries > 45) { busy = false; sub.textContent = 'unit started, port still quiet'; return; }
       sub.textContent = 'loading... ' + tries + 's';
       fetch('/status.json').then(function(r){ return r.json(); }).then(function(st){
         var svc = st.services.filter(function(x){ return x.key === key; })[0];
         if (svc && svc.up) { location.reload(); } else { setTimeout(poll, 1000); }
       }).catch(function(){ setTimeout(poll, 1000); });
     })();
-  }).catch(function(e){ sub.textContent = 'failed: ' + e; });
+  }).catch(function(e){ busy = false; sub.textContent = 'failed: ' + e; });
 }
 function launch(key, el){
   var was = el.querySelector('.s').textContent;
@@ -439,14 +489,18 @@ def render():
         t = '<span class="t">%s %s</span><span class="s">%s</span>' % (
             mark, html.escape(s["name"]), html.escape(sub))
         cls = "" if s["up"] else "down"
+        # data-up records what this tile was RENDERED as. The poller compares
+        # against it rather than against the DOM text, so it notices a change
+        # without having to parse anything back out.
+        d = 'data-svc="%s" data-up="%d"' % (s["key"], 1 if s["up"] else 0)
         if s["url"]:
-            parts.append('<a class="tile nb %s" href="%s">%s</a>' % (cls, s["url"], t))
+            parts.append('<a %s class="tile nb %s" href="%s">%s</a>' % (d, cls, s["url"], t))
         elif s["startable"]:
             # A dead service with a unit is an offer, not a dead end.
-            parts.append('<button class="tile nb %s" onclick="start(\'%s\',this)">%s</button>'
-                         % (cls, s["key"], t))
+            parts.append('<button %s class="tile nb %s" onclick="start(\'%s\',this)">%s</button>'
+                         % (d, cls, s["key"], t))
         else:
-            parts.append('<div class="tile nb %s">%s</div>' % (cls, t))
+            parts.append('<div %s class="tile nb %s">%s</div>' % (d, cls, t))
     parts.append('</div>')
 
     # Launchers
@@ -514,7 +568,7 @@ def render():
     parts.append('</div>')
 
     msg, cls = clock_status()
-    parts.append('<div class="bar"><span>%s</span>'
+    parts.append('<div class="bar"><span id="clockline">%s</span>'
                  '<span>Mod+O overview</span><span>Mod+1 here</span>'
                  '<span>f = link hints</span></div>' % html.escape(msg))
     parts.append('</body></html>')
