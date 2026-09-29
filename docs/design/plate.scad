@@ -414,8 +414,29 @@ RJ_CLEAR = 3.6;                   // M3 clearance, drawn 0.2 over (holes print
                                   // undersize) AND for slop across two ears
 RJ_CSK_D = 6.4;                   // M3 90 deg countersunk head, same 0.2
 
+// Second SMA, for the GPS antenna, added 2026-09-28 once the QLG2 was working.
+// It is on the DATA rail and not beside the RF one, because it is a data feed
+// that happens to arrive over coax: the QLG2 lives with the Pi, not with the
+// radio, and putting it here keeps the run to the module short. Same ⌀6.7 and
+// same plain through-cut as the left rail's - one part, one number, no second
+// experiment.
+//
+// Position is the midpoint of the only window the neighbours leave. The USB's
+// footprint is its relief pocket, not its opening: 24.5 + 2x3 of rebate = 30.5
+// along, so it reaches down to 34 - 15.25 = 18.75. The RJ45's is set by its
+// screw ears and heads, 27.5 + 6.4 = 33.9, so it reaches up to -3.05. Against
+// the SMA's 6.7 that leaves 0.3 .. 15.4, and 8 sits in the middle of it:
+// 7.4 mm of tile to the USB pocket, 7.7 to the RJ45 countersink. Anything
+// closer to the USB buys nothing and spends the only material there is.
+//
+// Across the rail it is centred like everything else, which is what keeps it
+// clear of the keyboard: centred in 39.25 puts the hole edge 16.2 mm from the
+// inboard edge, outboard of the 14 mm the keyboard covers. That is the same
+// reasoning as the left rail's SMA, and it is why "centred" is not a default
+// here but a result.
 RIGHT_FEATURES = [
     ["RJ45",     -20, "rj45",   RJ_W,  RJ_L],
+    ["GPS SMA",    8, "round",  SMA_D, SMA_D],
     ["dual USB",  34, "rebate", USB_W, USB_L, USB_WEB, USB_BEZ_W, USB_BEZ_L],
 ];
 

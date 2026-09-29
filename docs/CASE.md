@@ -231,6 +231,12 @@ Left rail is power and RF, right rail is data, and that's not arbitrary: the mod
 own I/O exits its left edge (power, AV) and its right edge (USB, Ethernet), so the
 plate mirrors the module and every cable run stays short.
 
+The GPS antenna is the one thing that reads as RF and isn't. Its SMA is on the *right*
+rail, because the rule is where the cable ends, not what kind of cable it is: the QLG2
+hangs off the Pi's GPIO header, not off the radio, so its coax belongs on the side the
+Pi is on. Sorting by connector type instead would have put a 2 m antenna lead across the
+whole deck to reach a receiver on the other side.
+
 ### What's cut
 
 | Connector | Rail | Opening | Notes |
@@ -241,6 +247,7 @@ plate mirrors the module and every cable run stays short.
 | 3.5 mm audio, panel extension | left | ⌀6.2 + ⌀13 relief from behind, 2.5 web | Runs to the module's own AUDIO socket, same edge. |
 | USB-A dual, square flush | right | 21.5 × 24.5, 2.0 web | One housing, two ports, one hole. |
 | RJ45 panel extension | right | 16.2 × 16.0 + 2 × M3 on 27.5 | Mounts from *behind*, screw ears, no snap. |
+| SMA bulkhead F–F, GPS antenna | right | ⌀6.7 drawn | Added 2026-09-28. The QLG2's antenna feed. Same part and same number as the left rail's, so no second coupon. |
 
 This printer runs holes about 0.2 mm undersize, so every round hole is drawn at
 nominal + 0.2. Two independent ladders on a test coupon landed on the same offset (SMA
