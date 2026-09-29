@@ -258,7 +258,7 @@ h2::before{content:'\\25BA  '}
       padding:8px 10px;background:var(--navy);color:var(--white);
       text-decoration:none;font-family:var(--mono);font-size:15px;text-align:left;
       cursor:pointer;width:100%}
-.tile:active{border-top-color:var(--bevel-dark);border-left-color:var(--bevel-dark);
+.tile:active,.book:active{border-top-color:var(--bevel-dark);border-left-color:var(--bevel-dark);
              border-bottom-color:var(--bevel-light);border-right-color:var(--bevel-light)}
 .tile .t{color:var(--cyan);font-weight:bold;overflow-wrap:anywhere}
 .tile .s{font-size:13px;color:var(--muted);overflow-wrap:anywhere}
@@ -272,14 +272,15 @@ h2::before{content:'\\25BA  '}
 .books{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:6px}
 .book{display:flex;justify-content:space-between;gap:10px;min-height:56px;
       align-items:center;padding:6px 10px;text-decoration:none;color:var(--white)}
-/* Hover inversion only where a real pointer exists. On a touchscreen :hover
-   latches onto the last thing tapped and stays there, so the page ends up with
-   a permanent cyan bar over whatever you last touched, which reads as the
-   current selection and is not. */
-@media (hover:hover){
-  .book:hover,.tile:hover{background:var(--cyan);color:var(--navy)}
-  .book:hover .t,.tile:hover .t,.tile:hover .s,.book:hover .n{color:var(--navy)}
-}
+/* NO :hover STYLING AT ALL, which is deliberate and was arrived at the hard
+   way. The cyan inversion was first put behind @media (hover:hover), on the
+   theory that a touchscreen would report hover:none and skip it. It does not:
+   Chromium answers hover:hover whenever ANY pointer exists, and this deck's
+   pointer is the panel, which (as config.kdl says) teleports to the last tap
+   and stays there. So the first boot after this shipped had a tile latched
+   cyan under a finger that had moved on, reading as a selection that was not
+   one. Feedback is :active and :focus-visible only, both of which end when the
+   interaction does. */
 .tile:focus-visible,.book:focus-visible{outline:3px solid var(--cyan);outline-offset:-3px}
 .book .n{color:var(--muted);font-size:13px;white-space:nowrap}
 .empty{padding:10px;color:var(--warn)}
