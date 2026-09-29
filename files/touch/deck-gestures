@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+# Touchscreen gestures, via lisgd.
+#
+# THE GAP THIS FILLS. niri handles 3-finger and 4-finger swipes itself, but it
+# reads them from libinput POINTER gesture events, and libinput only synthesises
+# those for touchpads. A touchscreen emits none, ever, so every one of those
+# gestures is dead on a deck whose only pointer is the panel. lisgd reads the
+# touch device directly and turns the contacts into commands, which is why it
+# exists at all (its own man page says as much: "the synthetic gestures you
+# define via lisgd can be used on touchscreens, which normal libinput gestures
+# don't support").
+#
+# It OBSERVES the device rather than grabbing it, so taps, drags and scrolling
+# still reach niri and the applications underneath. Nothing here takes input
+# away from anything.
+#
+# The bindings mirror what the Perixx touchpad would do if it were plugged in,
+# so the two input paths do not need separate muscle memory. Directions follow
+# natural-scroll, which is set in config.kdl: fingers move the view, not the
+# cursor, so swiping UP goes DOWN the workspace list.
+set -eu
+
+# Stable by-id path, not /dev/input/event4. Event numbers are assigned at probe
+# time: this same panel registers TWO nodes (event4 touch, event5 keyboard) and
+# DESIGN §9 already documents a case where probe order moved a device between
+# reboots and pointed a daemon at the wrong one.
+DEVICE="${DEVICE:-/dev/input/by-id/usb-TSTP_MTouch_CMTP_1.0-event-if00}"
+if [ ! -e "$DEVICE" ]; then
+    DEVICE="$(ls /dev/input/by-id/*MTouch*event-if00 2>/dev/null | head -1 || true)"
+fi
+[ -n "$DEVICE" ] && [ -e "$DEVICE" ] || {
+    echo "deck-gestures: no touchscreen found under /dev/input/by-id" >&2
+    exit 1
+}
+
+# -g nfingers,gesture,edge,distance,actmode,command
+exec lisgd -d "$DEVICE" \
+    -g "1,DU,B,*,R,deck-osk" \
+    -g "1,UD,T,*,R,deck-niri toggle-overview" \
+    -g "3,DU,*,*,R,deck-niri focus-workspace-down" \
+    -g "3,UD,*,*,R,deck-niri focus-workspace-up" \
+    -g "3,LR,*,*,R,deck-niri focus-column-left" \
+    -g "3,RL,*,*,R,deck-niri focus-column-right"

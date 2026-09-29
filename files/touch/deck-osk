@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+# Show or hide the on-screen keyboard.
+#
+# WHY wvkbd AND NOT squeekboard, which is already installed on this machine.
+# squeekboard waits to be asked: it appears when a client requests input through
+# text-input-v3. No XWayland client ever does, which on this deck means fldigi
+# (FLTK) and anything else coming through xwayland-satellite would never raise
+# it. wvkbd drives virtual-keyboard-v1 instead and sends real key events to
+# whatever holds focus, so it works against every client on the machine.
+#
+# SIGRTMIN toggles, SIGUSR1 hides, SIGUSR2 shows (wvkbd README). If nothing is
+# running yet this starts it visible, which is the right answer for something
+# invoked by a deliberate swipe.
+#
+# `pgrep -x`, not `pgrep -f`: DESIGN §6 records how -f matches the ssh-spawned
+# shell's own command line and lies about what is running.
+set -eu
+
+HEIGHT="${OSK_HEIGHT:-260}"   # of 800. wvkbd picks the LANDSCAPE height on a
+                              # 1280x800 panel, so -L is the option that acts
+                              # here and -H is the one that silently does not.
+FONT="${OSK_FONT:-DejaVu Sans 18}"
+
+# --boot is what config.kdl spawns at startup: bring it up already hidden so the
+# first swipe is instant instead of paying process start. Height and font live
+# here and only here, so the two paths cannot drift apart.
+if [ "${1:-}" = "--boot" ]; then
+    exec wvkbd-mobintl --hidden -L "$HEIGHT" --fn "$FONT"
+fi
+
+if pgrep -x wvkbd-mobintl >/dev/null 2>&1; then
+    exec pkill -RTMIN -x wvkbd-mobintl
+fi
+exec wvkbd-mobintl -L "$HEIGHT" --fn "$FONT"

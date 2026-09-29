@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+# `niri msg action ...` with the socket found rather than assumed.
+#
+# Everything that drives niri from outside the compositor needs NIRI_SOCKET, and
+# the two callers here (lisgd gestures, the launcher page) both run somewhere
+# that may not have it. niri-session does import it into the systemd user
+# environment, so a unit started after graphical-session.target usually inherits
+# it, but the value embeds the compositor PID
+# (/run/user/1000/niri.wayland-1.1298.sock), so it goes stale if niri restarts
+# without a fresh import. Discover instead, the way bin/sync-to-pi.sh does.
+#
+#   deck-niri toggle-overview
+#   deck-niri focus-workspace-down
+set -eu
+
+if [ -z "${NIRI_SOCKET:-}" ] || [ ! -S "${NIRI_SOCKET}" ]; then
+    runtime="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
+    sock="$(ls -t "$runtime"/niri.*.sock 2>/dev/null | head -1 || true)"
+    [ -n "$sock" ] && export NIRI_SOCKET="$sock"
+fi
+
+exec niri msg action "$@"

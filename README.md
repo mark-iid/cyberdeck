@@ -80,6 +80,7 @@ Individual steps, if you'd rather go one at a time:
 | `bin/56-flipper.sh` | qflipper + clone the existing flipper repo onto the deck |
 | `bin/57-gps-time.sh` | QLG2 GPS on the GPIO header: UART, 1PPS, gpsd, chrony (DESIGN §9) |
 | `bin/58-landing-page.sh` | the launcher page on `127.0.0.1:8000`: every local resource, tappable |
+| `bin/59-touch-input.sh` | wvkbd on-screen keyboard + lisgd touchscreen gestures |
 | `bin/60-local-ai.sh` | `llama-server` on `127.0.0.1` + `files/ai/ask-local.py` |
 | `bin/70-thermal-tune.sh` | `measure [secs]`, sustained-load thermal profile |
 | `bin/80-check-boot-integrity.sh` | run after ANY disk/clone change |

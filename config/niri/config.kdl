@@ -172,6 +172,14 @@ spawn-at-startup "sh" "-c" "swaybg -i \"$HOME/Pictures/wallpaper.jpg\" -m fill |
 // would not have been on a 2 GB Pi.
 spawn-at-startup "qutebrowser" "http://127.0.0.1:8000"
 
+// The on-screen keyboard, started hidden so the first bottom-edge swipe does not
+// pay process startup. wvkbd and not squeekboard (which is installed): an
+// input-method keyboard only appears when a client asks through text-input-v3,
+// and no XWayland client ever asks, so it would stay silent for exactly the
+// programs you are stuck with when the real keyboard is in the lid. See
+// bin/59-touch-input.sh.
+spawn-at-startup "deck-osk" "--boot"
+
 // ---------------------------------------------------------------------------
 // NAMED WORKSPACE for the launcher page (bin/58-landing-page.sh, served on
 // :8000). qutebrowser is spawned at startup and pinned here, so the deck boots
@@ -406,6 +414,12 @@ binds {
     // millimetre). Opening it is the only part a bare touchscreen cannot do,
     // which is what this bind and lisgd's bottom-edge swipe are both for.
     Mod+O { toggle-overview; }
+
+    // The keyboard, for when the real one is not attached. Also bound to a swipe
+    // up from the bottom edge once deck-gestures is running, which is the one
+    // that matters, since a keybind for an on-screen keyboard assumes the thing
+    // it is replacing.
+    Mod+I hotkey-overlay-title="On-screen keyboard, toggle" { spawn "deck-osk"; }
 
     Mod+Left  { focus-column-left; }
     Mod+Right { focus-column-right; }
