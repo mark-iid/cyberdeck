@@ -18,8 +18,11 @@ need_sudo
 
 # Upstream publishes NO git tags — only 'main'. So we pin a commit for
 # reproducibility. Bump deliberately, not incidentally.
-# 0eb2846 == v2.76.6-era main, read 2026-08-31.
-MSHV_REF="${MSHV_REF:-0eb284619b03256341646a298af619cc588f9c61}"
+# b10b29b == "MSHV v.2.76.7 Final", 2026-10-05. Bumped 2026-10-17 from 0eb2846
+# (v2.76.7 rc011). Upstream REWROTE main between the two -- they share no
+# ancestor -- so there is no meaningful diff to read, and an old pin may stop
+# being fetchable at all once upstream does it again.
+MSHV_REF="${MSHV_REF:-b10b29b968f1f98e28afaa65cc8a3c181a3b651b}"
 MSHV_DIR="$BUILD_ROOT/MSHV"
 
 # aarch64. Upstream ships several ARM .pro files:
@@ -31,6 +34,13 @@ MSHV_PRO="${MSHV_PRO:-MSHV_Slarm64_PI.pro}"
 
 [ "$(uname -m)" = "aarch64" ] || warn "Not aarch64 ($(uname -m)) — MSHV_PRO=$MSHV_PRO may be wrong."
 
+# The fftw patch below edits a TRACKED file. Undo it before fetching, or
+# `git checkout` of a new pin refuses to overwrite the local change. It is
+# reapplied after.
+if [ -d "$MSHV_DIR/.git" ]; then
+    git -C "$MSHV_DIR" checkout --quiet -- "$MSHV_PRO"
+    rm -f "$MSHV_DIR/$MSHV_PRO.orig"
+fi
 fetch_repo https://github.com/LZ2HV/MSHV.git "$MSHV_DIR" "$MSHV_REF"
 cd "$MSHV_DIR"
 
