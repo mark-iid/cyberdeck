@@ -38,9 +38,19 @@ REPO="$(cd "$(dirname "$0")/.." && pwd)"
 apt_install wvkbd lisgd
 
 log "Installing the touch helpers into /usr/local/bin"
-for f in deck-niri deck-osk deck-gestures deck-home; do
+for f in deck-niri deck-osk deck-gestures deck-home deck-wsjtx; do
     sudo install -Dm755 "$REPO/files/touch/$f" "/usr/local/bin/$f"
 done
+
+# fuzzel (Mod+D) starts WSJT-X from its .desktop entry, which runs plain
+# `wsjtx` and gets the waterfall on the wrong side. A user entry of the same
+# name shadows the packaged one, so that path goes through deck-wsjtx too.
+if [ -f /usr/share/applications/wsjtx.desktop ]; then
+    mkdir -p "$HOME/.local/share/applications"
+    sed 's|^Exec=.*|Exec=deck-wsjtx|' /usr/share/applications/wsjtx.desktop \
+        > "$HOME/.local/share/applications/wsjtx.desktop"
+    log "wsjtx.desktop overridden to launch deck-wsjtx"
+fi
 
 # Group membership is a prerequisite rather than something to set up: changing
 # it would need a re-login, and it is already satisfied.

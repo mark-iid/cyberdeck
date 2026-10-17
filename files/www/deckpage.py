@@ -97,7 +97,7 @@ SERVICE_BY_KEY = {d["key"]: d for d in SERVICES}
 # the argv is never built from anything the client says.
 LAUNCH = {
     "mshv":     (["mshv"],          "MSHV",        "FT8/FT4, primary"),
-    "wsjtx":    (["wsjtx"],         "WSJT-X",      "FT8/FT4, fallback"),
+    "wsjtx":    (["deck-wsjtx"],    "WSJT-X",      "FT8/FT4, fallback"),
     "js8call":  (["js8call"],       "JS8Call",     "keyboard-to-keyboard"),
     "fldigi":   (["fldigi"],        "fldigi",      "PSK31, RTTY, Olivia"),
     "flrig":    (["flrig"],         "flrig",       "rig control"),

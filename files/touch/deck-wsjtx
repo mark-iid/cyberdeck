@@ -1,0 +1,88 @@
+#!/usr/bin/env python3
+"""Start WSJT-X laid out across two screens: main window, then waterfall.
+
+config/niri/config.kdl tiles the main window as a full-width column and the
+Wide Graph as a full-width, half-height strip. What a rule CANNOT do is choose the order, and
+WSJT-X maps the Wide Graph FIRST, so niri puts the waterfall on the LEFT. This
+waits for both windows and moves the waterfall's column to the right of the
+main one, then leaves focus on the main window. Mod+Right goes to the waterfall,
+Mod+Left back.
+
+WSJT-X is started through `niri msg action spawn`, not as a child of this
+script, so it belongs to the session and outlives whatever launched it (a
+keybind, the launcher page, fuzzel).
+
+Already running? Then it only brings the main window to the front: WSJT-X
+refuses a second instance anyway, with an error box.
+
+    deck-wsjtx
+"""
+import glob
+import json
+import os
+import subprocess
+import time
+
+TIMEOUT = 30.0          # WSJT-X takes several seconds to map on this Pi
+WIDE = "Wide Graph"
+
+
+def niri_socket():
+    sock = os.environ.get("NIRI_SOCKET", "")
+    if sock and os.path.exists(sock):
+        return sock
+    runtime = os.environ.get("XDG_RUNTIME_DIR", f"/run/user/{os.getuid()}")
+    socks = sorted(glob.glob(f"{runtime}/niri.*.sock"), key=os.path.getmtime)
+    return socks[-1] if socks else ""
+
+
+os.environ["NIRI_SOCKET"] = niri_socket()
+
+
+def niri(*args):
+    subprocess.run(["niri", "msg", "action", *args], check=True)
+
+
+def wsjtx_windows():
+    out = subprocess.run(["niri", "msg", "-j", "windows"],
+                         capture_output=True, text=True, check=True).stdout
+    main = wide = None
+    for w in json.loads(out):
+        if w["app_id"].lower() not in ("wsjtx", "wsjt-x") or w["is_floating"]:
+            continue                # floating = a dialog, e.g. Rig Control Error
+        if WIDE in w["title"]:
+            wide = w
+        else:
+            main = w
+    return main, wide
+
+
+def column(w):
+    pos = (w.get("layout") or {}).get("pos_in_scrolling_layout")
+    return pos[0] if pos else None
+
+
+main, wide = wsjtx_windows()
+if main:
+    niri("focus-window", "--id", str(main["id"]))
+    raise SystemExit(0)
+
+niri("spawn", "--", "wsjtx")
+
+deadline = time.monotonic() + TIMEOUT
+while time.monotonic() < deadline:
+    main, wide = wsjtx_windows()
+    if main and wide:
+        break
+    time.sleep(0.5)
+
+if main and wide and main["workspace_id"] == wide["workspace_id"]:
+    wc, mc = column(wide), column(main)
+    if wc is not None and mc is not None and wc < mc:
+        niri("focus-window", "--id", str(wide["id"]))
+        for _ in range(mc - wc):
+            niri("move-column-right")
+if main:
+    niri("focus-window", "--id", str(main["id"]))
+# No Wide Graph within the timeout (it can be closed and stay closed): nothing
+# to arrange, and the main window is focused, which is all that is left to do.

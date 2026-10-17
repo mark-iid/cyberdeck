@@ -250,18 +250,39 @@ window-rule {
 // are verified working. JTDX is a WSJT-X fork and duplicates that fallback
 // rather than adding one, and I don't intend to use it.
 // WSJT-X is two windows (main 880x685 + WideGraph 938x337 = 1022px stacked,
-// against ~770px usable). They CANNOT both be tiled here. So the main window
-// tiles full-width and the waterfall FLOATS on top, summoned when needed.
+// against ~770px usable). They cannot be STACKED here. They can sit SIDE BY
+// SIDE, which is what niri's scrolling strip is for: the main window is one
+// full-width column, and the waterfall a second full-width column to its right,
+// HALF HEIGHT: a long strip across the top of that second screen. Mod+Right
+// goes to it, Mod+Left back. deck-wsjtx (files/touch/) puts it on the right; a rule
+// cannot, because WSJT-X maps the Wide Graph first.
+//
+// FULL WIDTH IS NOT COSMETIC. WSJT-X decodes FT8 only across the frequency
+// span the waterfall DRAWS, which is plot width x BinsPerPixel x 0.73 Hz. Set
+// up as it was (1272 px at BinsPerPixel 2) that was 0-1862 Hz, and ALL.TXT
+// agreed: 2608 decodes, highest 1863 Hz, not one above 1900. Everything from
+// there to 3000 Hz went undecoded. Now 1272 px at BinsPerPixel 4 in
+// ~/.config/WSJT-X.ini = 0-3700 Hz. Shrink this column and that range shrinks
+// with it. HideControls=true is set there too; the "Controls" box top left of
+// the waterfall brings them back.
+//
+// Replaced 2026-10-17 a floating 1272x200 waterfall laid over the main
+// window, which hid whatever was under it whenever it was up.
+//
+// NO open-floating false on this app-wide rule. It matched every WSJT-X window,
+// dialogs included, and overrode niri's own float-the-dialogs default: the
+// "Rig Control Error" box opened as a tiled 520px column of its own. Only the
+// Wide Graph rule below forces tiling; everything else floats or tiles as niri
+// decides.
 window-rule {
     match app-id=r#"^(?i)wsjt-?x$"#
-    open-floating false
     default-column-width { proportion 1.0; }
 }
 window-rule {
     match app-id=r#"^(?i)wsjt-?x$"# title=r#"Wide Graph"#
-    open-floating true
-    default-column-width { fixed 1272; }
-    default-window-height { fixed 200; }
+    open-floating false
+    default-column-width { proportion 1.0; }
+    default-window-height { proportion 0.5; }
 }
 
 // WSJT-X's Settings dialog: MEASURED at 1280x813 on a 776px usable area
@@ -478,7 +499,9 @@ binds {
     Mod+W hotkey-overlay-title="HOME — back to the launcher page" { spawn "deck-home"; }
     // kiwix-desktop stays installed and is still in fuzzel (Mod+D) if wanted.
     Mod+M hotkey-overlay-title="MSHV — FT8/FT4, primary (waterfall: Ctrl+W)" { spawn "mshv"; }
-    Mod+N hotkey-overlay-title="WSJT-X — FT8/FT4, fallback"                  { spawn "wsjtx"; }
+    // deck-wsjtx, not wsjtx: it puts the waterfall column to the RIGHT of the
+    // main window, which no window rule can do (see the WSJT-X rules).
+    Mod+N hotkey-overlay-title="WSJT-X — FT8/FT4, fallback"                  { spawn "deck-wsjtx"; }
 
     Mod+Q { close-window; }
 
