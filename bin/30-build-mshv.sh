@@ -84,8 +84,27 @@ make -j"$(build_jobs)"
 BIN="$(find . -maxdepth 3 -type f -name 'MSHV*' -perm -u+x ! -name '*.pro' ! -name '*.o' 2>/dev/null | head -1)"
 [ -n "$BIN" ] || die "Build produced no MSHV binary — check make output above."
 
-log "Installing MSHV from $BIN"
-sudo install -Dm755 "$BIN" /usr/local/bin/mshv
+# MSHV IS A PORTABLE APP. It finds settings/, log/, RxWavs/, AllTxtMonthly/
+# etc. via QCoreApplication::applicationDirPath() -- next to the binary -- and
+# WRITES into them. Installing the bare binary to /usr/local/bin (as this script
+# once did) gives the "cannot find the required sub-directories ... reinstall"
+# error at startup, and worse, makes every settings change vanish: the Rig and
+# Sound dialogs have no OK button by design, they save on close via
+# SaveSettings() -> <appdir>/settings/ms_settings, which silently fails.
+#
+# So the whole upstream bin/ tree goes to a USER-WRITABLE home, and
+# /usr/local/bin/mshv is a symlink. applicationDirPath() reads /proc/self/exe,
+# which resolves the symlink, so MSHV still sees MSHV_HOME as its app dir.
+#
+# Data is copied with --update=none: a rebuild replaces the binary but never
+# clobbers settings, logs or ALL.TXT you have accumulated.
+MSHV_HOME="${MSHV_HOME:-$HOME/.local/share/mshv}"
+log "Installing MSHV from $BIN into $MSHV_HOME"
+mkdir -p "$MSHV_HOME"
+cp -r --update=none bin/. "$MSHV_HOME"/
+install -m755 "$BIN" "$MSHV_HOME/mshv"
+rm -f "$MSHV_HOME/$(basename "$BIN")"
+sudo ln -sfn "$MSHV_HOME/mshv" /usr/local/bin/mshv
 
 # A .desktop entry, so it shows up in fuzzel next to wsjtx and jtdx.
 # StartupWMClass matters: niri matches Xwayland windows on WM_CLASS, and the
