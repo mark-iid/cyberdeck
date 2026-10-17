@@ -3,18 +3,43 @@
 #
 # The old Mod+W bind ran `qutebrowser http://127.0.0.1:8000` and nothing else.
 # With qutebrowser already running that only adds a TAB to it over IPC: niri
-# never moves you to the "web" workspace, so from MSHV or a terminal the key
-# appeared to do nothing. And it piled up a new tab on every press.
+# never moves focus to the browser, so from MSHV or a terminal the key appeared
+# to do nothing. And it piled up a new tab on every press.
 #
-# So: go to the workspace first, THEN load the page into the CURRENT tab. The
-# page you were on is one `H` (back) away, not lost. If the browser was closed
-# with Mod+Q (which left a blank screen), `qutebrowser ':open URL'` starts a
-# fresh instance instead, and the window rule pins it to "web".
+# So: FOCUS THE BROWSER WINDOW first, THEN load the page into its current tab.
+# The window, not the "web" workspace. Focusing the workspace is not enough:
+# MSHV opened from the launcher lands on "web" beside the browser, and
+# `focus-workspace web` from there is a no-op that leaves MSHV focused while the
+# launcher loads out of sight. That is exactly how the first version of this
+# looked broken from the left-edge swipe.
+#
+# The page you were on is one `H` (back) away, not lost. If the browser was
+# closed with Mod+Q (which left a blank screen), `qutebrowser ':open URL'`
+# starts a fresh instance instead, and the window rule pins it to "web".
 #
 #   deck-home
 set -eu
 
 HOME_URL="${DECK_HOME_URL:-http://127.0.0.1:8000}"
 
-deck-niri focus-workspace web
+# Same discovery as deck-niri. That one only runs actions; this also has to
+# QUERY niri for the window list.
+if [ -z "${NIRI_SOCKET:-}" ] || [ ! -S "${NIRI_SOCKET}" ]; then
+    runtime="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
+    sock="$(ls -t "$runtime"/niri.*.sock 2>/dev/null | head -1 || true)"
+    [ -n "$sock" ] && export NIRI_SOCKET="$sock"
+fi
+
+browser="$(niri msg -j windows | python3 -c '
+import json, sys
+ids = [w["id"] for w in json.load(sys.stdin)
+       if w["app_id"] == "org.qutebrowser.qutebrowser"]
+print(ids[0] if ids else "")
+')"
+
+if [ -n "$browser" ]; then
+    niri msg action focus-window --id "$browser"
+else
+    niri msg action focus-workspace web
+fi
 exec qutebrowser ":open $HOME_URL"
