@@ -38,7 +38,7 @@ REPO="$(cd "$(dirname "$0")/.." && pwd)"
 apt_install wvkbd lisgd
 
 log "Installing the touch helpers into /usr/local/bin"
-for f in deck-niri deck-osk deck-gestures; do
+for f in deck-niri deck-osk deck-gestures deck-home; do
     sudo install -Dm755 "$REPO/files/touch/$f" "/usr/local/bin/$f"
 done
 

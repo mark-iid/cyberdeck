@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+# Back to the launcher page, from anywhere, whatever state the browser is in.
+#
+# The old Mod+W bind ran `qutebrowser http://127.0.0.1:8000` and nothing else.
+# With qutebrowser already running that only adds a TAB to it over IPC: niri
+# never moves you to the "web" workspace, so from MSHV or a terminal the key
+# appeared to do nothing. And it piled up a new tab on every press.
+#
+# So: go to the workspace first, THEN load the page into the CURRENT tab. The
+# page you were on is one `H` (back) away, not lost. If the browser was closed
+# with Mod+Q (which left a blank screen), `qutebrowser ':open URL'` starts a
+# fresh instance instead, and the window rule pins it to "web".
+#
+#   deck-home
+set -eu
+
+HOME_URL="${DECK_HOME_URL:-http://127.0.0.1:8000}"
+
+deck-niri focus-workspace web
+exec qutebrowser ":open $HOME_URL"

@@ -437,11 +437,12 @@ binds {
     Mod+A hotkey-overlay-title="Local AI — 7B Mistral, offline" {
         spawn "qutebrowser" "http://127.0.0.1:8081";
     }
-    // The way back to the launcher if it has been closed. Mod+1 alone only
-    // moves to the workspace, which is no help once the window is gone.
-    Mod+W hotkey-overlay-title="Launcher page (every local resource, tappable)" {
-        spawn "qutebrowser" "http://127.0.0.1:8000";
-    }
+    // HOME: the way back to the launcher from anywhere. Mod+1 alone only moves
+    // to the workspace, which is no help once the window is gone or has
+    // wandered off to some other page. deck-home (files/touch/) goes to "web"
+    // AND loads the launcher into the current tab, restarting qutebrowser if
+    // Mod+Q closed it. The page you left is one `H` (back) away.
+    Mod+W hotkey-overlay-title="HOME — back to the launcher page" { spawn "deck-home"; }
     // kiwix-desktop stays installed and is still in fuzzel (Mod+D) if wanted.
     Mod+M hotkey-overlay-title="MSHV — FT8/FT4, primary (waterfall: Ctrl+W)" { spawn "mshv"; }
     Mod+N hotkey-overlay-title="WSJT-X — FT8/FT4, fallback"                  { spawn "wsjtx"; }
