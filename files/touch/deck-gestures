@@ -45,11 +45,21 @@ fi
 # they run on libinput pointer gesture events off a TOUCHPAD and never see this
 # path. See the gestures comment in config/niri/config.kdl.
 #
-# What is left is the two that work, and they work because they are anchored to
-# an edge: one contact, starting somewhere nothing else is listening.
+# What is left works because every gesture is anchored to an edge: one contact,
+# starting somewhere nothing else is listening.
+#
+#   bottom edge, swipe up      -> on-screen keyboard
+#   top edge, swipe down       -> overview
+#   left edge, swipe right     -> HOME, the launcher page (same as Mod+W)
+#
+# HOME goes through `deck-niri spawn` rather than running deck-home directly.
+# If the browser is closed, deck-home starts a new one, and anything lisgd
+# execs is a child of deck-gestures.service: a restart of the service would
+# take the browser down with it. Spawned by niri, it belongs to the session.
 #
 # If you want the columns on a gesture too, the same edge trick is available and
-# is the only shape worth trying on this panel:
+# is the only shape worth trying on this panel (the left edge is taken by HOME
+# now, so a column bind would need the right edge or a corner):
 #     -g "1,LR,L,*,R,deck-niri focus-column-left" \
 #     -g "1,RL,R,*,R,deck-niri focus-column-right"
 # Left off by default because lisgd does not grab the device, so those fire IN
@@ -58,4 +68,5 @@ fi
 # -g nfingers,gesture,edge,distance,actmode,command
 exec lisgd -d "$DEVICE" \
     -g "1,DU,B,*,R,deck-osk" \
-    -g "1,UD,T,*,R,deck-niri toggle-overview"
+    -g "1,UD,T,*,R,deck-niri toggle-overview" \
+    -g "1,LR,L,*,R,deck-niri spawn -- deck-home"
