@@ -192,6 +192,18 @@ spawn-at-startup "deck-osk" "--boot"
 // number row used to reach moved up by one. The Mod+1 bind below was changed to
 // address it BY NAME rather than by index, so this stays true no matter how
 // many named workspaces get added later.
+
+// The radio stack's own workspace, so it never shares one with the browser.
+// Before this, MSHV opened wherever focus was, which after a tap on the
+// launcher meant "web", right beside the browser. Every radio app is pinned
+// here by one rule at the top of the ham-stack section below, and Mod+2
+// addresses it by name.
+//
+// DECLARED BEFORE "web" ON PURPOSE. Each named workspace is inserted at index
+// 0, so the LAST one declared ends up first. Declared after "web", "radio"
+// became workspace 1 and pushed the launcher to 2 (seen with `niri msg
+// workspaces`, 2026-10-17). This order gives web=1, radio=2.
+workspace "radio"
 workspace "web"
 
 // ---------------------------------------------------------------------------
@@ -206,6 +218,27 @@ workspace "web"
 // A rule that matches nothing fails SILENTLY. That is exactly how the parent
 // config rotted: it carries a comment about a "Mod+W wsjtx-layout" script that
 // does not exist in any .kdl and is not in files/scripts/. Check, do not assume.
+
+// --- The radio workspace ----------------------------------------------------
+// ONE rule pins the whole ham stack to "radio", rather than an open-on-workspace
+// line in each app's own rule below. niri merges every rule that matches, so
+// those per-app rules still decide width, floating and dialogs; this one only
+// decides WHERE. Dialogs carry their parent's app-id, so MSHV's Sound and
+// Interface Control windows follow it here too.
+//
+// The list is every radio app that has a rule in this file, MSHV and WSJT-X
+// verified, the rest as (un)verified as their own rules say. The logger (QLog)
+// belongs with the radios: it is filled in from the FT8 program mid-QSO.
+//
+// open-focused is what makes this usable. Without it MSHV, started from the
+// launcher, opened on "radio" while focus stayed on "web": tapping the tile
+// looked like it did nothing, the same failure deck-home had. With it, niri
+// follows the new window to its workspace.
+window-rule {
+    match app-id=r#"^(?i)(mshv|wsjt-?x|js8call|fldigi|flrig|flmsg|flamp|gqrx|sdrpp|sdrangel|chirp|klog|qlog|tqsl|gpredict|xastir)$"#
+    open-on-workspace "radio"
+    open-focused true
+}
 
 // --- Weak-signal digital ----------------------------------------------------
 // DECIDED 2026-08-31 (DESIGN §3): MSHV is the primary FT8/FT4 program. It opens
@@ -480,16 +513,16 @@ binds {
     Mod+Shift+Up    { move-window-up; }
     Mod+Shift+Down  { move-window-down; }
 
-    // By name, not index: "web" is inserted at the front (see the workspace
-    // declaration above), so `focus-workspace 1` would still land here but would
-    // stop saying why. The other three stay numeric and now mean what used to be
-    // 1, 2 and 3.
+    // By name, not index: named workspaces are inserted at the front (see the
+    // workspace declarations above), so an index would still land here but
+    // would stop saying why. Mod+1 is the browser, Mod+2 the radios; 3 and 4
+    // stay numeric and are the first two ordinary workspaces after them.
     Mod+1 { focus-workspace "web"; }
-    Mod+2 { focus-workspace 2; }
+    Mod+2 { focus-workspace "radio"; }
     Mod+3 { focus-workspace 3; }
     Mod+4 { focus-workspace 4; }
     Mod+Shift+1 { move-column-to-workspace "web"; }
-    Mod+Shift+2 { move-column-to-workspace 2; }
+    Mod+Shift+2 { move-column-to-workspace "radio"; }
     Mod+Shift+3 { move-column-to-workspace 3; }
     Mod+Shift+4 { move-column-to-workspace 4; }
 
