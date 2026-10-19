@@ -26,6 +26,16 @@ Two halves to this repo:
   decisions in [docs/CASE.md](docs/CASE.md). Fifteen printed parts, no holes drilled in
   the shell.
 
+## What's in the case
+
+![The deck with the lid open, every connector and part called out](docs/images/annotated.png)
+
+Every part on that sheet is from the assembly model, sitting where it's installed,
+and each callout is projected from the part's own 3D position, so a leader lands on
+the thing it names. The one freehand bit is the outside of the Pelican (latches,
+handle, the moulded band): the model only knows the surveyed interior. The reasoning
+behind each label is in [docs/CASE.md](docs/CASE.md).
+
 ## The home screen
 
 ![The launcher page, on the deck's own panel](docs/images/launcher.png)
